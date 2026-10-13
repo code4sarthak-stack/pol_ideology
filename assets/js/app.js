@@ -497,7 +497,7 @@
       // 1. Badge & Subtitle
       var badge = document.getElementById("community-badge");
       if (badge) {
-        badge.textContent = stats.isLive ? t("statsLiveBadge") : (stats.total + " " + (t("statsParticipantsCount", { n: "" }) || "quiz takers")).trim();
+        badge.textContent = stats.isLive ? t("statsLiveBadge") : t("statsParticipantsCount", { n: stats.total.toLocaleString() });
         badge.className = "badge " + (stats.isLive ? "badge--live" : "badge--sample");
       }
       var sub = document.getElementById("community-sub");
@@ -631,14 +631,16 @@
 
     var avgFmt = (avgScore > 0 ? "+" : "") + avgScore;
     var userFmt = (userScore > 0 ? "+" : "") + userScore;
+    // Near either end, anchor the label to that end so it can't run past the card edge.
+    function edge(pct) { return pct < 20 ? " is-start" : pct > 80 ? " is-end" : ""; }
 
     return (
       '<div class="compare-bar">' +
       '  <div class="compare-bar__track">' +
-      '    <div class="compare-bar__avg-line" style="left: ' + avgPct.toFixed(1) + '%;">' +
+      '    <div class="compare-bar__avg-line' + edge(avgPct) + '" style="left: ' + avgPct.toFixed(1) + '%;">' +
       '      <span class="compare-bar__avg-tag">' + esc(t("statsAvgSpectrum")) + ' (' + avgFmt + ')</span>' +
       '    </div>' +
-      '    <div class="compare-bar__user-pin" style="left: ' + userPct.toFixed(1) + '%;">' +
+      '    <div class="compare-bar__user-pin' + edge(userPct) + '" style="left: ' + userPct.toFixed(1) + '%;">' +
       '      <span class="compare-bar__user-dot"></span>' +
       '      <span class="compare-bar__user-tag">' + esc(t("overall")) + ' (' + userFmt + ')</span>' +
       '    </div>' +
@@ -939,211 +941,11 @@
     document.getElementById("compass").innerHTML = svg;
   }
 
-  function renderCommunityCompass(averages, container) {
-    var civil = QUIZ.domains.civil[lang];
-    var econVal = averages.econ || 0;
-    var civilVal = averages.civil || 0;
-    var x = 100 + (econVal / 100) * 84;
-    var y = 100 - (civilVal / 100) * 84;
-
-    var grid = "";
-    for (var i = 16; i <= 184; i += 21) {
-      grid += '<line x1="' + i + '" y1="16" x2="' + i + '" y2="184"/>' +
-              '<line x1="16" y1="' + i + '" x2="184" y2="' + i + '"/>';
-    }
-    var svg =
-      '<svg class="compass" viewBox="0 0 200 210" role="img" aria-label="' + esc(t("statsCompassHeading") || "Community Compass") + '">' +
-      '<defs>' +
-      '  <clipPath id="comm-compass-clip"><rect x="16" y="16" width="168" height="168" rx="14"/></clipPath>' +
-      '  <filter id="comm-compass-shadow" x="-30%" y="-30%" width="160%" height="160%">' +
-      '    <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-opacity="0.22"/>' +
-      '  </filter>' +
-      '</defs>' +
-      '<g clip-path="url(#comm-compass-clip)">' +
-      '  <rect x="16" y="16" width="84" height="84" fill="var(--q-auth-left)"/>' +
-      '  <rect x="100" y="16" width="84" height="84" fill="var(--q-auth-right)"/>' +
-      '  <rect x="16" y="100" width="84" height="84" fill="var(--q-lib-left)"/>' +
-      '  <rect x="100" y="100" width="84" height="84" fill="var(--q-lib-right)"/>' +
-      '  <g stroke="var(--surface)" stroke-width="0.75" opacity="0.95">' + grid + '</g>' +
-      '</g>' +
-      '<rect x="16" y="16" width="168" height="168" rx="14" fill="none" stroke="var(--border-strong)" stroke-width="1"/>' +
-      '<line x1="100" y1="16" x2="100" y2="184" stroke="var(--ink)" stroke-width="0.85" opacity="0.35"/>' +
-      '<line x1="16" y1="100" x2="184" y2="100" stroke="var(--ink)" stroke-width="0.85" opacity="0.35"/>' +
-      '<path d="M' + x.toFixed(1) + ' 100V' + y.toFixed(1) + 'M100 ' + y.toFixed(1) + 'H' + x.toFixed(1) + '" fill="none" stroke="var(--accent)" stroke-width="0.85" stroke-dasharray="2.5 2.5" opacity="0.65"/>' +
-      '<text x="100" y="11" text-anchor="middle" class="compass-label">' + esc(civil.right) + '</text>' +
-      '<text x="100" y="198" text-anchor="middle" class="compass-label">' + esc(civil.left) + '</text>' +
-      '<text x="9" y="100" text-anchor="middle" transform="rotate(-90 9 100)" class="compass-label">' + esc(t("left")) + '</text>' +
-      '<text x="191" y="100" text-anchor="middle" transform="rotate(90 191 100)" class="compass-label">' + esc(t("right")) + '</text>' +
-      '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="14" fill="var(--accent)" opacity="0.18">' +
-      '  <animate attributeName="r" values="8;18;8" dur="3s" repeatCount="indefinite"/>' +
-      '  <animate attributeName="opacity" values="0.25;0.05;0.25" dur="3s" repeatCount="indefinite"/>' +
-      '</circle>' +
-      '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="5.5" fill="var(--accent)" stroke="#ffffff" stroke-width="2" filter="url(#comm-compass-shadow)"/>' +
-      '</svg>';
-    container.innerHTML = svg;
-  }
-
   /* ---------- Community Stats Dashboard Page ---------- */
 
+  // The dashboard itself is rendered by stats.js; this only sets the translated title.
   function statsPage() {
-    document.title = t("statsTitle") || "Community Ideology Statistics";
-    var refreshBtn = document.getElementById("stats-refresh");
-
-    function loadAndRenderStats() {
-      if (refreshBtn) refreshBtn.classList.add("is-spinning");
-      if (!window.QUIZ_DB) return;
-
-      window.QUIZ_DB.getStats().then(function (stats) {
-        if (refreshBtn) refreshBtn.classList.remove("is-spinning");
-        if (!stats) return;
-
-        // Badge
-        var badge = document.getElementById("stats-badge");
-        if (badge) {
-          badge.textContent = stats.isLive ? (t("statsLiveBadge") || "Live Database") : (stats.total + "+ " + (t("statsParticipantsCount", { n: "" }) || "Quiz Takers")).trim();
-          badge.className = "badge " + (stats.isLive ? "badge--live" : "badge--sample");
-        }
-
-        // KPIs
-        var kpiTotal = document.getElementById("kpi-total");
-        if (kpiTotal) kpiTotal.textContent = stats.total.toLocaleString();
-
-        var topIdeoKey = stats.topIdeology;
-        var topIdeoObj = QUIZ_RESULTS.ideologies.find(function (i) { return i.key === topIdeoKey; });
-        var kpiTop = document.getElementById("kpi-top");
-        if (kpiTop && topIdeoObj) {
-          kpiTop.textContent = (topIdeoObj.emoji || "") + " " + topIdeoObj[lang].title;
-        }
-
-        var kpiAvg = document.getElementById("kpi-avg");
-        if (kpiAvg) {
-          var avgOverall = stats.averages.overall;
-          var sign = avgOverall > 0 ? "+" : "";
-          kpiAvg.textContent = sign + avgOverall;
-        }
-
-        var kpiLang = document.getElementById("kpi-lang");
-        if (kpiLang && stats.langCounts) {
-          var enC = stats.langCounts.en || 0;
-          var hiC = stats.langCounts.hi || 0;
-          var totalL = enC + hiC || 1;
-          kpiLang.textContent = Math.round((enC / totalL) * 100) + "% / " + Math.round((hiC / totalL) * 100) + "%";
-        }
-
-        // Ideology Bars
-        var barsContainer = document.getElementById("stats-ideology-bars");
-        if (barsContainer) {
-          barsContainer.innerHTML = "";
-          var sorted = Object.keys(stats.ideologies).map(function (k) {
-            var item = stats.ideologies[k];
-            var obj = QUIZ_RESULTS.ideologies.find(function (i) { return i.key === k; });
-            return {
-              key: k,
-              title: obj ? obj[lang].title : k,
-              emoji: obj ? obj.emoji : "🏛️",
-              count: item.count,
-              pct: item.pct
-            };
-          }).sort(function (a, b) { return b.count - a.count; });
-
-          sorted.slice(0, 8).forEach(function (row) {
-            var item = el("div", "stats-bar-item");
-            item.innerHTML =
-              '<div class="stats-bar-head">' +
-              '  <span class="stats-bar-title"><span class="stats-bar-emoji">' + esc(row.emoji) + '</span> ' + esc(row.title) + '</span>' +
-              '  <span class="stats-bar-meta">' + row.pct + '% (' + row.count + ')</span>' +
-              '</div>' +
-              '<div class="stats-bar-track">' +
-              '  <div class="stats-bar-fill" style="width: ' + row.pct + '%;"></div>' +
-              '</div>';
-            barsContainer.appendChild(item);
-          });
-        }
-
-        // Spectrum 7 Bands
-        var spectrumContainer = document.getElementById("stats-spectrum-bars");
-        if (spectrumContainer) {
-          spectrumContainer.innerHTML = "";
-          var bandNames = [
-            t("bandL2"), t("bandL1"), t("bandLM"),
-            t("bandMid"),
-            t("bandRM"), t("bandR1"), t("bandR2")
-          ];
-          var bandColors = [
-            "#f43f5e", "#fb7185", "#fda4af",
-            "#cbd5e1",
-            "#93c5fd", "#60a5fa", "#3b82f6"
-          ];
-          for (var b = 0; b < 7; b++) {
-            var bData = stats.bands[b] || { count: 0, pct: 0 };
-            var bRow = el("div", "spectrum-band-row");
-            bRow.innerHTML =
-              '<div class="spectrum-band-head">' +
-              '  <span class="spectrum-band-dot" style="background: ' + bandColors[b] + ';"></span>' +
-              '  <span class="spectrum-band-name">' + esc(bandNames[b] || "Band " + b) + '</span>' +
-              '  <span class="spectrum-band-pct">' + bData.pct + '% (' + bData.count + ')</span>' +
-              '</div>' +
-              '<div class="spectrum-band-track">' +
-              '  <div class="spectrum-band-fill" style="width: ' + bData.pct + '%; background: ' + bandColors[b] + ';"></div>' +
-              '</div>';
-            spectrumContainer.appendChild(bRow);
-          }
-        }
-
-        // 4 Domains Grid
-        var domainsGrid = document.getElementById("stats-domains-grid");
-        if (domainsGrid) {
-          domainsGrid.innerHTML = "";
-          DOMAINS.forEach(function (d) {
-            var dom = QUIZ.domains[d];
-            var names = dom[lang];
-            var avgVal = stats.averages[d] || 0;
-            var band = QUIZ.bands[d][bandIndex(avgVal)][lang];
-            var card = el("div", "stats-domain-card");
-            var sign = avgVal > 0 ? "+" : "";
-
-            card.innerHTML =
-              '<div class="stats-domain-header">' +
-              '  <span class="stats-domain-title">' + dom.icon + ' ' + esc(names.name) + '</span>' +
-              '  <span class="badge badge--accent">' + esc(band.label) + ' (' + sign + avgVal + ')</span>' +
-              '</div>';
-            card.appendChild(meter(avgVal, names.left, names.right, band.label, DOMAIN_SEGS, bandIndex(avgVal)));
-            domainsGrid.appendChild(card);
-          });
-        }
-
-        // Community Compass
-        var compassBox = document.getElementById("stats-compass");
-        if (compassBox) {
-          renderCommunityCompass(stats.averages, compassBox);
-        }
-
-        // Recent Feed
-        var recentFeed = document.getElementById("stats-recent-feed");
-        if (recentFeed && stats.recent) {
-          recentFeed.innerHTML = "";
-          stats.recent.forEach(function (rec) {
-            var ideoObj = QUIZ_RESULTS.ideologies.find(function (i) { return i.key === rec.ideology; });
-            var item = el("div", "recent-feed-item");
-            var sign = rec.overall_score > 0 ? "+" : "";
-            item.innerHTML =
-              '<span class="recent-feed-icon">' + (ideoObj ? ideoObj.emoji : "🧭") + '</span>' +
-              '<div class="recent-feed-body">' +
-              '  <div class="recent-feed-title">' + (ideoObj ? esc(ideoObj[lang].title) : esc(rec.ideology)) + '</div>' +
-              '  <div class="recent-feed-meta">Score: ' + sign + rec.overall_score + ' · ' + (rec.lang === "hi" ? "हिन्दी" : "English") + '</div>' +
-              '</div>' +
-              '<span class="recent-feed-time">' + esc(rec.timeAgo) + '</span>';
-            recentFeed.appendChild(item);
-          });
-        }
-      });
-    }
-
-    if (refreshBtn) {
-      refreshBtn.addEventListener("click", loadAndRenderStats);
-    }
-
-    loadAndRenderStats();
+    document.title = t("statsTitle");
   }
 
   function esc(str) {
