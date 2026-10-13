@@ -4,7 +4,7 @@ A mobile-first quiz website that earns money from ads. A visitor:
 
 1. **Picks a language**: English or Hindi.
 2. **Enters their name** and starts.
-3. **Answers 20 questions**, one per page. Each question has its own five answer choices, plus a short note on the history and research behind it.
+3. **Answers 12 questions**, one per page. Each question has its own five answer choices, plus a short note on the history and research behind it.
 4. **Gets a result page** with:
    - their closest ideology (out of 16) and an overall Left ↔ Right meter
    - a meter for each of 4 areas: Economy, Society, Civil liberties and World politics
@@ -20,13 +20,13 @@ It's plain HTML, CSS and JavaScript, with no framework and no build step. Upload
 ```
 index.html        Page 1: language choice (landing page)
 start.html        Page 2: name + start
-quiz.html         Pages 3–22: one question per page (?q=1…20)
-result.html       Page 23: ideology, meters per area, examples, compass, share buttons
+quiz.html         Pages 3–14: one question per page (?q=1…12)
+result.html       Page 15: ideology, meters per area, examples, compass, share buttons
 about.html, privacy.html, contact.html   Needed for AdSense approval
 ads.txt           AdSense seller declaration (needs your pub ID)
 robots.txt, sitemap.xml, site.webmanifest
 assets/js/config.js     ← AdSense + Analytics IDs (the only code file you must edit)
-assets/js/questions.js  ← the 4 areas and 20 questions, in both languages
+assets/js/questions.js  ← the 4 areas and 12 questions, in both languages
 assets/js/results.js    ← labels, descriptions and examples for every result, in both languages (result page only)
 assets/js/strings.js    ← all button and label text, in both languages
 assets/js/app.js        Page logic: scoring, navigation, ads, sharing
@@ -83,7 +83,7 @@ Edit `assets/js/questions.js`. Each question has:
 - **`scores`**: one score per option, in the order the options appear, from `-2` (left pole) to `+2` (right pole). The direction is mixed on purpose, so the leftmost answer isn't always first.
 - **Text in both languages**: the question, its options and a short "why this matters" note.
 
-Keep 5 questions per area and 5 options per question. Answers are stored as one digit per question in share links, so reordering questions or options changes the results of links that were already shared.
+Keep 3 questions per area and 5 options per question. Answers are stored as one digit per question in share links, so reordering questions or options changes the results of links that were already shared.
 
 ## How results are calculated
 
