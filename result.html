@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Your Result — Political Ideology Quiz</title>
-  <meta name="description" content="See which political ideology your friend got — then take the free 2-minute quiz in English or Hindi.">
+  <meta name="description" content="See which political ideology your friend got — then take the free 5-minute quiz in English or Hindi.">
   <meta name="robots" content="noindex, follow">
   <meta name="theme-color" content="#4f46e5">
   <link rel="icon" href="assets/img/icon.svg" type="image/svg+xml">
@@ -13,7 +13,7 @@
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Political Ideology Quiz">
   <meta property="og:title" content="Which political ideology are you? 🧭 आपकी विचारधारा क्या है?">
-  <meta property="og:description" content="See my result, then take the 2-minute quiz in English or Hindi.">
+  <meta property="og:description" content="See my result, then take the 5-minute quiz in English or Hindi.">
   <meta property="og:image" content="https://YOUR-DOMAIN.com/assets/img/og-image.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -34,8 +34,15 @@
       <p class="result-hero__lead" id="result-lead"></p>
       <h1 class="result-hero__title" id="result-title"></h1>
       <p class="result-hero__desc" id="result-desc"></p>
+      <div class="overall" id="overall"></div>
+      <p class="also-close" id="also-close"></p>
       <a class="btn btn--primary friend-cta" id="friend-cta" href="index.html" data-link="index.html" data-i18n="friendCta" hidden>Which ideology are you? Take the quiz →</a>
       <noscript><p>Please enable JavaScript to see the result.</p></noscript>
+    </section>
+
+    <section class="card">
+      <h2 id="ideology-examples-heading"></h2>
+      <div id="ideology-examples"></div>
     </section>
 
     <section class="card">
@@ -49,27 +56,27 @@
       <p class="copy-status" id="copy-status" aria-live="polite"></p>
     </section>
 
-    <section class="card">
-      <h2 data-i18n="compassHeading">Your position on the political compass</h2>
-      <div id="compass"></div>
-      <div class="axis" id="axis-econ">
-        <div class="axis__head"><span class="axis__name"></span><span class="axis__value"></span></div>
-        <div class="axis__track"><span class="axis__marker"></span></div>
-        <div class="axis__ends"><span class="axis__left"></span><span class="axis__right"></span></div>
-      </div>
-      <div class="axis" id="axis-social">
-        <div class="axis__head"><span class="axis__name"></span><span class="axis__value"></span></div>
-        <div class="axis__track"><span class="axis__marker"></span></div>
-        <div class="axis__ends"><span class="axis__left"></span><span class="axis__right"></span></div>
-      </div>
+    <section class="content section-intro">
+      <h2 data-i18n="domainsHeading">Your ideology in 4 areas</h2>
+      <p data-i18n="domainsSub"></p>
     </section>
+    <div id="domains-a"></div>
 
     <div class="ad" data-ad="middle"></div>
 
+    <div id="domains-b"></div>
+
+    <section class="card">
+      <h2 data-i18n="compassHeading">Your position on the political compass</h2>
+      <p class="muted" data-i18n="compassSub"></p>
+      <div id="compass"></div>
+    </section>
+
     <section class="content">
-      <h2 data-i18n="axesHeading">What do the two axes mean?</h2>
-      <p data-i18n="axesEcon"></p>
-      <p data-i18n="axesSocial"></p>
+      <h2 data-i18n="methodHeading">How your result is calculated</h2>
+      <p data-i18n="method1"></p>
+      <p data-i18n="method2"></p>
+      <p data-i18n="method3"></p>
     </section>
 
     <a class="btn btn--ghost" id="retake-link" href="quiz.html" data-i18n="retake">Retake the quiz</a>
@@ -91,6 +98,7 @@
   <script src="assets/js/config.js"></script>
   <script src="assets/js/strings.js"></script>
   <script src="assets/js/questions.js"></script>
+  <script src="assets/js/results.js"></script>
   <script src="assets/js/app.js"></script>
 </body>
 </html>
