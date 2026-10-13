@@ -9,8 +9,11 @@
  * 3. GA_MEASUREMENT_ID: optional Google Analytics 4 ID ("G-XXXXXXX") to track the funnel.
  * 4. FIREBASE: Firebase Realtime Database for the live "quizzes taken" counter and the anonymous
  *    community statistics. Without it, the stats pages show built-in sample statistics.
+ * 5. DOMAIN: the site address printed on the shareable story image.
  */
 window.SITE_CONFIG = {
+  DOMAIN: "ideomap.in",
+
   ADSENSE_CLIENT: "ca-pub-XXXXXXXXXXXXXXXX",
   AD_SLOTS: {
     top: "1111111111",    // fixed 320x100 banner at the top of pages
