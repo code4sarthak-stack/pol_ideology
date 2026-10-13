@@ -31,14 +31,13 @@
     <div class="ad" data-ad="top"></div>
 
     <section class="card bento-card stats-hero">
-      <div class="stats-hero__header">
-        <span class="badge badge--sample" id="stats-status-badge">&nbsp;</span>
-        <button class="btn-refresh" id="btn-refresh" type="button">
+      <div class="stats-hero__title-row">
+        <h1 class="stats-hero__title" data-i18n="statsHeading">Overall Ideology of All Users</h1>
+        <button class="btn-refresh" id="btn-refresh" type="button" aria-label="Refresh data">
           <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
           <span data-i18n="statsRefreshBtn">Refresh</span>
         </button>
       </div>
-      <h1 class="stats-hero__title" data-i18n="statsHeading">Community Ideology Statistics</h1>
       <p class="stats-hero__sub" data-i18n="statsSub">Aggregated results from all quiz participants across policy areas and ideologies.</p>
 
       <div class="stats-kpi-grid">
@@ -66,13 +65,13 @@
     </section>
 
     <div class="card-grid">
-      <!-- Ideology Distribution Breakdown -->
-      <section class="card bento-card">
+      <!-- Community Compass -->
+      <section class="card bento-card bento-card--compass">
         <div class="bento-head">
-          <h2 class="bento-head__title" data-i18n="statsIdeologyDistHeading">Ideological Distribution</h2>
+          <h2 class="bento-head__title" data-i18n="statsCompassHeading">Community Political Compass</h2>
         </div>
-        <p class="bento-card__sub" data-i18n="statsIdeologyDistSub">Share of test takers by their closest political philosophy (16 total):</p>
-        <div class="stats-bars" id="ideology-bars"></div>
+        <p class="bento-card__sub" data-i18n="statsCompassSub">Centroid of all participants on the Economic and Civil liberties axes:</p>
+        <div id="stats-compass"></div>
       </section>
 
       <div class="card-stack">
@@ -99,13 +98,13 @@
     <div class="ad" data-ad="middle"></div>
 
     <div class="card-grid">
-      <!-- Community Compass -->
-      <section class="card bento-card bento-card--compass">
+      <!-- Ideology Distribution Breakdown -->
+      <section class="card bento-card">
         <div class="bento-head">
-          <h2 class="bento-head__title" data-i18n="statsCompassHeading">Community Political Compass</h2>
+          <h2 class="bento-head__title" data-i18n="statsIdeologyDistHeading">Ideological Distribution</h2>
         </div>
-        <p class="bento-card__sub" data-i18n="statsCompassSub">Centroid of all participants on the Economic and Civil liberties axes:</p>
-        <div id="stats-compass"></div>
+        <p class="bento-card__sub" data-i18n="statsIdeologyDistSub">Share of test takers by their closest political philosophy (16 total):</p>
+        <div class="stats-bars" id="ideology-bars"></div>
       </section>
 
       <!-- Recent Activity Feed -->
@@ -133,6 +132,7 @@
     <nav>
       <a href="about.html" data-link="about.html" data-i18n="footerAbout">About</a>
       <a href="privacy.html" data-link="privacy.html" data-i18n="footerPrivacy">Privacy Policy</a>
+      <a href="terms.html" data-link="terms.html" data-i18n="footerTerms">Terms of Service</a>
       <a href="contact.html" data-link="contact.html" data-i18n="footerContact">Contact</a>
       <a href="stats.html" data-link="stats.html" data-i18n="footerStats">Community Stats</a>
     </nav>

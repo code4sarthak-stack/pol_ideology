@@ -2319,14 +2319,33 @@ body.modal-open {
   .stats-cta-row .btn { width: auto; min-width: 200px; }
 }
 
-.stats-hero__header {
+.stats-hero__title-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 }
-.stats-hero__header .badge { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.stats-hero__title-row .stats-hero__title {
+  margin-bottom: 0;
+  font-size: clamp(1.35rem, 4.2vw, 2.25rem);
+  line-height: 1.15;
+  flex: 1;
+  min-width: 0;
+}
+.stats-hero__title-row .btn-refresh {
+  flex-shrink: 0;
+}
+@media (max-width: 480px) {
+  .stats-hero__title-row {
+    gap: 8px;
+  }
+  .btn-refresh {
+    padding: 5px 10px;
+    font-size: 0.75rem;
+    gap: 5px;
+  }
+}
 .btn-refresh {
   flex: none;
   display: inline-flex;
@@ -2360,11 +2379,6 @@ body.modal-open {
   to { transform: rotate(360deg); }
 }
 
-.stats-hero__title {
-  font-size: 2.3rem;
-  line-height: 1.12;
-  margin-bottom: 8px;
-}
 .stats-hero__sub {
   color: var(--muted);
   font-size: 0.95rem;

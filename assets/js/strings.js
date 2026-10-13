@@ -80,6 +80,7 @@ window.STRINGS = {
 
     footerAbout: "About",
     footerPrivacy: "Privacy Policy",
+    footerTerms: "Terms of Service",
     footerContact: "Contact",
     footerStats: "Community Stats",
     liveCounter: "{count} quizzes taken so far",
@@ -211,6 +212,7 @@ window.STRINGS = {
 
     footerAbout: "हमारे बारे में",
     footerPrivacy: "प्राइवेसी पॉलिसी",
+    footerTerms: "सेवा की शर्तें",
     footerContact: "संपर्क",
     footerStats: "सामुदायिक सांख्यिकी",
     liveCounter: "अब तक {count} क्विज़ पूरे किए गए",

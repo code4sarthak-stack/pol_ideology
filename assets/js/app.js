@@ -753,9 +753,11 @@
     window.QUIZ_DB.getStats().then(function (stats) {
       // 1. Badge & Subtitle
       var badge = document.getElementById("community-badge");
+      if (badge) {
         var label = stats.isLive ? t("statsLiveBadge") : t("statsParticipantsCount", { n: stats.total.toLocaleString() });
         badge.innerHTML = '<span class="live-pulse-dot"></span> ' + esc(label);
         badge.className = "badge " + (stats.isLive ? "badge--live" : "badge--sample");
+      }
       var sub = document.getElementById("community-sub");
       if (sub) {
         sub.textContent = t("communityOverallSub");
