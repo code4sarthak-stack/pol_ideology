@@ -46,6 +46,7 @@ window.STRINGS = {
 
     // Result page
     resultTitle: "Your Result — ideoMap",
+    brandTagline: "Test your Political Ideology Today",
     resultLeadNamed: "{name}, your political ideology is",
     resultLead: "Your political ideology is",
     resultLeadFriend: "Your friend's political ideology is",
@@ -198,6 +199,7 @@ window.STRINGS = {
     precisionSub: "12 और सवालों के जवाब दें (लगभग 3 मिनट) और हर क्षेत्र का स्कोर दोगुने जवाबों पर आधारित होगा। आपके पहले 12 जवाब सुरक्षित रहेंगे।",
 
     resultTitle: "आपका रिज़ल्ट — ideoMap",
+    brandTagline: "आज अपनी राजनीतिक विचारधारा जानें",
     resultLeadNamed: "{name}, आपकी राजनीतिक विचारधारा है",
     resultLead: "आपकी राजनीतिक विचारधारा है",
     resultLeadFriend: "आपके दोस्त की राजनीतिक विचारधारा है",

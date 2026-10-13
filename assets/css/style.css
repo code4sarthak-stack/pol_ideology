@@ -878,6 +878,7 @@ strong { color: var(--ink); font-weight: 600; }
   outline-offset: 2px;
 }
 .mode-option__body {
+  flex: 1;
   display: grid;
   gap: 2px;
   min-width: 0;
@@ -1166,10 +1167,43 @@ strong { color: var(--ink); font-weight: 600; }
   position: relative;
   overflow: hidden;
   text-align: center;
-  padding: 34px 22px 30px;
+  padding: 20px 22px 20px;
   background: radial-gradient(100% 65% at 50% 0%, rgba(79, 70, 229, 0.04) 0%, rgba(255, 255, 255, 0) 70%), var(--surface);
 }
 .result-hero > * { position: relative; }
+
+/* ── Brand block (logo + name + tagline) at top of result card ── */
+.result-hero__brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin-bottom: 14px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.result-hero__brand-logo {
+  width: 36px;
+  height: 36px;
+  margin-bottom: 2px;
+}
+
+.result-hero__brand-name {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.result-hero__brand-tagline {
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-weight: 500;
+  margin: 0;
+  letter-spacing: 0.01em;
+}
 
 .result-hero__emoji {
   display: grid;
@@ -1438,6 +1472,144 @@ strong { color: var(--ink); font-weight: 600; }
 }
 
 .retake-btn { max-width: 420px; margin: 4px auto 0; }
+
+/* ── Share Preview Modal ─────────────────────────────────────── */
+.share-preview-modal .modal-card {
+  max-width: 400px;
+}
+
+.share-preview-modal__header {
+  display: flex;
+  flex-direction: column;
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.share-preview-modal__title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.share-preview-modal__subtitle {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin: 3px 0 0;
+}
+
+.share-preview-modal__img-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 16px 20px 8px;
+  background: var(--surface-2);
+}
+
+/* canvas preview: scale 1080×1920 canvas to ~180px wide in the modal */
+.share-preview-modal__img-wrap canvas,
+.share-preview-modal__img-wrap img {
+  width: 180px;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 6px 24px rgba(15,23,42,0.15);
+  display: block;
+}
+
+.share-preview-modal__hint {
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-align: center;
+  padding: 6px 20px 0;
+  background: var(--surface-2);
+}
+
+.share-preview-modal__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 20px 20px;
+}
+
+.btn--wa-confirm {
+  background: #25d366;
+  color: #ffffff;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 13px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+  width: 100%;
+}
+.btn--wa-confirm:hover { background: #1ebe5c; transform: translateY(-1px); }
+
+.btn--insta-confirm {
+  background: linear-gradient(135deg, #833ab4 0%, #fd1d1d 50%, #fcb045 100%);
+  color: #ffffff;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 13px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.1s ease;
+  width: 100%;
+}
+.btn--insta-confirm:hover { opacity: 0.9; transform: translateY(-1px); }
+
+.btn--dl-confirm {
+  background: var(--surface-2);
+  color: var(--ink);
+  border: 1px solid var(--border-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 0.88rem;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  width: 100%;
+}
+.btn--dl-confirm:hover { background: var(--surface-3); }
+
+.share-preview-modal__loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 48px 20px;
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.share-preview-spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spinnerRotate 0.75s linear infinite;
+}
+
+@keyframes spinnerRotate {
+  to { transform: rotate(360deg); }
+}
 
 /* Ideological Neighbours Chips */
 .neighbour-chips {
