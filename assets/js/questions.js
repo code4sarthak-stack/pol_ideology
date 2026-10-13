@@ -44,26 +44,26 @@ window.QUIZ = {
       domain: "econ",
       scores: [-2, -1, 0, 1, 2],
       en: {
-        text: "Who should pay for people's healthcare?",
+        text: "A billionaire and a factory worker live in the same country. What should the tax system do?",
         options: [
-          "The state should run free hospitals for everyone and phase out private healthcare.",
-          "Free public healthcare for all, paid by taxes, with private hospitals as an extra option.",
-          "The government should cover the poor; everyone else buys their own insurance.",
-          "Mostly private insurance, with tax breaks to make it affordable.",
-          "Health is a personal responsibility; markets and charity should handle it."
+          "Tax great fortunes very heavily. No one needs to be a billionaire while others are poor.",
+          "The rich should pay much higher rates to fund welfare and public services.",
+          "Taxes should rise with income, but rates must stay competitive to keep investment.",
+          "One low, simple flat tax rate for everyone is fairest.",
+          "Keep taxes minimal. People earned their money and should keep it."
         ],
-        why: "Britain's NHS (1948) made care free for everyone at the point of use, Cuba runs a fully state-owned system, and the USA relies mostly on private insurance. India mixes public hospitals with insurance schemes like Ayushman Bharat. Each model trades off cost, quality and access."
+        why: "In the 1970s India's top income-tax rate reached 97.75%, and the USA's was 91% in the 1950s. Today economists like Thomas Piketty argue for wealth taxes, while countries like Estonia use a flat income tax. The debate is fairness versus the incentive to work and invest."
       },
       hi: {
-        text: "लोगों के इलाज का ख़र्च किसे उठाना चाहिए?",
+        text: "एक ही देश में एक अरबपति और एक फ़ैक्ट्री मज़दूर रहते हैं। टैक्स व्यवस्था को क्या करना चाहिए?",
         options: [
-          "सरकार सबके लिए मुफ़्त अस्पताल चलाए और निजी स्वास्थ्य सेवा धीरे-धीरे ख़त्म हो।",
-          "टैक्स से सबके लिए मुफ़्त सरकारी इलाज हो, और निजी अस्पताल एक अतिरिक्त विकल्प रहें।",
-          "सरकार ग़रीबों का ख़र्च उठाए; बाक़ी लोग अपना बीमा ख़ुद लें।",
-          "ज़्यादातर निजी बीमा हो, जिसे सस्ता बनाने के लिए टैक्स में छूट मिले।",
-          "सेहत हर व्यक्ति की अपनी ज़िम्मेदारी है; इसे बाज़ार और दान-संस्थाएँ सँभालें।"
+          "बड़ी दौलत पर बहुत भारी टैक्स लगे। जब दूसरे ग़रीब हों, तब किसी को अरबपति होने की ज़रूरत नहीं।",
+          "अमीर कहीं ऊँची दर से टैक्स दें, ताकि कल्याण योजनाओं और सार्वजनिक सेवाओं का ख़र्च चले।",
+          "आय के साथ टैक्स बढ़े, लेकिन दरें इतनी ही हों कि निवेश बना रहे।",
+          "सबके लिए एक ही कम और आसान दर (फ़्लैट टैक्स) सबसे न्यायपूर्ण है।",
+          "टैक्स न्यूनतम हो। लोगों ने अपना पैसा कमाया है, वह उन्हीं के पास रहे।"
         ],
-        why: "ब्रिटेन की NHS (1948) ने सबके लिए मुफ़्त इलाज शुरू किया, क्यूबा में पूरी व्यवस्था सरकारी है, और अमेरिका ज़्यादातर निजी बीमा पर चलता है। भारत में सरकारी अस्पतालों के साथ आयुष्मान भारत जैसी बीमा योजनाएँ हैं। हर मॉडल में ख़र्च, गुणवत्ता और पहुँच के बीच संतुलन बनाना पड़ता है।"
+        why: "1970 के दशक में भारत में आयकर की सबसे ऊँची दर 97.75% तक पहुँच गई थी, और 1950 के दशक में अमेरिका में 91% थी। आज थॉमस पिकेटी जैसे अर्थशास्त्री संपत्ति कर की वकालत करते हैं, जबकि एस्टोनिया जैसे देश फ़्लैट इनकम टैक्स अपनाते हैं। बहस न्याय बनाम काम और निवेश के प्रोत्साहन की है।"
       }
     },
 
@@ -258,28 +258,28 @@ window.QUIZ = {
 
     /* 9 */ {
       domain: "econ",
-      scores: [-2, -1, 0, 1, 2],
+      scores: [2, 1, 0, -1, -2],
       en: {
-        text: "A billionaire and a factory worker live in the same country. What should the tax system do?",
+        text: "Why are some people poor while others are rich?",
         options: [
-          "Tax great fortunes very heavily. No one needs to be a billionaire while others are poor.",
-          "The rich should pay much higher rates to fund welfare and public services.",
-          "Taxes should rise with income, but rates must stay competitive to keep investment.",
-          "One low, simple flat tax rate for everyone is fairest.",
-          "Keep taxes minimal. People earned their money and should keep it."
+          "People mostly get what they earn; generous welfare discourages hard work.",
+          "Mostly personal choices. Hard work and good decisions usually pay off.",
+          "A mix of circumstances and personal choices.",
+          "Mostly unequal starting points: caste, class, bad schools and where you are born.",
+          "The system itself. Capitalism lets a few profit from the work of many."
         ],
-        why: "In the 1970s India's top income-tax rate reached 97.75%, and the USA's was 91% in the 1950s. Today economists like Thomas Piketty argue for wealth taxes, while countries like Estonia use a flat income tax. The debate is fairness versus the incentive to work and invest."
+        why: "Sociologists call this the 'attribution of poverty'. People who blame social structures tend to support redistribution; those who stress individual effort favour lower taxes and less welfare. Karl Marx blamed class exploitation, while the Victorian writer Samuel Smiles preached 'self-help'."
       },
       hi: {
-        text: "एक ही देश में एक अरबपति और एक फ़ैक्ट्री मज़दूर रहते हैं। टैक्स व्यवस्था को क्या करना चाहिए?",
+        text: "कुछ लोग ग़रीब और कुछ अमीर क्यों होते हैं?",
         options: [
-          "बड़ी दौलत पर बहुत भारी टैक्स लगे। जब दूसरे ग़रीब हों, तब किसी को अरबपति होने की ज़रूरत नहीं।",
-          "अमीर कहीं ऊँची दर से टैक्स दें, ताकि कल्याण योजनाओं और सार्वजनिक सेवाओं का ख़र्च चले।",
-          "आय के साथ टैक्स बढ़े, लेकिन दरें इतनी ही हों कि निवेश बना रहे।",
-          "सबके लिए एक ही कम और आसान दर (फ़्लैट टैक्स) सबसे न्यायपूर्ण है।",
-          "टैक्स न्यूनतम हो। लोगों ने अपना पैसा कमाया है, वह उन्हीं के पास रहे।"
+          "लोगों को ज़्यादातर वही मिलता है जो वे कमाते हैं; ज़्यादा सरकारी मदद मेहनत की आदत छुड़ा देती है।",
+          "ज़्यादातर अपने फ़ैसलों से। मेहनत और समझदारी का फल आमतौर पर मिलता है।",
+          "हालात और अपने फ़ैसलों, दोनों का मिला-जुला असर।",
+          "ज़्यादातर असमान शुरुआत से: जाति, वर्ग, ख़राब स्कूल और जन्म की जगह।",
+          "ख़ुद व्यवस्था की वजह से। पूँजीवाद में कुछ लोग बहुतों की मेहनत से मुनाफ़ा कमाते हैं।"
         ],
-        why: "1970 के दशक में भारत में आयकर की सबसे ऊँची दर 97.75% तक पहुँच गई थी, और 1950 के दशक में अमेरिका में 91% थी। आज थॉमस पिकेटी जैसे अर्थशास्त्री संपत्ति कर की वकालत करते हैं, जबकि एस्टोनिया जैसे देश फ़्लैट इनकम टैक्स अपनाते हैं। बहस न्याय बनाम काम और निवेश के प्रोत्साहन की है।"
+        why: "समाजशास्त्री इसे 'ग़रीबी का कारण-निर्धारण' (attribution of poverty) कहते हैं। जो लोग सामाजिक ढाँचे को ज़िम्मेदार मानते हैं, वे अक्सर संपत्ति के पुनर्वितरण का समर्थन करते हैं; जो व्यक्तिगत मेहनत पर ज़ोर देते हैं, वे कम टैक्स और कम कल्याण योजनाएँ पसंद करते हैं। कार्ल मार्क्स ने वर्ग-शोषण को दोष दिया, जबकि विक्टोरियन लेखक सैमुअल स्माइल्स ने 'सेल्फ़-हेल्प' (आत्म-सहायता) का उपदेश दिया।"
       }
     },
 
@@ -339,114 +339,6 @@ window.QUIZ = {
 
     /* 12 */ {
       domain: "world",
-      scores: [-2, -1, 0, 1, 2],
-      en: {
-        text: "Should international bodies like the UN and international courts be able to overrule national governments?",
-        options: [
-          "Yes. Humanity needs a strong world government to solve global problems.",
-          "Yes, on human rights, climate and war crimes.",
-          "Only where our country has freely signed the treaty.",
-          "Rarely. National sovereignty matters more than global rules.",
-          "Never. No foreign body should tell our nation what to do."
-        ],
-        why: "After two world wars, the United Nations (1945) and later the International Criminal Court (2002) tried to place rules above states. Realists like Hans Morgenthau argue that states always act in their own interest, while liberal thinkers from Immanuel Kant to Woodrow Wilson hoped law could bring 'perpetual peace'."
-      },
-      hi: {
-        text: "क्या संयुक्त राष्ट्र और अंतरराष्ट्रीय अदालतों जैसी संस्थाओं को राष्ट्रीय सरकारों के फ़ैसले पलटने का अधिकार होना चाहिए?",
-        options: [
-          "हाँ। वैश्विक समस्याएँ सुलझाने के लिए मानवता को एक मज़बूत विश्व सरकार चाहिए।",
-          "हाँ, मानवाधिकार, जलवायु और युद्ध अपराधों के मामलों में।",
-          "सिर्फ़ उन मामलों में जिनकी संधि पर हमारे देश ने अपनी मर्ज़ी से हस्ताक्षर किए हों।",
-          "शायद ही कभी। राष्ट्रीय संप्रभुता वैश्विक नियमों से ज़्यादा अहम है।",
-          "कभी नहीं। कोई विदेशी संस्था हमारे देश को नहीं बता सकती कि क्या करना है।"
-        ],
-        why: "दो विश्व युद्धों के बाद संयुक्त राष्ट्र (1945) और बाद में अंतरराष्ट्रीय आपराधिक न्यायालय (2002) ने देशों के ऊपर नियम रखने की कोशिश की। हैंस मॉर्गेन्थाउ जैसे यथार्थवादी मानते हैं कि देश हमेशा अपने हित में काम करते हैं, जबकि इमैनुएल कांट से वुडरो विल्सन तक के उदारवादी विचारकों को उम्मीद थी कि क़ानून 'स्थायी शांति' ला सकता है।"
-      }
-    },
-
-    /* 13 */ {
-      domain: "econ",
-      scores: [2, 1, 0, -1, -2],
-      en: {
-        text: "Why are some people poor while others are rich?",
-        options: [
-          "People mostly get what they earn; generous welfare discourages hard work.",
-          "Mostly personal choices. Hard work and good decisions usually pay off.",
-          "A mix of circumstances and personal choices.",
-          "Mostly unequal starting points: caste, class, bad schools and where you are born.",
-          "The system itself. Capitalism lets a few profit from the work of many."
-        ],
-        why: "Sociologists call this the 'attribution of poverty'. People who blame social structures tend to support redistribution; those who stress individual effort favour lower taxes and less welfare. Karl Marx blamed class exploitation, while the Victorian writer Samuel Smiles preached 'self-help'."
-      },
-      hi: {
-        text: "कुछ लोग ग़रीब और कुछ अमीर क्यों होते हैं?",
-        options: [
-          "लोगों को ज़्यादातर वही मिलता है जो वे कमाते हैं; ज़्यादा सरकारी मदद मेहनत की आदत छुड़ा देती है।",
-          "ज़्यादातर अपने फ़ैसलों से। मेहनत और समझदारी का फल आमतौर पर मिलता है।",
-          "हालात और अपने फ़ैसलों, दोनों का मिला-जुला असर।",
-          "ज़्यादातर असमान शुरुआत से: जाति, वर्ग, ख़राब स्कूल और जन्म की जगह।",
-          "ख़ुद व्यवस्था की वजह से। पूँजीवाद में कुछ लोग बहुतों की मेहनत से मुनाफ़ा कमाते हैं।"
-        ],
-        why: "समाजशास्त्री इसे 'ग़रीबी का कारण-निर्धारण' (attribution of poverty) कहते हैं। जो लोग सामाजिक ढाँचे को ज़िम्मेदार मानते हैं, वे अक्सर संपत्ति के पुनर्वितरण का समर्थन करते हैं; जो व्यक्तिगत मेहनत पर ज़ोर देते हैं, वे कम टैक्स और कम कल्याण योजनाएँ पसंद करते हैं। कार्ल मार्क्स ने वर्ग-शोषण को दोष दिया, जबकि विक्टोरियन लेखक सैमुअल स्माइल्स ने 'सेल्फ़-हेल्प' (आत्म-सहायता) का उपदेश दिया।"
-      }
-    },
-
-    /* 14 */ {
-      domain: "social",
-      scores: [-2, -1, 0, 1, 2],
-      en: {
-        text: "What should the law say about same-sex couples?",
-        options: [
-          "Full equality: marriage, adoption, and inclusion in school education.",
-          "They should be able to marry, just like anyone else.",
-          "Civil unions with legal rights, but not 'marriage'.",
-          "Tolerate them privately, but the law should not recognise such relationships.",
-          "Such relationships go against our culture and should not be accepted."
-        ],
-        why: "India decriminalised same-sex relations in 2018 (Navtej Singh Johar case), but in 2023 the Supreme Court left the question of marriage to Parliament. More than 30 countries now allow same-sex marriage, while around 60 still criminalise same-sex relations."
-      },
-      hi: {
-        text: "समलैंगिक जोड़ों के बारे में क़ानून क्या होना चाहिए?",
-        options: [
-          "पूरी बराबरी: शादी, बच्चा गोद लेने का अधिकार, और स्कूली शिक्षा में भी शामिल किया जाए।",
-          "उन्हें भी बाक़ी सबकी तरह शादी करने का अधिकार हो।",
-          "क़ानूनी अधिकारों के साथ 'सिविल यूनियन' हो, लेकिन 'शादी' नहीं।",
-          "निजी तौर पर बर्दाश्त करें, लेकिन क़ानून ऐसे रिश्तों को मान्यता न दे।",
-          "ऐसे रिश्ते हमारी संस्कृति के ख़िलाफ़ हैं और इन्हें स्वीकार नहीं करना चाहिए।"
-        ],
-        why: "भारत ने 2018 में (नवतेज सिंह जौहर मामले में) समलैंगिक संबंधों को अपराध की श्रेणी से हटाया, लेकिन 2023 में सुप्रीम कोर्ट ने शादी का सवाल संसद पर छोड़ दिया। आज 30 से ज़्यादा देशों में समलैंगिक विवाह की अनुमति है, जबकि लगभग 60 देश अब भी समलैंगिक संबंधों को अपराध मानते हैं।"
-      }
-    },
-
-    /* 15 */ {
-      domain: "civil",
-      scores: [2, 1, 0, -1, -2],
-      en: {
-        text: "What is the best way to deal with crime?",
-        options: [
-          "Harsh punishments, fast trials and the death penalty for serious crimes.",
-          "Tougher sentences and more powers for the police.",
-          "Fair punishment plus rehabilitation, with the death penalty only in the 'rarest of rare' cases.",
-          "Focus on rehabilitation, and abolish the death penalty.",
-          "Tackle root causes like poverty; prisons should be a last resort."
-        ],
-        why: "Norway focuses on rehabilitation and has one of the world's lowest reoffending rates; Singapore relies on strict punishment and has very low crime. India keeps the death penalty for the 'rarest of rare' cases (Bachan Singh, 1980), while more than two-thirds of countries have abolished it in law or in practice."
-      },
-      hi: {
-        text: "अपराध से निपटने का सबसे अच्छा तरीक़ा क्या है?",
-        options: [
-          "कड़ी सज़ा, तेज़ सुनवाई, और गंभीर अपराधों के लिए मृत्युदंड।",
-          "ज़्यादा सख़्त सज़ाएँ और पुलिस को ज़्यादा अधिकार।",
-          "उचित सज़ा के साथ सुधार भी, और मृत्युदंड सिर्फ़ 'दुर्लभतम में दुर्लभ' मामलों में।",
-          "सुधार पर ज़ोर दें, और मृत्युदंड ख़त्म करें।",
-          "ग़रीबी जैसी जड़ों को ख़त्म करें; जेल आख़िरी उपाय हो।"
-        ],
-        why: "नॉर्वे सुधार पर ध्यान देता है और वहाँ दोबारा अपराध करने की दर दुनिया में सबसे कम में से है; सिंगापुर सख़्त सज़ा पर भरोसा करता है और वहाँ अपराध बहुत कम है। भारत में मृत्युदंड 'दुर्लभतम में दुर्लभ' मामलों के लिए है (बचन सिंह मामला, 1980), जबकि दो-तिहाई से ज़्यादा देशों ने इसे क़ानून या व्यवहार में ख़त्म कर दिया है।"
-      }
-    },
-
-    /* 16 */ {
-      domain: "world",
       scores: [2, 1, 0, -1, -2],
       en: {
         text: "A neighbouring country attacks your border posts. How should your country respond?",
@@ -469,114 +361,6 @@ window.QUIZ = {
           "संयुक्त राष्ट्र और अंतरराष्ट्रीय मध्यस्थता का सहारा लें। युद्ध कभी हल नहीं है।"
         ],
         why: "कौटिल्य के अर्थशास्त्र और सुन त्ज़ू से लेकर आधुनिक यथार्थवादियों तक, रणनीतिकार बल बनाम कूटनीति पर बहस करते रहे हैं। क्यूबा मिसाइल संकट (1962) बातचीत से टला, जबकि 1914 का जुलाई संकट बढ़कर पहले विश्व युद्ध में बदल गया। प्रतिरोध (deterrence) का सिद्धांत कहता है कि भरोसेमंद ताक़त युद्ध को रोकती है।"
-      }
-    },
-
-    /* 17 */ {
-      domain: "econ",
-      scores: [-2, -1, 0, 1, 2],
-      en: {
-        text: "A company wants to lay off 500 workers to stay profitable. What should happen?",
-        options: [
-          "It shouldn't be allowed. Workers should co-own and run their companies.",
-          "Only with government permission, union agreement and generous compensation.",
-          "Allowed, with fair severance pay and help to retrain for new jobs.",
-          "Allowed. Businesses must adapt quickly, and workers will find new jobs.",
-          "It's entirely the owner's decision; unions and labour laws only distort the market."
-        ],
-        why: "Germany gives workers seats on company boards ('co-determination'). In India, factories with 100 or more workers needed government permission to lay anyone off; the 2020 labour codes raised this to 300. The USA mostly follows 'at-will' employment. Protection brings security; critics say it discourages formal hiring."
-      },
-      hi: {
-        text: "एक कंपनी मुनाफ़े में बने रहने के लिए 500 कर्मचारियों की छँटनी करना चाहती है। क्या होना चाहिए?",
-        options: [
-          "इसकी इजाज़त न हो। कंपनियों के मालिक और संचालक ख़ुद मज़दूर होने चाहिए।",
-          "सिर्फ़ सरकार की अनुमति, यूनियन की सहमति और अच्छे मुआवज़े के साथ।",
-          "इजाज़त हो, लेकिन उचित मुआवज़े और नई नौकरी के लिए ट्रेनिंग के साथ।",
-          "इजाज़त हो। कंपनियों को जल्दी बदलना पड़ता है, और कर्मचारी नई नौकरियाँ ढूँढ लेंगे।",
-          "यह पूरी तरह मालिक का फ़ैसला है; यूनियन और श्रम क़ानून बस बाज़ार को बिगाड़ते हैं।"
-        ],
-        why: "जर्मनी में कंपनी के बोर्ड में कर्मचारियों की भी सीटें होती हैं ('को-डिटरमिनेशन')। भारत में 100 या ज़्यादा कर्मचारियों वाली फ़ैक्ट्रियों को छँटनी के लिए सरकारी अनुमति चाहिए होती थी; 2020 के श्रम कोड ने यह सीमा 300 कर दी। अमेरिका में ज़्यादातर 'एट-विल' नौकरी चलती है। सुरक्षा से भरोसा मिलता है; आलोचकों के अनुसार इससे कंपनियाँ औपचारिक नौकरियाँ देने से कतराती हैं।"
-      }
-    },
-
-    /* 18 */ {
-      domain: "social",
-      scores: [2, 1, 0, -1, -2],
-      en: {
-        text: "How should society treat its old customs and traditions?",
-        options: [
-          "They are sacred and must be protected from modern and foreign influences.",
-          "They carry the wisdom of generations, so change them slowly and carefully.",
-          "Keep the useful ones and change the harmful ones.",
-          "Question and reform them whenever they clash with equality or individual rights.",
-          "Most are chains from the past; replace them with reason and science."
-        ],
-        why: "This is the core debate between Enlightenment thinkers, who trusted reason, and Edmund Burke, who saw tradition as the inherited wisdom of the ages. Reformers like Raja Ram Mohan Roy (against sati) and Jyotirao Phule (against caste) challenged customs, while Gandhi drew moral strength from tradition."
-      },
-      hi: {
-        text: "समाज को अपने पुराने रीति-रिवाज़ों और परंपराओं के साथ कैसा व्यवहार करना चाहिए?",
-        options: [
-          "ये पवित्र हैं, और इन्हें आधुनिक व विदेशी प्रभावों से बचाना चाहिए।",
-          "इनमें पीढ़ियों की समझ है, इसलिए इन्हें धीरे-धीरे और सोच-समझकर बदलना चाहिए।",
-          "जो उपयोगी हैं उन्हें रखें, जो नुक़सानदेह हैं उन्हें बदलें।",
-          "जब भी ये बराबरी या व्यक्तिगत अधिकारों से टकराएँ, इन पर सवाल उठाकर सुधार करें।",
-          "ज़्यादातर अतीत की बेड़ियाँ हैं; इनकी जगह तर्क और विज्ञान को अपनाना चाहिए।"
-        ],
-        why: "यह प्रबोधन (Enlightenment) के विचारकों, जो तर्क पर भरोसा करते थे, और एडमंड बर्क के बीच की मूल बहस है, जो परंपरा को सदियों से मिली समझ मानते थे। राजा राममोहन राय (सती के ख़िलाफ़) और ज्योतिराव फुले (जाति के ख़िलाफ़) जैसे सुधारकों ने रीति-रिवाज़ों को चुनौती दी, जबकि गांधी ने परंपरा से नैतिक शक्ति ली।"
-      }
-    },
-
-    /* 19 */ {
-      domain: "civil",
-      scores: [-2, -1, 0, 1, 2],
-      en: {
-        text: "Protesters have blocked a highway for several days against a new law. What should the government do?",
-        options: [
-          "Negotiate with them. Protest is democracy, and the inconvenience is the point.",
-          "Let the protest continue, but keep routes open for ambulances and emergencies.",
-          "Move them to a designated protest site, using force only as a last resort.",
-          "Clear the highway quickly with police. Law and order comes first.",
-          "Arrest the leaders and ban such protests. They harm the nation."
-        ],
-        why: "From Gandhi's Salt March (1930) to the US civil-rights marches, civil disobedience has changed history. Governments must balance the right to assemble peacefully (Article 19(1)(b) in India) with public order and the rights of other citizens."
-      },
-      hi: {
-        text: "एक नए क़ानून के विरोध में प्रदर्शनकारियों ने कई दिनों से हाईवे जाम कर रखा है। सरकार को क्या करना चाहिए?",
-        options: [
-          "उनसे बातचीत करे। विरोध ही लोकतंत्र है, और असुविधा ही उसका मक़सद है।",
-          "विरोध चलने दे, लेकिन एम्बुलेंस और आपात सेवाओं के लिए रास्ता खुला रखे।",
-          "उन्हें तय प्रदर्शन-स्थल पर भेजे, और बल का इस्तेमाल सिर्फ़ आख़िरी उपाय के रूप में करे।",
-          "पुलिस से हाईवे जल्दी ख़ाली कराए। क़ानून-व्यवस्था सबसे पहले।",
-          "नेताओं को गिरफ़्तार करे और ऐसे प्रदर्शनों पर रोक लगाए। ये देश को नुक़सान पहुँचाते हैं।"
-        ],
-        why: "गांधी के नमक सत्याग्रह (1930) से लेकर अमेरिका के नागरिक अधिकार आंदोलन तक, सविनय अवज्ञा ने इतिहास बदला है। सरकारों को शांतिपूर्ण सभा के अधिकार (भारत में अनुच्छेद 19(1)(ख)) और सार्वजनिक व्यवस्था व दूसरे नागरिकों के अधिकारों के बीच संतुलन बनाना होता है।"
-      }
-    },
-
-    /* 20 */ {
-      domain: "world",
-      scores: [-2, -1, 0, 1, 2],
-      en: {
-        text: "How should countries handle climate change?",
-        options: [
-          "All countries must cut emissions fast, together, even if it slows our growth.",
-          "Through global deals like the Paris Agreement, with rich countries paying more.",
-          "Cooperate, but only in ways that don't hold back our development.",
-          "Our growth comes first. The rich countries caused it, so let them fix it.",
-          "Global climate deals are a trap to keep countries like ours down."
-        ],
-        why: "The Paris Agreement (2015) aims to keep warming well below 2 °C. India argues for 'common but differentiated responsibilities', since rich nations emitted most of the carbon dioxide in history. The USA has withdrawn from the agreement twice. The ecologist Garrett Hardin called shared problems like this a 'tragedy of the commons'."
-      },
-      hi: {
-        text: "देशों को जलवायु परिवर्तन से कैसे निपटना चाहिए?",
-        options: [
-          "सभी देश मिलकर तेज़ी से उत्सर्जन घटाएँ, भले ही इससे हमारी विकास दर धीमी हो।",
-          "पेरिस समझौते जैसे वैश्विक समझौतों के ज़रिए, जिनमें अमीर देश ज़्यादा भुगतान करें।",
-          "सहयोग करें, लेकिन सिर्फ़ उन्हीं तरीक़ों से जो हमारे विकास को न रोकें।",
-          "हमारा विकास पहले। समस्या अमीर देशों ने पैदा की, वही इसे ठीक करें।",
-          "वैश्विक जलवायु समझौते हमारे जैसे देशों को पीछे रखने का जाल हैं।"
-        ],
-        why: "पेरिस समझौते (2015) का लक्ष्य धरती के तापमान में बढ़ोतरी को 2 °C से काफ़ी नीचे रखना है। भारत 'साझा लेकिन अलग-अलग ज़िम्मेदारियों' की बात करता है, क्योंकि इतिहास में ज़्यादातर कार्बन डाइऑक्साइड अमीर देशों ने छोड़ी है। अमेरिका दो बार इस समझौते से बाहर निकल चुका है। पारिस्थितिकी विज्ञानी गैरेट हार्डिन ने ऐसी साझा समस्याओं को 'साझा संसाधनों की त्रासदी' (tragedy of the commons) कहा था।"
       }
     }
   ]
