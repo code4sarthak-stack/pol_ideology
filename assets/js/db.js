@@ -3,8 +3,7 @@
  *
  * Supports:
  * 1. Firebase Realtime Database (using existing SITE_CONFIG.FIREBASE credentials)
- * 2. Supabase (using SITE_CONFIG.SUPABASE_URL and SITE_CONFIG.SUPABASE_ANON_KEY)
- * 3. High-fidelity sample dataset of 100 users (fallback for testing and preview)
+ * 2. High-fidelity sample dataset of 100 users (fallback for testing and preview)
  */
 (function () {
   "use strict";
@@ -132,11 +131,38 @@
     }
   }
 
-  /* Helper: Check Supabase */
-  function isSupabaseConfigured() {
-    var url = (CFG.SUPABASE_URL || "").trim();
-    var key = (CFG.SUPABASE_ANON_KEY || "").trim();
-    return /^https:\/\/[a-z0-9-]+\.supabase\.co/i.test(url) && key.length > 20;
+  /* ---------- One community entry per quiz ---------- */
+
+  // A Quick (12-answer) result and the In-depth (24-answer) result that continues it share
+  // their first 12 answers, so they are one quiz and share one community entry: the later
+  // result replaces the earlier one instead of counting the same person twice. The browser
+  // remembers what it last saved for each quiz (anonymous scores only, no name).
+  var QUICK_LENGTH = 12;
+
+  function entryKey(answers) {
+    return "pq_entry_" + answers.slice(0, QUICK_LENGTH);
+  }
+  function readEntry(answers) {
+    try { return JSON.parse(localStorage.getItem(entryKey(answers)) || "null"); } catch (e) { return null; }
+  }
+  function writeEntry(entry) {
+    try { localStorage.setItem(entryKey(entry.answers), JSON.stringify(entry)); } catch (e) { /* ignore */ }
+  }
+
+  // Add (sign = 1) or remove (sign = -1) one result's contribution to the Firebase summary.
+  function applyToSummary(cur, r, sign) {
+    cur.ideologies = cur.ideologies || {};
+    cur.bands = cur.bands || {};
+    cur.sums = cur.sums || {};
+    cur.langs = cur.langs || {};
+    var ideo = Math.max(0, (cur.ideologies[r.ideology] || 0) + sign);
+    if (ideo) cur.ideologies[r.ideology] = ideo; else delete cur.ideologies[r.ideology];
+    cur.bands[r.overall_band] = Math.max(0, (cur.bands[r.overall_band] || 0) + sign);
+    ["econ", "social", "civil", "world", "overall"].forEach(function (d) {
+      cur.sums[d] = (cur.sums[d] || 0) + sign * (r[d + "_score"] || 0);
+    });
+    var l = r.lang === "hi" ? "hi" : "en";
+    cur.langs[l] = Math.max(0, (cur.langs[l] || 0) + sign);
   }
 
   /* Helper: Relative time string */
@@ -233,13 +259,16 @@
   /* ---------- Public API ---------- */
 
   var DB = {
+    // data: { ideology, overall_band, overall_score, econ_score … world_score, lang, answers }
     saveSubmission: function (data) {
-      if (!data || !data.ideology) return Promise.resolve(false);
+      if (!data || !data.ideology || !data.answers) return Promise.resolve(false);
 
-      var sessionKey = "pq_logged_" + (data.answers || data.ideology + "_" + data.overall_score);
-      try {
-        if (sessionStorage.getItem(sessionKey)) return Promise.resolve(false);
-      } catch (e) {}
+      // Already saved this exact result (a reload or revisit), or this quiz already has a
+      // more precise result saved (e.g. Back from the 24-answer result to the 12-answer one).
+      var prev = readEntry(data.answers);
+      if (prev && (prev.answers === data.answers || prev.answers.length > data.answers.length)) {
+        return Promise.resolve(false);
+      }
 
       // Keep local backup
       try {
@@ -260,38 +289,41 @@
           try {
             var root = fb.ref("ideology_tracker");
             root.child("summary").transaction(function (cur) {
-              if (!cur) {
-                cur = {
-                  total: 0,
-                  ideologies: {},
-                  bands: {},
-                  sums: { econ: 0, social: 0, civil: 0, world: 0, overall: 0 },
-                  langs: { en: 0, hi: 0 }
-                };
-              }
-              cur.total = (cur.total || 0) + 1;
-              cur.ideologies[data.ideology] = (cur.ideologies[data.ideology] || 0) + 1;
-              cur.bands[data.overall_band] = (cur.bands[data.overall_band] || 0) + 1;
-              cur.sums.econ = (cur.sums.econ || 0) + (data.econ_score || 0);
-              cur.sums.social = (cur.sums.social || 0) + (data.social_score || 0);
-              cur.sums.civil = (cur.sums.civil || 0) + (data.civil_score || 0);
-              cur.sums.world = (cur.sums.world || 0) + (data.world_score || 0);
-              cur.sums.overall = (cur.sums.overall || 0) + (data.overall_score || 0);
-              var l = data.lang === "hi" ? "hi" : "en";
-              cur.langs[l] = (cur.langs[l] || 0) + 1;
+              var fresh = !cur;
+              cur = cur || { total: 0 };
+              // Replacing this quiz's earlier result: swap its contribution, keep the total.
+              if (prev && !fresh) applyToSummary(cur, prev, -1);
+              else cur.total = (cur.total || 0) + 1;
+              applyToSummary(cur, data, 1);
               return cur;
             }, function (err, committed) {
               if (!err && committed) {
-                try { sessionStorage.setItem(sessionKey, "1"); } catch (e) {}
+                var entry = {
+                  answers: data.answers,
+                  ideology: data.ideology,
+                  overall_band: data.overall_band,
+                  overall_score: data.overall_score,
+                  econ_score: data.econ_score,
+                  social_score: data.social_score,
+                  civil_score: data.civil_score,
+                  world_score: data.world_score,
+                  lang: data.lang === "hi" ? "hi" : "en"
+                };
                 try {
-                  root.child("recent").push().set({
+                  var item = root.child("recent").push();
+                  item.set({
                     ideology: data.ideology,
                     overall_band: data.overall_band,
                     overall_score: data.overall_score,
-                    lang: data.lang || "en",
+                    lang: entry.lang,
                     ts: window.firebase.database.ServerValue.TIMESTAMP
                   });
+                  entry.recentKey = item.key;
+                  if (prev && prev.recentKey) {
+                    root.child("recent").child(prev.recentKey).remove().catch(function () {});
+                  }
                 } catch (e) {}
+                writeEntry(entry);
                 resolve(true);
               } else {
                 resolve(false);
@@ -301,40 +333,6 @@
           } catch (e) {
             console.warn("Firebase save error:", e);
           }
-        }
-
-        // 2. Save to Supabase (if configured)
-        if (isSupabaseConfigured()) {
-          var endpoint = CFG.SUPABASE_URL.replace(/\/+$/, "") + "/rest/v1/quiz_submissions";
-          fetch(endpoint, {
-            method: "POST",
-            headers: {
-              "apikey": CFG.SUPABASE_ANON_KEY,
-              "Authorization": "Bearer " + CFG.SUPABASE_ANON_KEY,
-              "Content-Type": "application/json",
-              "Prefer": "return=minimal"
-            },
-            body: JSON.stringify({
-              ideology: data.ideology,
-              overall_band: data.overall_band,
-              overall_score: data.overall_score,
-              econ_score: data.econ_score,
-              social_score: data.social_score,
-              civil_score: data.civil_score,
-              world_score: data.world_score,
-              lang: data.lang || "en"
-            })
-          }).then(function (r) {
-            if (r.ok) {
-              try { sessionStorage.setItem(sessionKey, "1"); } catch (e) {}
-              resolve(true);
-            } else {
-              resolve(false);
-            }
-          }).catch(function () {
-            resolve(false);
-          });
-          return;
         }
 
         resolve(false);
@@ -406,46 +404,16 @@
               });
               return;
             }
-            // If Firebase empty, try Supabase or fallback
-            checkSupabaseOrSample(resolve);
+            // Firebase empty -> sample dataset
+            resolve(processRows(SAMPLE_SUBMISSIONS, false));
           }, function () {
-            checkSupabaseOrSample(resolve);
+            resolve(processRows(SAMPLE_SUBMISSIONS, false));
           });
         });
       }
 
-      return new Promise(function (resolve) {
-        checkSupabaseOrSample(resolve);
-      });
-
-      function checkSupabaseOrSample(resolve) {
-        if (isSupabaseConfigured()) {
-          var endpoint = CFG.SUPABASE_URL.replace(/\/+$/, "") +
-            "/rest/v1/quiz_submissions?select=ideology,overall_band,overall_score,econ_score,social_score,civil_score,world_score,lang,created_at&order=created_at.desc&limit=1000";
-
-          fetch(endpoint, {
-            headers: {
-              "apikey": CFG.SUPABASE_ANON_KEY,
-              "Authorization": "Bearer " + CFG.SUPABASE_ANON_KEY
-            }
-          })
-            .then(function (res) { return res.json(); })
-            .then(function (rows) {
-              if (Array.isArray(rows) && rows.length > 0) {
-                resolve(processRows(rows, true));
-              } else {
-                resolve(processRows(SAMPLE_SUBMISSIONS, false));
-              }
-            })
-            .catch(function () {
-              resolve(processRows(SAMPLE_SUBMISSIONS, false));
-            });
-          return;
-        }
-
-        // Neither cloud database active -> sample dataset
-        resolve(processRows(SAMPLE_SUBMISSIONS, false));
-      }
+      // No cloud database -> sample dataset
+      return Promise.resolve(processRows(SAMPLE_SUBMISSIONS, false));
     },
 
     compareUser: function (userOverall, userIdeologyKey) {

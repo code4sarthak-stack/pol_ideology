@@ -7,9 +7,8 @@
  * 2. AD_SLOTS: create three "Display ads" units in AdSense (Ads → By ad unit) and paste their
  *    data-ad-slot numbers here.
  * 3. GA_MEASUREMENT_ID: optional Google Analytics 4 ID ("G-XXXXXXX") to track the funnel.
- * 4. SUPABASE_URL & SUPABASE_ANON_KEY: Free cloud database (https://supabase.com) to track
- *    overall ideology results across all users in real time. (See schema.sql to set up).
- *    Leave blank to use built-in sample statistics for testing.
+ * 4. FIREBASE: Firebase Realtime Database for the live "quizzes taken" counter and the anonymous
+ *    community statistics. Without it, the stats pages show built-in sample statistics.
  */
 window.SITE_CONFIG = {
   ADSENSE_CLIENT: "ca-pub-XXXXXXXXXXXXXXXX",
@@ -30,9 +29,5 @@ window.SITE_CONFIG = {
     messagingSenderId: "753749456601",
     appId: "1:753749456601:web:018594a3ce3485344df0c8",
     measurementId: "G-JN6Q0JYG29"
-  },
-
-  // Supabase cloud database for tracking quiz takers
-  SUPABASE_URL: "",       // e.g. "https://xyzcompany.supabase.co"
-  SUPABASE_ANON_KEY: ""   // your Supabase project's anon public key
+  }
 };
