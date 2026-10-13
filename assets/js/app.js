@@ -310,8 +310,10 @@
 
   function incrementQuizCounter(answers) {
     if (params.get("s") === "1") return; // Never increment on friend shared preview links
-    var countedKey = "pq_counted_" + (answers || "submitted");
-    if (load(countedKey)) return; // Prevent incrementing on page refresh or revisit
+    // Keyed on the first 12 answers: a Quick result and the 24-answer result that continues it
+    // are one quiz, so they count once. Also stops a page refresh or revisit counting again.
+    var countedKey = "pq_counted_" + (answers || "submitted").slice(0, QUICK);
+    if (load(countedKey)) return;
 
     var db = getFirebaseDb();
     if (db) {
