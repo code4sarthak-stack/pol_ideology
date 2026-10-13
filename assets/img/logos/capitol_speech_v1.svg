@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Background glow -->
+    <radialGradient id="v1-glow" cx="50%" cy="45%" r="48%">
+      <stop offset="0%" stop-color="#fffbeb" stop-opacity="0.9"/>
+      <stop offset="70%" stop-color="#fef3c7" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    
+    <!-- Left Bubble: Left / Blue Ideology -->
+    <linearGradient id="v1-blue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#2563eb"/>
+    </linearGradient>
+
+    <!-- Right Bubble: Right / Orange Ideology -->
+    <linearGradient id="v1-orange" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fb923c"/>
+      <stop offset="100%" stop-color="#ea580c"/>
+    </linearGradient>
+
+    <!-- Capitol Building: Deep Navy/Slate -->
+    <linearGradient id="v1-building" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+
+    <filter id="v1-shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#0f172a" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+
+  <!-- Clean Background -->
+  <rect width="512" height="512" rx="96" fill="#ffffff"/>
+
+  <!-- Soft Warm Circular Backdrop -->
+  <circle cx="256" cy="245" r="175" fill="url(#v1-glow)"/>
+
+  <!-- DIALOGUE SPEECH BUBBLES -->
+  <g filter="url(#v1-shadow)">
+    <!-- Left Speech Bubble (Blue / Progressive) -->
+    <!-- Tail points towards left of the dome -->
+    <path d="M 175, 110
+             C 215, 110 235, 135 235, 170
+             C 235, 205 210, 230 170, 230
+             C 150, 230 142, 242 135, 260
+             C 134, 245 125, 230 110, 222
+             C 80, 208 70, 185 70, 155
+             C 70, 120 110, 110 175, 110 Z"
+          fill="url(#v1-blue)"/>
+
+    <!-- Right Speech Bubble (Orange / Conservative) -->
+    <!-- Tail points towards right of the dome -->
+    <path d="M 337, 115
+             C 395, 115 442, 135 442, 175
+             C 442, 210 415, 230 385, 230
+             C 370, 230 365, 245 372, 265
+             C 362, 250 350, 235 330, 232
+             C 290, 228 277, 205 277, 170
+             C 277, 130 300, 115 337, 115 Z"
+          fill="url(#v1-orange)"/>
+  </g>
+
+  <!-- CAPITOL / PARLIAMENT (Clean, Modern, Simple Silhouette) -->
+  <g filter="url(#v1-shadow)" fill="url(#v1-building)">
+    <!-- Flag atop the dome -->
+    <path d="M 256, 135 L 256, 175" stroke="#1e293b" stroke-width="4.5" stroke-linecap="round"/>
+    <path d="M 256, 137 C 266, 135 274, 142 284, 140 L 284, 155 C 274, 157 266, 150 256, 152 Z" fill="#1e293b"/>
+
+    <!-- Dome Lantern / Cupola -->
+    <rect x="250" y="172" width="12" height="14" rx="2"/>
+    <ellipse cx="256" cy="172" rx="10" ry="4"/>
+
+    <!-- Main Dome (Clean Arch) -->
+    <path d="M 194, 248 C 194, 192 222, 182 256, 182 C 290, 182 318, 192 318, 248 Z"/>
+    
+    <!-- Rotunda Drum / Attic Band with Simple Arched Windows -->
+    <rect x="186" y="248" width="140" height="26" rx="4"/>
+    <!-- Windows in Dome Drum (Negative Space) -->
+    <g fill="#ffffff" opacity="0.95">
+      <rect x="198" y="254" width="8" height="14" rx="4"/>
+      <rect x="214" y="254" width="8" height="14" rx="4"/>
+      <rect x="230" y="254" width="8" height="14" rx="4"/>
+      <rect x="246" y="254" width="8" height="14" rx="4"/>
+      <rect x="262" y="254" width="8" height="14" rx="4"/>
+      <rect x="278" y="254" width="8" height="14" rx="4"/>
+      <rect x="294" y="254" width="8" height="14" rx="4"/>
+      <rect x="306" y="254" width="8" height="14" rx="4"/>
+    </g>
+
+    <!-- Architrave / Entablature (Roof over Columns) -->
+    <path d="M 166, 280 L 346, 280 L 340, 290 L 172, 290 Z"/>
+
+    <!-- Columns (Clean, Minimalist Pillars) -->
+    <rect x="180" y="293" width="15" height="65" rx="3"/>
+    <rect x="207" y="293" width="15" height="65" rx="3"/>
+    <rect x="234" y="293" width="15" height="65" rx="3"/>
+    <rect x="263" y="293" width="15" height="65" rx="3"/>
+    <rect x="290" y="293" width="15" height="65" rx="3"/>
+    <rect x="317" y="293" width="15" height="65" rx="3"/>
+
+    <!-- Building Base Plinth -->
+    <rect x="156" y="360" width="200" height="14" rx="3"/>
+
+    <!-- Grand Steps (Tiered Base) -->
+    <polygon points="144,377 368,377 362,390 150,390"/>
+    <polygon points="134,393 378,393 370,408 142,408"/>
+    <polygon points="120,412 392,412 382,428 130,428"/>
+  </g>
+</svg>

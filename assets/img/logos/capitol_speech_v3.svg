@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <filter id="v3-shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#4f46e5" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <!-- Clean Canvas -->
+  <rect width="512" height="512" rx="112" fill="#ffffff"/>
+  <rect width="512" height="512" rx="112" fill="none" stroke="#f1f5f9" stroke-width="2"/>
+
+  <!-- Warm Aesthetic Center Disc -->
+  <circle cx="256" cy="250" r="175" fill="#fefce8" opacity="0.7"/>
+
+  <!-- Left Speech Bubble: Soft Indigo/Blue Fill + Dark Border -->
+  <g filter="url(#v3-shadow)">
+    <!-- Left Bubble -->
+    <path d="M 125, 140
+             C 175, 140 210, 162 210, 195
+             C 210, 228 178, 250 135, 250
+             C 126, 250 118, 260 110, 274
+             C 112, 260 105, 250 96, 244
+             C 70, 230 60, 210 60, 195
+             C 60, 162 88, 140 125, 140 Z"
+          fill="#3b82f6" fill-opacity="0.16"
+          stroke="#2563eb" stroke-width="5" stroke-linejoin="round"/>
+    
+    <!-- Left Dialogue Dots -->
+    <circle cx="112" cy="195" r="5" fill="#2563eb"/>
+    <circle cx="132" cy="195" r="5" fill="#2563eb"/>
+    <circle cx="152" cy="195" r="5" fill="#2563eb"/>
+
+    <!-- Right Speech Bubble -->
+    <path d="M 387, 140
+             C 424, 140 452, 162 452, 195
+             C 452, 210 442, 230 416, 244
+             C 407, 250 400, 260 402, 274
+             C 394, 260 386, 250 377, 250
+             C 334, 250 302, 228 302, 195
+             C 302, 162 337, 140 387, 140 Z"
+          fill="#f97316" fill-opacity="0.16"
+          stroke="#ea580c" stroke-width="5" stroke-linejoin="round"/>
+
+    <!-- Right Dialogue Dots -->
+    <circle cx="360" cy="195" r="5" fill="#ea580c"/>
+    <circle cx="380" cy="195" r="5" fill="#ea580c"/>
+    <circle cx="400" cy="195" r="5" fill="#ea580c"/>
+  </g>
+
+  <!-- Architectural Line-Art Capitol (Navy Slate Strokes & Accents) -->
+  <g stroke="#0f172a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <!-- Flagpole & Waving Flag -->
+    <line x1="256" y1="145" x2="256" y2="180"/>
+    <path d="M 256, 147 C 266, 144 274, 150 284, 147 L 284, 160 C 274, 163 266, 157 256, 160 Z" fill="#0f172a"/>
+
+    <!-- Lantern Top -->
+    <rect x="250" y="180" width="12" height="12" rx="2" fill="#ffffff"/>
+
+    <!-- Dome Arch -->
+    <path d="M 206, 250 C 206, 198 230, 192 256, 192 C 282, 192 306, 198 306, 250 Z" fill="#ffffff"/>
+
+    <!-- Arched Windows in Drum -->
+    <line x1="196" y1="250" x2="316" y2="250"/>
+    <line x1="192" y1="272" x2="320" y2="272"/>
+    <path d="M 224, 272 L 224, 260 A 6 6 0 0 1 236, 260 L 236, 272" fill="#0f172a" fill-opacity="0.1"/>
+    <path d="M 250, 272 L 250, 260 A 6 6 0 0 1 262, 260 L 262, 272" fill="#0f172a" fill-opacity="0.1"/>
+    <path d="M 276, 272 L 276, 260 A 6 6 0 0 1 288, 260 L 288, 272" fill="#0f172a" fill-opacity="0.1"/>
+
+    <!-- Entablature / Roof Beam -->
+    <line x1="176" y1="288" x2="336" y2="288" stroke-width="7"/>
+
+    <!-- Classical Columns -->
+    <line x1="192" y1="288" x2="192" y2="352"/>
+    <line x1="224" y1="288" x2="224" y2="352"/>
+    <line x1="256" y1="288" x2="256" y2="352"/>
+    <line x1="288" y1="288" x2="288" y2="352"/>
+    <line x1="320" y1="288" x2="320" y2="352"/>
+
+    <!-- Base Plinth -->
+    <line x1="170" y1="352" x2="342" y2="352" stroke-width="7"/>
+
+    <!-- Stepped Podium -->
+    <line x1="155" y1="370" x2="357" y2="370" stroke-width="6"/>
+    <line x1="138" y1="388" x2="374" y2="388" stroke-width="6"/>
+    <line x1="120" y1="406" x2="392" y2="406" stroke-width="6"/>
+  </g>
+</svg>

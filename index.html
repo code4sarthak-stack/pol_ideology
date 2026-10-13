@@ -65,12 +65,23 @@
         </div>
       </div>
 
-      <div class="live-counter-wrap" id="live-counter-wrap" hidden>
-        <div class="live-counter-pill">
-          <span class="live-pulse" aria-hidden="true"></span>
-          <span id="live-counter-text">...</span>
+      <!-- Modern Aesthetic Live Quiz Takers Counter -->
+      <a class="live-counter-card" id="live-counter-wrap" href="stats.html" title="View live community statistics" hidden>
+        <div class="live-counter-glow" aria-hidden="true"></div>
+        <div class="live-counter-inner">
+          <div class="live-counter-number-row">
+            <span class="live-counter-number" id="live-counter-num">0</span>
+          </div>
+          <div class="live-counter-text-row">
+            <span class="live-counter-text" id="live-counter-text">have taken the quiz</span>
+            <span class="live-counter-text-hi" id="live-counter-text-hi" lang="hi">अब तक लोगों ने यह क्विज़ लिया</span>
+          </div>
+          <div class="live-counter-link-hint" aria-hidden="true">
+            <span>See community stats</span>
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </div>
         </div>
-      </div>
+      </a>
     </section>
 
     <div class="ad" data-ad="middle"></div>
@@ -90,18 +101,24 @@
     </section>
 
     <section class="card bento-card">
-      <div class="bento-head">
-        <h2 class="bento-head__title">About this quiz</h2>
-      </div>
-      <p>Politics is about more than parties. This quiz draws on political science, sociology and history to look at four areas: who should control the economy, how far society should keep or change its traditions, how much power the state should have over individuals, and how your country should deal with the world.</p>
-      <p>Each question has its own answer choices, from one end of the debate to the other. You'll see how far left or right you lean overall and in each area, the ideology closest to you, and real examples from history of each position at its best and at its worst.</p>
-      <p>There are no right or wrong answers, and the quiz is not linked to any party or candidate. It is a way to reflect on your own views and compare them with your friends.</p>
+      <div class="about-cols">
+        <div>
+          <div class="bento-head">
+            <h2 class="bento-head__title">About this quiz</h2>
+          </div>
+          <p>Politics is about more than parties. This quiz draws on political science, sociology and history to look at four areas: who should control the economy, how far society should keep or change its traditions, how much power the state should have over individuals, and how your country should deal with the world.</p>
+          <p>Each question has its own answer choices, from one end of the debate to the other. You'll see how far left or right you lean overall and in each area, the ideology closest to you, and real examples from history of each position at its best and at its worst.</p>
+          <p>There are no right or wrong answers, and the quiz is not linked to any party or candidate. It is a way to reflect on your own views and compare them with your friends.</p>
+        </div>
 
-      <div style="margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border);">
-        <h3 lang="hi" style="margin-bottom: 8px;">इस क्विज़ के बारे में</h3>
-        <p lang="hi" style="margin-bottom: 8px;">राजनीति सिर्फ़ पार्टियों के बारे में नहीं है। यह क्विज़ राजनीति विज्ञान, समाजशास्त्र और इतिहास के आधार पर चार क्षेत्रों को देखता है: अर्थव्यवस्था पर किसका नियंत्रण हो, समाज अपनी परंपराएँ कितनी रखे या बदले, व्यक्ति पर सरकार की कितनी ताक़त हो, और आपका देश बाक़ी दुनिया से कैसे पेश आए।</p>
-        <p lang="hi" style="margin-bottom: 8px;">हर सवाल के अपने जवाब हैं, बहस के एक छोर से दूसरे छोर तक। आप देखेंगे कि कुल मिलाकर और हर क्षेत्र में आप कितने वाम या दक्षिण की ओर हैं, कौन-सी विचारधारा आपके सबसे क़रीब है, और इतिहास के असली उदाहरण जो हर सोच का सबसे अच्छा और सबसे बुरा रूप दिखाते हैं।</p>
-        <p lang="hi">कोई जवाब सही या ग़लत नहीं है, और इस क्विज़ का किसी पार्टी या उम्मीदवार से कोई संबंध नहीं है।</p>
+        <div class="about-cols__hi" lang="hi">
+          <div class="bento-head">
+            <h2 class="bento-head__title">इस क्विज़ के बारे में</h2>
+          </div>
+          <p>राजनीति सिर्फ़ पार्टियों के बारे में नहीं है। यह क्विज़ राजनीति विज्ञान, समाजशास्त्र और इतिहास के आधार पर चार क्षेत्रों को देखता है: अर्थव्यवस्था पर किसका नियंत्रण हो, समाज अपनी परंपराएँ कितनी रखे या बदले, व्यक्ति पर सरकार की कितनी ताक़त हो, और आपका देश बाक़ी दुनिया से कैसे पेश आए।</p>
+          <p>हर सवाल के अपने जवाब हैं, बहस के एक छोर से दूसरे छोर तक। आप देखेंगे कि कुल मिलाकर और हर क्षेत्र में आप कितने वाम या दक्षिण की ओर हैं, कौन-सी विचारधारा आपके सबसे क़रीब है, और इतिहास के असली उदाहरण जो हर सोच का सबसे अच्छा और सबसे बुरा रूप दिखाते हैं।</p>
+          <p>कोई जवाब सही या ग़लत नहीं है, और इस क्विज़ का किसी पार्टी या उम्मीदवार से कोई संबंध नहीं है।</p>
+        </div>
       </div>
     </section>
 
@@ -118,6 +135,8 @@
     <p>© ideoMap</p>
   </footer>
 
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <script src="assets/js/config.js"></script>
   <script src="assets/js/db.js"></script>
   <script src="assets/js/strings.js"></script>

@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Top Half (Dome & Sky): Vibrant Blue -->
+    <linearGradient id="tb-blue" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#1d4ed8"/>
+    </linearGradient>
+
+    <!-- Bottom Half (Columns & Steps): Warm Vibrant Orange -->
+    <linearGradient id="tb-orange" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fb923c"/>
+      <stop offset="100%" stop-color="#ea580c"/>
+    </linearGradient>
+
+    <filter id="tb-shadow" x="-12%" y="-12%" width="124%" height="124%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#0f172a" flood-opacity="0.12"/>
+    </filter>
+
+    <clipPath id="clip-top">
+      <rect x="0" y="0" width="512" height="276"/>
+    </clipPath>
+    <clipPath id="clip-bottom">
+      <rect x="0" y="276" width="512" height="236"/>
+    </clipPath>
+  </defs>
+
+  <!-- Clean Canvas -->
+  <rect width="512" height="512" rx="112" fill="#ffffff"/>
+  <rect width="512" height="512" rx="112" fill="none" stroke="#f1f5f9" stroke-width="2"/>
+
+  <!-- Halo -->
+  <circle cx="256" cy="270" r="185" fill="#f8fafc"/>
+
+  <!-- BUILDING -->
+  <g filter="url(#tb-shadow)">
+    <!-- TOP HALF: DOME & CUPOLA (BLUE) -->
+    <g clip-path="url(#clip-top)" fill="url(#tb-blue)">
+      <!-- Flag -->
+      <line x1="256" y1="110" x2="256" y2="152" stroke="#1d4ed8" stroke-width="4.5" stroke-linecap="round"/>
+      <path d="M 256, 112 C 266, 109 274, 116 284, 113 L 284, 128 C 274, 131 266, 124 256, 127 Z"/>
+
+      <!-- Cupola -->
+      <rect x="248" y="150" width="16" height="15" rx="2"/>
+      <ellipse cx="256" cy="150" rx="12" ry="4"/>
+
+      <!-- Dome -->
+      <path d="M 176, 238 C 176, 168 212, 156 256, 156 C 300, 156 336, 168 336, 238 Z"/>
+
+      <!-- Drum Band -->
+      <rect x="166" y="238" width="180" height="28" rx="3"/>
+
+      <!-- Entablature / Pediment Beam -->
+      <polygon points="144,276 368,276 360,288 152,288"/>
+    </g>
+
+    <!-- Drum Windows (White Cutouts) -->
+    <g fill="#ffffff" opacity="0.95">
+      <rect x="180" y="244" width="8" height="16" rx="4"/>
+      <rect x="200" y="244" width="8" height="16" rx="4"/>
+      <rect x="220" y="244" width="8" height="16" rx="4"/>
+      <rect x="240" y="244" width="8" height="16" rx="4"/>
+      <rect x="264" y="244" width="8" height="16" rx="4"/>
+      <rect x="284" y="244" width="8" height="16" rx="4"/>
+      <rect x="304" y="244" width="8" height="16" rx="4"/>
+      <rect x="324" y="244" width="8" height="16" rx="4"/>
+    </g>
+
+    <!-- BOTTOM HALF: COLUMNS & STEPS (ORANGE) -->
+    <g clip-path="url(#clip-bottom)" fill="url(#tb-orange)">
+      <!-- Entablature lower border -->
+      <polygon points="144,276 368,276 360,288 152,288"/>
+
+      <!-- 6 Columns -->
+      <rect x="164" y="292" width="18" height="74" rx="4"/>
+      <rect x="196" y="292" width="18" height="74" rx="4"/>
+      <rect x="228" y="292" width="18" height="74" rx="4"/>
+      <rect x="266" y="292" width="18" height="74" rx="4"/>
+      <rect x="298" y="292" width="18" height="74" rx="4"/>
+      <rect x="330" y="292" width="18" height="74" rx="4"/>
+
+      <!-- Plinth -->
+      <rect x="136" y="370" width="240" height="16" rx="3"/>
+
+      <!-- 3 Steps -->
+      <polygon points="122,390 390,390 382,404 130,404"/>
+      <polygon points="110,408 402,408 392,424 120,424"/>
+      <polygon points="96,428 416,428 404,446 108,446"/>
+    </g>
+
+    <!-- Horizontal Division Line across the pediment -->
+    <line x1="144" y1="276" x2="368" y2="276" stroke="#ffffff" stroke-width="2.5"/>
+  </g>
+</svg>

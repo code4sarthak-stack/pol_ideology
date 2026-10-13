@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="100%" height="100%">
+  <defs>
+    <linearGradient id="i-blue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#1d4ed8"/>
+    </linearGradient>
+    <linearGradient id="i-orange" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fb923c"/>
+      <stop offset="100%" stop-color="#ea580c"/>
+    </linearGradient>
+
+    <!-- Clip left & right -->
+    <clipPath id="c-l">
+      <rect x="0" y="0" width="31.6" height="64"/>
+    </clipPath>
+    <clipPath id="c-r">
+      <rect x="32.4" y="0" width="31.6" height="64"/>
+    </clipPath>
+  </defs>
+
+  <!-- Clean rounded badge container (same as original 64x64 icon rx=14) -->
+  <rect width="64" height="64" rx="14" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+
+  <!-- Subtle halo -->
+  <circle cx="32" cy="35" r="23" fill="#f8fafc"/>
+
+  <!-- Left Half (Blue) -->
+  <g clip-path="url(#c-l)" fill="url(#i-blue)">
+    <!-- Flagpole & Flag -->
+    <line x1="32" y1="12" x2="32" y2="18" stroke="#1d4ed8" stroke-width="1.2"/>
+    <polygon points="32,13 27,13 28.5,15.5 27,17 32,17"/>
+
+    <!-- Lantern top -->
+    <rect x="30.5" y="18" width="3" height="3" rx="0.5"/>
+
+    <!-- Dome -->
+    <path d="M 21, 30 C 21, 20.5 26, 19 32, 19 C 38, 19 43, 20.5 43, 30 Z"/>
+
+    <!-- Drum -->
+    <rect x="19.5" y="30" width="25" height="4" rx="0.6"/>
+
+    <!-- Beam -->
+    <polygon points="17,34.5 47,34.5 46,36 18,36"/>
+
+    <!-- Columns (3 on left) -->
+    <rect x="19.5" y="37" width="2.6" height="10" rx="0.6"/>
+    <rect x="24" y="37" width="2.6" height="10" rx="0.6"/>
+    <rect x="28.5" y="37" width="2.6" height="10" rx="0.6"/>
+    <rect x="33" y="37" width="2.6" height="10" rx="0.6"/>
+    <rect x="37.5" y="37" width="2.6" height="10" rx="0.6"/>
+    <rect x="42" y="37" width="2.6" height="10" rx="0.6"/>
+
+    <!-- Plinth -->
+    <rect x="16" y="47.5" width="32" height="2.2" rx="0.5"/>
+
+    <!-- Steps -->
+    <polygon points="14,50.2 50,50.2 49,52 15,52"/>
+    <polygon points="12.5,52.5 51.5,52.5 50.5,54.5 13.5,54.5"/>
+  </g>
+
+  <!-- Right Half (Orange) -->
+  <g clip-path="url(#c-r)" fill="url(#i-orange)">
+    <!-- Flagpole & Flag -->
+    <line x1="32" y1="12" x2="32" y2="18" stroke="#ea580c" stroke-width="1.2"/>
+    <polygon points="32,13 37,13 35.5,15.5 37,17 32,17"/>
+
+    <!-- Lantern top -->
+    <rect x="30.5" y="18" width="3" height="3" rx="0.5"/>
+
+    <!-- Dome -->
+    <path d="M 21, 30 C 21, 20.5 26, 19 32, 19 C 38, 19 43, 20.5 43, 30 Z"/>
+
+    <!-- Drum -->
+    <rect x="19.5" y="30" width="25" height="4" rx="0.6"/>
+
+    <!-- Beam -->
+    <polygon points="17,34.5 47,34.5 46,36 18,36"/>
+
+    <!-- Columns (3 on right) -->
+    <rect x="19.5" y="37" width="2.6" height="10" rx="0.6"/>
+    <rect x="24" y="37" width="2.6" height="10" rx="0.6"/>
+    <rect x="28.5" y="37" width="2.6" height="10" rx="0.6"/>
+    <rect x="33" y="37" width="2.6" height="10" rx="0.6"/>
+    <rect x="37.5" y="37" width="2.6" height="10" rx="0.6"/>
+    <rect x="42" y="37" width="2.6" height="10" rx="0.6"/>
+
+    <!-- Plinth -->
+    <rect x="16" y="47.5" width="32" height="2.2" rx="0.5"/>
+
+    <!-- Steps -->
+    <polygon points="14,50.2 50,50.2 49,52 15,52"/>
+    <polygon points="12.5,52.5 51.5,52.5 50.5,54.5 13.5,54.5"/>
+  </g>
+
+  <!-- Dividing line -->
+  <line x1="32" y1="12" x2="32" y2="54.5" stroke="#ffffff" stroke-width="0.8"/>
+</svg>

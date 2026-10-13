@@ -6,20 +6,22 @@
   <title>ideoMap — Logo Design Templates Showcase</title>
   <style>
     :root {
-      --bg: #0f172a;
-      --card-bg: #1e293b;
+      --bg: #0b0f19;
+      --card-bg: #151d2e;
       --card-border: rgba(255, 255, 255, 0.08);
       --text: #f8fafc;
       --muted: #94a3b8;
       --accent: #4f46e5;
-      --accent-gold: #fbbf24;
+      --accent-hover: #4338ca;
+      --blue: #2563eb;
+      --orange: #ea580c;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       background: var(--bg);
       color: var(--text);
-      padding: 2.5rem 1.5rem 4rem;
+      padding: 2.5rem 1.5rem 5rem;
       line-height: 1.5;
     }
     header {
@@ -49,12 +51,23 @@
     p.subtitle {
       font-size: 1.15rem;
       color: var(--muted);
-      max-width: 650px;
+      max-width: 740px;
       margin: 0 auto;
+    }
+    .section-title {
+      max-width: 1200px;
+      margin: 3.5rem auto 1.5rem;
+      font-size: 1.45rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 0.75rem;
     }
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 2rem;
       max-width: 1200px;
       margin: 0 auto;
@@ -73,14 +86,21 @@
       transform: translateY(-4px);
       border-color: rgba(99, 102, 241, 0.4);
     }
+    .card.featured {
+      border: 2px solid rgba(79, 70, 229, 0.65);
+      box-shadow: 0 12px 40px rgba(79, 70, 229, 0.2);
+    }
     .preview-box {
       background: #ffffff;
-      padding: 2.5rem;
+      padding: 2.5rem 2rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 280px;
+      min-height: 270px;
       position: relative;
+    }
+    .preview-box.dark {
+      background: #020617;
     }
     .preview-box img {
       max-width: 200px;
@@ -88,7 +108,7 @@
       width: 100%;
       height: auto;
       object-fit: contain;
-      filter: drop-shadow(0 8px 16px rgba(0,0,0,0.06));
+      filter: drop-shadow(0 8px 20px rgba(0,0,0,0.08));
     }
     .card-body {
       padding: 1.5rem;
@@ -106,20 +126,26 @@
     }
     .tag {
       font-size: 0.75rem;
-      padding: 0.2rem 0.6rem;
+      padding: 0.25rem 0.65rem;
       border-radius: 6px;
       background: rgba(255,255,255,0.08);
       color: var(--muted);
+      font-weight: 600;
+    }
+    .tag.primary {
+      background: rgba(79, 70, 229, 0.25);
+      color: #c7d2fe;
+      border: 1px solid rgba(99, 102, 241, 0.4);
     }
     .card-desc {
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       color: var(--muted);
       margin-bottom: 1.25rem;
       flex: 1;
     }
     .navbar-preview {
       background: #f8fafc;
-      padding: 0.75rem 1rem;
+      padding: 0.65rem 0.9rem;
       border-radius: 8px;
       display: flex;
       align-items: center;
@@ -159,7 +185,7 @@
       color: #ffffff;
     }
     .btn-primary:hover {
-      background: #4338ca;
+      background: var(--accent-hover);
     }
     .btn-secondary {
       background: rgba(255,255,255,0.08);
@@ -174,116 +200,134 @@
   <header>
     <div class="badge">Branding & Identity</div>
     <h1>ideoMap Logo Templates</h1>
-    <p class="subtitle">5 simple, modern, and elegant logo templates crafted for the ideoMap political quiz & compass app.</p>
+    <p class="subtitle">Two-tone Capitol Building designs (Half Blue / Half Orange) embodying Left ↔ Right political ideology, with no floating balloons.</p>
   </header>
 
+  <!-- SECTION 1: TWO-TONE HALF BLUE / HALF ORANGE CAPITOL -->
+  <div class="section-title">
+    <span>🏛️ Two-Tone Capitol Series (Half Blue / Half Orange)</span>
+  </div>
+
   <div class="grid">
-    <!-- Template 1 -->
-    <div class="card">
+    <!-- Template A: Left/Right Split (Clean White Backdrop) -->
+    <div class="card featured">
       <div class="preview-box">
-        <img src="logo_template_1.png" alt="Template 1: Minimalist Compass Star">
+        <img src="capitol_split_lr.png" alt="Capitol Split Left/Right">
       </div>
       <div class="card-body">
         <div class="card-title">
-          <span>1. The Compass Star</span>
-          <span class="tag">Geometric Line Art</span>
+          <span>A. Split Spectrum Capitol</span>
+          <span class="tag primary">Recommended</span>
         </div>
-        <p class="card-desc">Clean four-point faceted navigational star with multi-dimensional ideological axis rings. Royal indigo, amber gold, and subtle slate.</p>
+        <p class="card-desc">The Capitol building itself is split cleanly down the center: Left half is Royal Blue (Left / Progressive), Right half is Vibrant Orange (Right / Conservative). No floating balloons, pure architectural symbolism.</p>
         <div class="navbar-preview">
-          <img src="logo_template_1.svg" alt="App preview">
+          <img src="capitol_split_lr.svg" alt="App preview">
           <span>ideoMap</span>
         </div>
         <div class="links">
-          <a href="logo_template_1.svg" class="btn btn-primary" download>Download SVG</a>
-          <a href="logo_template_1.png" class="btn btn-secondary" download>PNG Image</a>
+          <a href="capitol_split_lr.svg" class="btn btn-primary" download>Download SVG</a>
+          <a href="capitol_split_lr.png" class="btn btn-secondary" download>PNG Image</a>
         </div>
       </div>
     </div>
 
-    <!-- Template 2 -->
-    <div class="card">
-      <div class="preview-box">
-        <img src="logo_template_2.jpg" alt="Template 2: Intersecting Ideological Axes">
+    <!-- Template B: App Icon Badge (Obsidian Background) -->
+    <div class="card featured">
+      <div class="preview-box dark">
+        <img src="capitol_split_badge.png" alt="Capitol Split Badge">
       </div>
       <div class="card-body">
         <div class="card-title">
-          <span>2. The Spectrum Grid</span>
-          <span class="tag">Swiss Modernism</span>
+          <span>B. Dark Badge App Icon</span>
+          <span class="tag">App Icon / Favicon</span>
         </div>
-        <p class="card-desc">Minimalist political compass coordinate axes dividing 4 geometric quadrants in indigo, muted teal, slate, and warm amber gradients.</p>
+        <p class="card-desc">High-contrast mobile icon badge on a deep obsidian slate squircle. Features glowing neon blue and warm orange halves with fine coordinate guidelines.</p>
         <div class="navbar-preview">
-          <img src="logo_template_2.svg" alt="App preview">
+          <img src="capitol_split_badge.svg" alt="App preview">
           <span>ideoMap</span>
         </div>
         <div class="links">
-          <a href="logo_template_2.svg" class="btn btn-primary" download>Download SVG</a>
-          <a href="logo_template_2.jpg" class="btn btn-secondary" download>JPG Image</a>
+          <a href="capitol_split_badge.svg" class="btn btn-primary" download>Download SVG</a>
+          <a href="capitol_split_badge.png" class="btn btn-secondary" download>PNG Image</a>
         </div>
       </div>
     </div>
 
-    <!-- Template 3 -->
+    <!-- Template C: Top/Bottom Horizontal Cut -->
     <div class="card">
       <div class="preview-box">
-        <img src="logo_template_3.jpg" alt="Template 3: Origami Monogram M">
+        <img src="capitol_split_tb.svg" alt="Capitol Split Top/Bottom">
       </div>
       <div class="card-body">
         <div class="card-title">
-          <span>3. The Origami 'M' Monogram</span>
-          <span class="tag">Luxury Monogram</span>
+          <span>C. Top / Bottom Split</span>
+          <span class="tag">Horizontal Waterline</span>
         </div>
-        <p class="card-desc">Geometric 'M' lettermark seamlessly rising into an upward navigation compass arrow with faceted indigo shading and glowing amber apex.</p>
+        <p class="card-desc">Divided horizontally along the pediment: Top dome & cupola in vibrant royal blue, bottom columns & steps in warm energetic orange.</p>
         <div class="navbar-preview">
-          <img src="logo_template_3.svg" alt="App preview">
+          <img src="capitol_split_tb.svg" alt="App preview">
           <span>ideoMap</span>
         </div>
         <div class="links">
-          <a href="logo_template_3.svg" class="btn btn-primary" download>Download SVG</a>
-          <a href="logo_template_3.jpg" class="btn btn-secondary" download>JPG Image</a>
+          <a href="capitol_split_tb.svg" class="btn btn-primary" download>Download SVG</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: OTHER MINIMALIST ARCHETYPES -->
+  <div class="section-title">
+    <span>🧭 Compass & Speech Variations (Archived)</span>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="preview-box">
+        <img src="capitol_speech_v1.png" alt="Capitol Speech V1">
+      </div>
+      <div class="card-body">
+        <div class="card-title">
+          <span>Capitol + Speech Bubbles</span>
+          <span class="tag">Reference Style</span>
+        </div>
+        <p class="card-desc">Direct 2D simplification of the original reference with dark navy dome and floating blue & orange speech bubbles.</p>
+        <div class="links">
+          <a href="capitol_speech_v1.svg" class="btn btn-secondary" download>SVG</a>
+          <a href="capitol_speech_v1.png" class="btn btn-secondary" download>PNG</a>
         </div>
       </div>
     </div>
 
-    <!-- Template 4 -->
     <div class="card">
       <div class="preview-box">
-        <img src="logo_template_4.jpg" alt="Template 4: Ideological Balance Dial">
+        <img src="logo_template_2.jpg" alt="Template 2: Intersecting Axes">
       </div>
       <div class="card-body">
         <div class="card-title">
-          <span>4. The Spectrum Dial</span>
-          <span class="tag">Architectural Precision</span>
+          <span>The Spectrum Grid</span>
+          <span class="tag">Compass Quadrants</span>
         </div>
-        <p class="card-desc">Sleek calibrated semicircular meter with fine radial tick marks and an equilibrium needle highlighted by a warm amber tip.</p>
-        <div class="navbar-preview">
-          <img src="logo_template_4.svg" alt="App preview">
-          <span>ideoMap</span>
-        </div>
+        <p class="card-desc">Swiss-style political compass axes dividing 4 soft-gradient quadrants in indigo, teal, slate, and amber.</p>
         <div class="links">
-          <a href="logo_template_4.svg" class="btn btn-primary" download>Download SVG</a>
-          <a href="logo_template_4.jpg" class="btn btn-secondary" download>JPG Image</a>
+          <a href="logo_template_2.svg" class="btn btn-secondary" download>SVG</a>
+          <a href="logo_template_2.jpg" class="btn btn-secondary" download>JPG</a>
         </div>
       </div>
     </div>
 
-    <!-- Template 5 -->
     <div class="card">
       <div class="preview-box">
-        <img src="logo_template_5.png" alt="Template 5: Map Pin Compass Core">
+        <img src="logo_template_3.jpg" alt="Template 3: Origami M">
       </div>
       <div class="card-body">
         <div class="card-title">
-          <span>5. The Map Marker & Core</span>
-          <span class="tag">Iconic Brand Mark</span>
+          <span>Origami 'M' Monogram</span>
+          <span class="tag">Monogram</span>
         </div>
-        <p class="card-desc">Sculpted modern map marker silhouette encapsulating a golden navigational compass star, instantly communicating political mapping.</p>
-        <div class="navbar-preview">
-          <img src="logo_template_5.svg" alt="App preview">
-          <span>ideoMap</span>
-        </div>
+        <p class="card-desc">Geometric 'M' lettermark ascending into an illuminated compass arrow with golden apex.</p>
         <div class="links">
-          <a href="logo_template_5.svg" class="btn btn-primary" download>Download SVG</a>
-          <a href="logo_template_5.png" class="btn btn-secondary" download>PNG Image</a>
+          <a href="logo_template_3.svg" class="btn btn-secondary" download>SVG</a>
+          <a href="logo_template_3.jpg" class="btn btn-secondary" download>JPG</a>
         </div>
       </div>
     </div>

@@ -228,34 +228,83 @@
   }
 
   function bindLiveCounter(elementId, wrapId) {
-    var el = document.getElementById(elementId);
-    var wrap = wrapId ? document.getElementById(wrapId) : null;
-    if (!el) return;
+    var wrap = document.getElementById(wrapId || "live-counter-wrap");
+    var numEl = document.getElementById("live-counter-num");
+    var textEl = document.getElementById("live-counter-text");
+    var textHiEl = document.getElementById("live-counter-text-hi");
 
+    // Legacy fallback if only elementId exists:
+    if (!numEl && elementId) numEl = document.getElementById(elementId);
+    if (!wrap && !numEl) return;
+
+    function renderCount(rawCount) {
+      var count = Number(rawCount);
+      if (isNaN(count) || count < 0) return;
+
+      // Always format large numbers with commas: e.g. 50,000,000 (never 50M or 50000000)
+      var formatted = count.toLocaleString("en-US");
+
+      if (numEl) {
+        numEl.textContent = formatted;
+      }
+
+      // Line 2: Text description
+      if (textEl) {
+        textEl.textContent = count === 1 ? t("liveCounterSingular") : t("liveCounterPlural");
+      }
+      if (textHiEl) {
+        var hiStr = STR && STR.hi ? (count === 1 ? STR.hi.liveCounterSingular : STR.hi.liveCounterPlural) : "अब तक लोगों ने यह क्विज़ लिया";
+        textHiEl.textContent = hiStr;
+      }
+
+      // Legacy fallback if single element only:
+      if (!textEl && numEl && !document.getElementById("live-counter-text")) {
+        numEl.textContent = t("liveCounter", { count: formatted });
+      }
+
+      if (wrap) wrap.hidden = false;
+    }
+
+    // Support URL test override: ?test_count=50000000 (allows verifying scale without mutating DB)
+    var testCountParam = params.get("test_count");
+    if (testCountParam !== null && testCountParam !== "" && !isNaN(Number(testCountParam))) {
+      renderCount(Number(testCountParam));
+      return;
+    }
+
+    // 1. Instant REST fetch: provides immediate real-time count in ~50ms
+    if (CFG.FIREBASE && CFG.FIREBASE.databaseURL) {
+      var restUrl = CFG.FIREBASE.databaseURL.replace(/\/+$/, "") + "/quiz_count.json";
+      fetch(restUrl)
+        .then(function (r) { return r.json(); })
+        .then(function (val) {
+          if (typeof val === "number" && val >= 0) {
+            renderCount(val);
+          } else if (val === null) {
+            renderCount(0);
+          }
+        })
+        .catch(function (e) {
+          console.warn("Live counter REST fetch notice:", e);
+        });
+    }
+
+    // 2. Real-time Firebase listener: synchronizes live count updates across users
     var db = getFirebaseDb();
     if (db) {
       try {
         var counterRef = db.ref("quiz_count");
         counterRef.on("value", function (snapshot) {
-          var count = snapshot.val();
-          if (typeof count === "number" && count >= 0) {
-            el.textContent = t("liveCounter", { count: count.toLocaleString() });
-            if (wrap) wrap.hidden = false;
+          var val = snapshot.val();
+          if (typeof val === "number" && val >= 0) {
+            renderCount(val);
+          } else if (val === null) {
+            renderCount(0);
           }
         });
-        return;
       } catch (e) {
-        console.warn("Live counter listener warning:", e);
+        console.warn("Live counter listener notice:", e);
       }
-    }
-
-    if (window.QUIZ_DB) {
-      window.QUIZ_DB.getStats().then(function (stats) {
-        if (stats && stats.total) {
-          el.textContent = t("liveCounter", { count: stats.total.toLocaleString() });
-          if (wrap) wrap.hidden = false;
-        }
-      });
     }
   }
 
@@ -265,27 +314,49 @@
     if (load(countedKey)) return; // Prevent incrementing on page refresh or revisit
 
     var db = getFirebaseDb();
-    if (!db) return;
+    if (db) {
+      try {
+        var counterRef = db.ref("quiz_count");
+        // Atomic transaction: locks and sequences concurrent submissions so counts never collide
+        counterRef.transaction(function (current) {
+          return (current || 0) + 1;
+        }, function (error, committed) {
+          if (committed) {
+            save(countedKey, "1");
+          }
+        });
+        return;
+      } catch (e) {
+        console.warn("Quiz counter transaction error:", e);
+      }
+    }
 
-    try {
-      var counterRef = db.ref("quiz_count");
-      // Atomic transaction: locks and sequences concurrent submissions so counts never collide
-      counterRef.transaction(function (current) {
-        return (current || 0) + 1;
-      }, function (error, committed) {
-        if (committed) {
+    // Direct REST fallback if SDK is unavailable or blocked
+    if (CFG.FIREBASE && CFG.FIREBASE.databaseURL) {
+      var url = CFG.FIREBASE.databaseURL.replace(/\/+$/, "") + "/quiz_count.json";
+      fetch(url)
+        .then(function (r) { return r.json(); })
+        .then(function (current) {
+          var nextVal = (typeof current === "number" && current >= 0) ? current + 1 : 1;
+          return fetch(url, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(nextVal)
+          });
+        })
+        .then(function () {
           save(countedKey, "1");
-        }
-      });
-    } catch (e) {
-      console.warn("Quiz counter transaction error:", e);
+        })
+        .catch(function (err) {
+          console.warn("REST quiz counter increment warning:", err);
+        });
     }
   }
 
   /* ---------- Pages ---------- */
 
   function homePage() {
-    bindLiveCounter("live-counter-text", "live-counter-wrap");
+    bindLiveCounter();
 
     document.querySelectorAll("[data-choose-lang]").forEach(function (el) {
       el.addEventListener("click", function () {
@@ -453,6 +524,12 @@
     var badgeEl = document.getElementById("result-badge");
     if (badgeEl) badgeEl.textContent = overall;
 
+    var exampleEl = document.getElementById("result-example-badge");
+    if (exampleEl && text.examplePerson) {
+      exampleEl.textContent = (lang === "hi" ? "जानी-मानी मिसाल: " : "e.g. ") + text.examplePerson;
+      exampleEl.hidden = false;
+    }
+
     var overallBox = document.getElementById("overall");
     if (overallBox) {
       overallBox.innerHTML = "";
@@ -460,15 +537,30 @@
     }
 
     // Template 3 Bento: Ideological neighbours chips
+    initIdeologyModal();
     var chipsContainer = document.getElementById("neighbour-chips");
     if (chipsContainer) {
       chipsContainer.innerHTML = "";
       ranked.slice(1, 4).forEach(function (r) {
-        var chip = el("div", "neighbour-chip");
+        var chip = el("button", "neighbour-chip");
+        chip.type = "button";
+        chip.setAttribute("aria-haspopup", "dialog");
+        chip.setAttribute("aria-label", t("openExplainer", { ideology: r[lang].title }) || ("Learn about " + r[lang].title));
+
         var em = el("span", "neighbour-chip__emoji", r.emoji);
         var title = el("span", "neighbour-chip__name", r[lang].title);
+        var info = el("span", "neighbour-chip__info");
+        info.setAttribute("aria-hidden", "true");
+        info.innerHTML = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>';
+
         chip.appendChild(em);
         chip.appendChild(title);
+        chip.appendChild(info);
+
+        chip.addEventListener("click", function () {
+          openIdeologyModal(r, chip);
+        });
+
         chipsContainer.appendChild(chip);
       });
     }
@@ -503,11 +595,11 @@
     });
 
     renderCompass(s);
-    setupShare(answers, text.title, overall, ideo.key);
+    setupShare(answers, text.title, overall, ideo, s, ranked, name);
 
     // Atomic live quiz counter increment and live badge
     incrementQuizCounter(answers);
-    bindLiveCounter("live-counter-text", "live-counter-wrap");
+    bindLiveCounter();
 
     // Save quiz result anonymously and display community comparison
     if (!friend && window.QUIZ_DB) {
@@ -554,6 +646,171 @@
     return null;
   }
 
+  var SKULL_ICON_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-skull preview-icon" aria-hidden="true"><path d="m12.5 17-.5-1-.5 1h1z"/><path d="M15 22a1 1 0 0 0 1-1v-1a2 2 0 0 0 1.56-3.25 8 8 0 1 0-11.12 0A2 2 0 0 0 8 20v1a1 1 0 0 0 1 1z"/><circle cx="15" cy="12" r="1"/><circle cx="9" cy="12" r="1"/></svg>';
+
+  var INSPIRING_ICON_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-face-grinning preview-icon" aria-hidden="true"><path d="M15 10V9"/><path d="M7.084 14.302a5.12 5.12 0 009.833 0 .24.24 0 00-.235-.302H7.32a.24.24 0 00-.235.302"/><path d="M9 10V9"/><circle cx="12" cy="12" r="10"/></svg>';
+
+  function exampleTag(kind, className, tagType) {
+    var tag = el(tagType || "p", className || "example__tag");
+    if (kind === "bad") {
+      tag.innerHTML = SKULL_ICON_SVG + '<span>' + esc(t("badTag")) + '</span>';
+    } else {
+      tag.innerHTML = INSPIRING_ICON_SVG + '<span>' + esc(t("goodTag")) + '</span>';
+    }
+    return tag;
+  }
+
+  /* ---------- Ideology Explainer Modal ---------- */
+
+  var activeModalTrigger = null;
+  var modalInitialized = false;
+
+  function initIdeologyModal() {
+    if (modalInitialized) return;
+    modalInitialized = true;
+    var modal = document.getElementById("ideology-modal");
+    if (!modal) return;
+    var closeBtn = document.getElementById("modal-close-btn");
+
+    function closeModal() {
+      if (!modal.classList.contains("is-active")) return;
+      modal.classList.remove("is-active");
+      modal.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("modal-open");
+      if (activeModalTrigger && typeof activeModalTrigger.focus === "function") {
+        activeModalTrigger.focus();
+      }
+      activeModalTrigger = null;
+    }
+
+    if (closeBtn) {
+      closeBtn.addEventListener("click", closeModal);
+    }
+
+    modal.addEventListener("click", function (e) {
+      if (e.target === modal) {
+        closeModal();
+      }
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && modal.classList.contains("is-active")) {
+        closeModal();
+      }
+    });
+
+    window.closeIdeologyModal = closeModal;
+  }
+
+  function openIdeologyModal(ideo, triggerEl) {
+    var modal = document.getElementById("ideology-modal");
+    var body = document.getElementById("modal-body");
+    if (!modal || !body || !ideo) return;
+
+    activeModalTrigger = triggerEl || null;
+
+    var text = ideo[lang] || ideo.en;
+    var laymanText = text.layman || text.desc;
+    var pillars = text.pillars || [];
+    var good = text.good;
+    var bad = text.bad;
+
+    body.innerHTML = "";
+
+    // 1. Header: Emoji, Badge, Title
+    var header = el("div", "modal-header");
+    var em = el("div", "modal-header__emoji", ideo.emoji);
+    var meta = el("div", "modal-header__meta");
+    var badge = el("span", "modal-header__badge", t("laymanExplainerBadge"));
+    var title = el("h3", "modal-header__title", text.title);
+    meta.appendChild(badge);
+    meta.appendChild(title);
+    if (text.examplePerson) {
+      var exBadge = el("div", "modal-header__example");
+      exBadge.innerHTML = '<span class="muted">' + (lang === "hi" ? "जानी-मानी मिसाल: " : "Familiar example: ") + '</span><strong>' + esc(text.examplePerson) + '</strong>';
+      meta.appendChild(exBadge);
+    }
+    header.appendChild(em);
+    header.appendChild(meta);
+    body.appendChild(header);
+
+    // 2. Layman Box ("In Simple Terms")
+    var laymanBox = el("div", "modal-layman");
+    var laymanTitle = el("div", "modal-layman__title");
+    laymanTitle.innerHTML = '<span aria-hidden="true">💡</span> ' + esc(t("inLaymanTerms"));
+    var laymanP = el("p", "modal-layman__text", laymanText);
+    laymanBox.appendChild(laymanTitle);
+    laymanBox.appendChild(laymanP);
+    body.appendChild(laymanBox);
+
+    // 3. Pillars ("What They Stand For")
+    if (pillars && pillars.length > 0) {
+      var secPillars = el("div", "modal-section");
+      secPillars.appendChild(el("h4", "modal-section__title", t("keyPillars")));
+      var list = el("ul", "modal-pillars");
+      pillars.forEach(function (p) {
+        var li = el("li", "modal-pillar-item");
+        li.textContent = p;
+        list.appendChild(li);
+      });
+      secPillars.appendChild(list);
+      body.appendChild(secPillars);
+    }
+
+    // 4. Real World Examples (Good & Cautionary)
+    if (good || bad) {
+      var secEx = el("div", "modal-section");
+      secEx.appendChild(el("h4", "modal-section__title", t("realWorldExamples")));
+      var exGrid = el("div", "modal-examples-grid");
+
+      if (good) {
+        var gCard = el("div", "modal-example-card modal-example-card--good");
+        gCard.appendChild(exampleTag("good", "modal-example-card__tag", "div"));
+        gCard.appendChild(el("div", "modal-example-card__name", good.name));
+        gCard.appendChild(el("div", "modal-example-card__when", good.when));
+        gCard.appendChild(el("p", "modal-example-card__text", good.text));
+        exGrid.appendChild(gCard);
+      }
+
+      if (bad) {
+        var bCard = el("div", "modal-example-card modal-example-card--bad");
+        bCard.appendChild(exampleTag("bad", "modal-example-card__tag", "div"));
+        bCard.appendChild(el("div", "modal-example-card__name", bad.name));
+        bCard.appendChild(el("div", "modal-example-card__when", bad.when));
+        bCard.appendChild(el("p", "modal-example-card__text", bad.text));
+        exGrid.appendChild(bCard);
+      }
+
+      secEx.appendChild(exGrid);
+      body.appendChild(secEx);
+    }
+
+    // 5. Why this aligns with you note
+    var whyBox = el("div", "modal-why");
+    whyBox.innerHTML = '<span aria-hidden="true">🧭</span> <span>' + esc(t("whyNeighbour")) + '</span>';
+    body.appendChild(whyBox);
+
+    // 6. Action Button: "Got it"
+    var footer = el("div", "modal-footer");
+    var gotItBtn = el("button", "btn btn--primary", t("modalGotIt"));
+    gotItBtn.type = "button";
+    gotItBtn.addEventListener("click", function () {
+      if (window.closeIdeologyModal) window.closeIdeologyModal();
+    });
+    footer.appendChild(gotItBtn);
+    body.appendChild(footer);
+
+    // Show modal
+    modal.classList.add("is-active");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("modal-open");
+
+    // Focus close button
+    var closeBtn = document.getElementById("modal-close-btn");
+    if (closeBtn) closeBtn.focus();
+    track("ideology_modal_open", { ideology: ideo.key, language: lang });
+  }
+
   /* Community Comparison Widget (Below Compass) */
   function renderCommunityComparison(userScore, userIdeo, userBand) {
     var card = document.getElementById("community-card");
@@ -562,10 +819,9 @@
     window.QUIZ_DB.getStats().then(function (stats) {
       // 1. Badge & Subtitle
       var badge = document.getElementById("community-badge");
-      if (badge) {
-        badge.textContent = stats.isLive ? t("statsLiveBadge") : (stats.total + " " + (t("statsParticipantsCount", { n: "" }) || "quiz takers")).trim();
+        var label = stats.isLive ? t("statsLiveBadge") : t("statsParticipantsCount", { n: stats.total.toLocaleString() });
+        badge.innerHTML = '<span class="live-pulse-dot"></span> ' + esc(label);
         badge.className = "badge " + (stats.isLive ? "badge--live" : "badge--sample");
-      }
       var sub = document.getElementById("community-sub");
       if (sub) {
         sub.textContent = t("communityOverallSub");
@@ -585,16 +841,41 @@
         var topIdeoObj = findIdeology(stats.topIdeology);
         if (topIdeoObj) {
           var topPct = (stats.ideologies[stats.topIdeology] || {}).pct || 0;
-          kpiTop.textContent = topIdeoObj.emoji + " " + topIdeoObj[lang].title.split(" (")[0] + " (" + topPct + "%)";
+          var cleanTitle = topIdeoObj[lang].title.split(" (")[0];
+          kpiTop.innerHTML =
+            '<div class="community-kpi-top-row">' +
+              '<span class="community-kpi-top-row__icon" aria-hidden="true">' + topIdeoObj.emoji + '</span>' +
+              '<div class="community-kpi-top-row__body">' +
+                '<span class="community-kpi-top-row__title">' + esc(cleanTitle) + '</span>' +
+                '<span class="community-kpi-top-row__pct">' + topPct + '%</span>' +
+              '</div>' +
+            '</div>';
+          kpiTop.style.cursor = "pointer";
+          kpiTop.title = t("laymanTapHint") || "Tap to learn more";
+          kpiTop.onclick = function () {
+            openIdeologyModal(topIdeoObj, kpiTop);
+          };
         }
       }
 
-      // 3. User Comparison Callout
+      // 3. User Comparison Callout & Benchmark Labels
       var userIdeoStat = stats.ideologies[userIdeo.key] || { count: 0, pct: 0 };
       var diff = userScore - stats.averages.overall;
       var absDiff = Math.abs(diff);
       var userScoreFmt = (userScore > 0 ? "+" : "") + userScore;
       var avgFmt = (stats.averages.overall > 0 ? "+" : "") + stats.averages.overall;
+      var avgBandName = overallBandLabel ? overallBandLabel(stats.averages.overall) : "";
+      var userBandName = overallBandLabel ? overallBandLabel(userScore) : "";
+
+      var avgLabelEl = document.getElementById("benchmark-avg-label");
+      if (avgLabelEl) {
+        avgLabelEl.textContent = (t("statsAvgSpectrum") || "Community Center") + ": " + avgFmt + (avgBandName ? " (" + avgBandName + ")" : "");
+      }
+
+      var userLabelEl = document.getElementById("benchmark-user-label");
+      if (userLabelEl) {
+        userLabelEl.textContent = (t("youTag") || "You") + ": " + userScoreFmt + (userBandName ? " (" + userBandName + ")" : "");
+      }
 
       var diffDesc = "";
       if (absDiff <= 4) {
@@ -654,10 +935,12 @@
       if (ideoBarsContainer) {
         var list = QUIZ.ideologies.map(function (item) {
           var iStat = stats.ideologies[item.key] || { count: 0, pct: 0 };
+          var textObj = item[lang] || item.en;
           return {
             key: item.key,
             emoji: item.emoji,
-            title: item[lang].title,
+            title: textObj.title,
+            examplePerson: textObj.examplePerson || "",
             count: iStat.count,
             pct: iStat.pct,
             isUser: (item.key === userIdeo.key)
@@ -667,26 +950,85 @@
         });
 
         var maxPct = Math.max(1, list[0].pct);
-        var barsHtml = list.map(function (item) {
+
+        function renderBarItem(item) {
           var widthRatio = ((item.pct / maxPct) * 100).toFixed(1);
+          var exHtml = item.examplePerson
+            ? '<span class="stats-bar-sub">' + (lang === "hi" ? "उदा. " : "e.g. ") + esc(item.examplePerson) + '</span>'
+            : '';
           return (
-            '<div class="stats-bar-item' + (item.isUser ? ' is-user' : '') + '">' +
-            '  <div class="stats-bar-head">' +
-            '    <span class="stats-bar-title">' +
-            '      <span class="stats-bar-emoji">' + item.emoji + '</span> ' +
-            '      <span>' + esc(item.title) + '</span>' +
-            (item.isUser ? ' <span class="badge stats-bar-user-badge">' + esc(t("youTag")) + '</span>' : '') +
-            '    </span>' +
-            '    <span class="stats-bar-meta"><strong>' + item.pct + '%</strong> <span class="muted">(' + item.count + ')</span></span>' +
+            '<div class="stats-bar-item' + (item.isUser ? ' is-user' : '') + '" data-key="' + esc(item.key) + '" role="button" tabindex="0" title="' + esc(item.title) + '">' +
+            '  <div class="stats-bar-main">' +
+            '    <div class="stats-bar-icon" aria-hidden="true">' + item.emoji + '</div>' +
+            '    <div class="stats-bar-content">' +
+            '      <div class="stats-bar-title-wrap">' +
+            '        <span class="stats-bar-title">' + esc(item.title) + '</span>' +
+            (item.isUser ? ' <span class="stats-bar-user-badge">' + esc(t("youTag")) + '</span>' : '') +
+            '      </div>' +
+            exHtml +
+            '    </div>' +
+            '    <div class="stats-bar-metric">' +
+            '      <span class="stats-bar-pct">' + item.pct + '%</span>' +
+            '      <span class="stats-bar-count">(' + item.count + ')</span>' +
+            '    </div>' +
             '  </div>' +
             '  <div class="stats-bar-track">' +
             '    <div class="stats-bar-fill' + (item.isUser ? ' is-user-fill' : '') + '" style="width: ' + widthRatio + '%;"></div>' +
             '  </div>' +
             '</div>'
           );
-        }).join("");
+        }
 
-        ideoBarsContainer.innerHTML = barsHtml;
+        var isExpanded = false;
+        var topLimit = 6;
+
+        function updateListDisplay() {
+          var displayList;
+          if (isExpanded || list.length <= topLimit) {
+            displayList = list;
+          } else {
+            displayList = list.slice(0, topLimit);
+            var userInTop = displayList.some(function (it) { return it.isUser; });
+            if (!userInTop) {
+              var userItem = list.find(function (it) { return it.isUser; });
+              if (userItem) displayList.push(userItem);
+            }
+          }
+
+          var html = displayList.map(renderBarItem).join("");
+
+          if (list.length > topLimit) {
+            var toggleLabel = isExpanded
+              ? (lang === "hi" ? "कम दिखाएँ ↑" : "Show Top " + topLimit + " ↑")
+              : (lang === "hi" ? "सभी 16 विचारधाराएँ देखें (" + (list.length - topLimit) + " और) ↓" : "Show all " + list.length + " worldviews (" + (list.length - topLimit) + " more) ↓");
+
+            html += '<button type="button" class="stats-bars-toggle-btn" id="btn-toggle-ideo-bars">' + esc(toggleLabel) + '</button>';
+          }
+
+          ideoBarsContainer.innerHTML = html;
+
+          var toggleBtn = document.getElementById("btn-toggle-ideo-bars");
+          if (toggleBtn) {
+            toggleBtn.addEventListener("click", function () {
+              isExpanded = !isExpanded;
+              updateListDisplay();
+            });
+          }
+        }
+
+        updateListDisplay();
+
+        ideoBarsContainer.addEventListener("click", function (e) {
+          if (e.target.closest("#btn-toggle-ideo-bars")) return;
+          var itemEl = e.target.closest(".stats-bar-item");
+          if (!itemEl) return;
+          var key = itemEl.getAttribute("data-key");
+          if (!key) return;
+          var ideoObj = findIdeology(key);
+          if (ideoObj && typeof openIdeologyModal === "function") {
+            openIdeologyModal(ideoObj, itemEl);
+          }
+        });
       }
     });
   }
@@ -697,21 +1039,25 @@
 
     var avgFmt = (avgScore > 0 ? "+" : "") + avgScore;
     var userFmt = (userScore > 0 ? "+" : "") + userScore;
+    // Near either end, anchor the label to that end so it can't run past the card edge.
+    function edge(pct) { return pct < 20 ? " is-start" : pct > 80 ? " is-end" : ""; }
 
     return (
       '<div class="compare-bar">' +
       '  <div class="compare-bar__track">' +
-      '    <div class="compare-bar__avg-line" style="left: ' + avgPct.toFixed(1) + '%;">' +
-      '      <span class="compare-bar__avg-tag">' + esc(t("statsAvgSpectrum")) + ' (' + avgFmt + ')</span>' +
+      '    <div class="compare-bar__mid-line" style="left: 50%;"></div>' +
+      '    <div class="compare-bar__avg-line' + edge(avgPct) + '" style="left: ' + avgPct.toFixed(1) + '%;" title="' + esc(t("statsAvgSpectrum")) + ': ' + avgFmt + '">' +
+      '      <span class="compare-bar__marker-pill compare-bar__marker-pill--avg">' + avgFmt + '</span>' +
       '    </div>' +
-      '    <div class="compare-bar__user-pin" style="left: ' + userPct.toFixed(1) + '%;">' +
+      '    <div class="compare-bar__user-pin' + edge(userPct) + '" style="left: ' + userPct.toFixed(1) + '%;" title="' + esc(t("youTag")) + ': ' + userFmt + '">' +
       '      <span class="compare-bar__user-dot"></span>' +
-      '      <span class="compare-bar__user-tag">' + esc(t("overall")) + ' (' + userFmt + ')</span>' +
+      '      <span class="compare-bar__marker-pill compare-bar__marker-pill--user">' + userFmt + '</span>' +
       '    </div>' +
       '  </div>' +
       '  <div class="compare-bar__ends">' +
-      '    <span>' + esc(t("left")) + ' (-100)</span>' +
-      '    <span>' + esc(t("right")) + ' (+100)</span>' +
+      '    <span>← ' + esc(t("left")) + ' (-100)</span>' +
+      '    <span class="compare-bar__mid-tag">0</span>' +
+      '    <span>' + esc(t("right")) + ' (+100) →</span>' +
       '  </div>' +
       '</div>'
     );
@@ -885,7 +1231,7 @@
 
   function example(kind, ex) {
     var box = el("article", "example example--" + kind);
-    box.appendChild(el("p", "example__tag", t(kind === "good" ? "goodTag" : "badTag")));
+    box.appendChild(exampleTag(kind, "example__tag", "p"));
     box.appendChild(el("h4", "example__name", ex.name));
     box.appendChild(el("p", "example__when", ex.when));
     box.appendChild(el("p", "example__text", ex.text));
@@ -916,38 +1262,538 @@
     return new URL(link, location.href).href;
   }
 
-  function setupShare(answers, title, overall, key) {
+  function showQuickShareToast(msg, type) {
+    var toast = document.getElementById("hero-share-toast");
+    if (!toast) return;
+    toast.textContent = msg;
+    toast.className = "quick-share__toast quick-share__toast--" + (type || "info");
+    toast.hidden = false;
+    clearTimeout(toast._timeout);
+    toast._timeout = setTimeout(function () {
+      toast.hidden = true;
+    }, 5500);
+  }
+
+  function copyLinkWithFeedback(link, callback) {
+    var done = function () {
+      if (typeof callback === "function") callback();
+    };
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(link).then(done, function () {
+        fallbackCopy(link);
+        done();
+      });
+    } else {
+      fallbackCopy(link);
+      done();
+    }
+  }
+
+  function downloadBlob(blob, filename) {
+    var a = document.createElement("a");
+    var urlObj = URL.createObjectURL(blob);
+    a.href = urlObj;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function () {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(urlObj);
+    }, 1500);
+  }
+
+  function buildStoryCardCanvas(data) {
+    var canvas = document.createElement("canvas");
+    canvas.width = 1080;
+    canvas.height = 1920;
+    var ctx = canvas.getContext("2d");
+
+    function drawRoundRect(x, y, w, h, r, fill, stroke, strokeWidth) {
+      ctx.save();
+      ctx.beginPath();
+      if (typeof ctx.roundRect === "function") {
+        ctx.roundRect(x, y, w, h, r);
+      } else {
+        var radius = typeof r === "number" ? r : 16;
+        ctx.moveTo(x + radius, y);
+        ctx.lineTo(x + w - radius, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
+        ctx.lineTo(x + w, y + h - radius);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+        ctx.lineTo(x + radius, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
+        ctx.lineTo(x, y + radius);
+        ctx.quadraticCurveTo(x, y, x + radius, y);
+      }
+      ctx.closePath();
+      if (fill) {
+        ctx.fillStyle = fill;
+        ctx.fill();
+      }
+      if (stroke) {
+        ctx.strokeStyle = stroke;
+        ctx.lineWidth = strokeWidth || 1;
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function wrapText(text, x, y, maxWidth, lineHeight, maxLines) {
+      var words = String(text || "").split(" ");
+      var line = "";
+      var linesRendered = 0;
+      var curY = y;
+      for (var n = 0; n < words.length; n++) {
+        var testLine = line + (line ? " " : "") + words[n];
+        var metrics = ctx.measureText(testLine);
+        if (metrics.width > maxWidth && n > 0) {
+          ctx.fillText(line, x, curY);
+          line = words[n];
+          curY += lineHeight;
+          linesRendered++;
+          if (maxLines && linesRendered >= maxLines - 1) {
+            var remaining = words.slice(n).join(" ");
+            while (ctx.measureText(remaining + "...").width > maxWidth && remaining.length > 0) {
+              remaining = remaining.slice(0, -1);
+            }
+            ctx.fillText(remaining + "...", x, curY);
+            return curY + lineHeight;
+          }
+        } else {
+          line = testLine;
+        }
+      }
+      ctx.fillText(line, x, curY);
+      return curY + lineHeight;
+    }
+
+    // 1. Canvas Background
+    ctx.fillStyle = "#fafaf8";
+    ctx.fillRect(0, 0, 1080, 1920);
+
+    // Soft top ambient radial glow
+    var topGlow = ctx.createRadialGradient(540, 260, 40, 540, 260, 550);
+    topGlow.addColorStop(0, "rgba(79, 70, 229, 0.12)");
+    topGlow.addColorStop(0.65, "rgba(238, 240, 255, 0.4)");
+    topGlow.addColorStop(1, "rgba(250, 250, 248, 0)");
+    ctx.fillStyle = topGlow;
+    ctx.fillRect(0, 0, 1080, 800);
+
+    // 2. Main Card Container (safe zones for Story: top 140px, bottom 140px)
+    var cardX = 70;
+    var cardY = 140;
+    var cardW = 940;
+    var cardH = 1640;
+    var cardRadius = 36;
+
+    ctx.save();
+    ctx.shadowColor = "rgba(15, 23, 42, 0.08)";
+    ctx.shadowBlur = 36;
+    ctx.shadowOffsetY = 14;
+    drawRoundRect(cardX, cardY, cardW, cardH, cardRadius, "#ffffff", "#ebe9e4", 2);
+    ctx.restore();
+
+    // 3. Card Top Branding Pill
+    var brandText = "🧭 ideoMap · Political Ideology Quiz";
+    ctx.font = "600 22px 'Instrument Sans', system-ui, -apple-system, sans-serif";
+    var brandMetrics = ctx.measureText(brandText);
+    var pillW = brandMetrics.width + 44;
+    var pillH = 42;
+    var pillX = 540 - pillW / 2;
+    var pillY = cardY + 36;
+    drawRoundRect(pillX, pillY, pillW, pillH, 21, "#f4f3ef", "#dad7d0", 1.5);
+    ctx.fillStyle = "#4b5563";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(brandText, 540, pillY + pillH / 2);
+
+    // 4. Emoji Icon in Circle Badge
+    var emojiCenterY = pillY + 115;
+    drawRoundRect(540 - 55, emojiCenterY - 55, 110, 110, 55, "#ffffff", "#ebe9e4", 2);
+    ctx.font = "58px 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(data.emoji || "🧭", 540, emojiCenterY + 4);
+
+    // 5. Lead text (User Name + lead)
+    var leadText = data.leadText;
+    ctx.font = "500 26px 'Instrument Sans', system-ui, -apple-system, sans-serif";
+    ctx.fillStyle = "#6b6a66";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "alphabetic";
+    ctx.fillText(leadText, 540, emojiCenterY + 105);
+
+    // 6. Ideology Title
+    var title = data.title;
+    var titleY = emojiCenterY + 180;
+    ctx.fillStyle = "#18181b";
+    var titleSize = title.length > 22 ? 52 : (title.length > 16 ? 60 : 68);
+    ctx.font = "bold " + titleSize + "px 'Instrument Serif', Georgia, serif";
+    ctx.fillText(title, 540, titleY);
+
+    // 7. Overall Band Badge Pill
+    var badgeText = (data.lang === "hi" ? "कुल स्थिति: " : "Overall: ") + data.overall;
+    ctx.font = "700 22px 'Instrument Sans', system-ui, -apple-system, sans-serif";
+    var badgeMetrics = ctx.measureText(badgeText);
+    var bPillW = badgeMetrics.width + 36;
+    var bPillH = 40;
+    var bPillY = titleY + 22;
+    drawRoundRect(540 - bPillW / 2, bPillY, bPillW, bPillH, 20, "#eef0ff", "#c7d2fe", 1.5);
+    ctx.fillStyle = "#4f46e5";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(badgeText, 540, bPillY + bPillH / 2);
+
+    // 8. Divider Line
+    var divY = bPillY + bPillH + 28;
+    ctx.beginPath();
+    ctx.moveTo(cardX + 44, divY);
+    ctx.lineTo(cardX + cardW - 44, divY);
+    ctx.strokeStyle = "#ebe9e4";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // 9. Ideology Description
+    var descY = divY + 42;
+    ctx.font = "24px 'Instrument Sans', system-ui, -apple-system, sans-serif";
+    ctx.fillStyle = "#374151";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "alphabetic";
+    var descBottom = wrapText(data.desc, cardX + 44, descY, cardW - 88, 38, 4);
+
+    // 10. Left ↔ Right Spectrum Meter
+    var meterSectionY = Math.max(descBottom + 20, divY + 195);
+    var leftPct = Math.round((100 - data.overallScore) / 2);
+    var rightPct = 100 - leftPct;
+    var leftName = data.leftName || "Left";
+    var rightName = data.rightName || "Right";
+
+    // Spectrum Labels
+    ctx.font = "700 23px 'Instrument Sans', system-ui, -apple-system, sans-serif";
+    ctx.fillStyle = "#d9434d";
+    ctx.textAlign = "left";
+    ctx.fillText(leftPct + "% " + leftName, cardX + 44, meterSectionY + 24);
+
+    ctx.fillStyle = "#2a78d6";
+    ctx.textAlign = "right";
+    ctx.fillText(rightName + " " + rightPct + "%", cardX + cardW - 44, meterSectionY + 24);
+
+    // 7-Band Spectrum Bar
+    var barY = meterSectionY + 38;
+    var barW = cardW - 88;
+    var barH = 22;
+    var barX = cardX + 44;
+    var segColors = ["#d9434d", "#e57379", "#f0a3a6", "#d6d3cc", "#9cc0ee", "#639ce2", "#2a78d6"];
+    var segW = barW / 7;
+
+    for (var si = 0; si < 7; si++) {
+      ctx.fillStyle = segColors[si];
+      ctx.fillRect(barX + si * segW, barY, segW + 0.5, barH);
+    }
+    drawRoundRect(barX, barY, barW, barH, 11, null, "#ebe9e4", 1);
+
+    // Indicator Dot on bar
+    var markerX = barX + ((data.overallScore + 100) / 200) * barW;
+    markerX = Math.max(barX + 11, Math.min(barX + barW - 11, markerX));
+    var markerY = barY + barH / 2;
+    ctx.save();
+    ctx.shadowColor = "rgba(0, 0, 0, 0.35)";
+    ctx.shadowBlur = 6;
+    ctx.beginPath();
+    ctx.arc(markerX, markerY, 13, 0, Math.PI * 2);
+    ctx.fillStyle = "#18181b";
+    ctx.fill();
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = "#ffffff";
+    ctx.stroke();
+    ctx.restore();
+
+    // 11. Neighbouring Ideologies row
+    var closeY = barY + 54;
+    if (data.alsoClose && data.alsoClose.length > 0) {
+      var closeText = (data.lang === "hi" ? "क़रीबी विचारधाराएँ: " : "Also close: ") +
+        data.alsoClose.map(function (c) { return c.emoji + " " + c.title; }).join("   ");
+      ctx.font = "500 21px 'Instrument Sans', system-ui, -apple-system, sans-serif";
+      ctx.fillStyle = "#6b6a66";
+      ctx.textAlign = "center";
+      ctx.fillText(closeText, 540, closeY);
+    }
+
+    // 12. 4-Area Breakdown (2x2 Grid)
+    if (data.domains && data.domains.length === 4) {
+      var gridStartY = closeY + 34;
+      var dCardW = (cardW - 88 - 18) / 2;
+      var dCardH = 58;
+      for (var di = 0; di < 4; di++) {
+        var col = di % 2;
+        var row = Math.floor(di / 2);
+        var dx = cardX + 44 + col * (dCardW + 18);
+        var dy = gridStartY + row * (dCardH + 12);
+        var dItem = data.domains[di];
+
+        drawRoundRect(dx, dy, dCardW, dCardH, 14, "#f8fafc", "#e2e8f0", 1.5);
+        ctx.textAlign = "left";
+        ctx.textBaseline = "middle";
+        ctx.font = "600 20px 'Instrument Sans', system-ui, -apple-system, sans-serif";
+        ctx.fillStyle = "#1e293b";
+        ctx.fillText(dItem.icon + " " + dItem.name, dx + 18, dy + dCardH / 2);
+
+        ctx.textAlign = "right";
+        ctx.font = "700 20px 'Instrument Sans', system-ui, -apple-system, sans-serif";
+        ctx.fillStyle = "#4f46e5";
+        ctx.fillText(dItem.lean, dx + dCardW - 18, dy + dCardH / 2);
+      }
+    }
+
+    // 13. Bottom "TAKE THE TEST" Conversion Block
+    var ctaBoxY = (data.domains && data.domains.length === 4)
+      ? gridStartY + 2 * (dCardH + 12) + 30
+      : closeY + 60;
+    var ctaBoxH = 420;
+    var ctaBoxW = cardW - 72;
+    var ctaBoxX = cardX + 36;
+
+    drawRoundRect(ctaBoxX, ctaBoxY, ctaBoxW, ctaBoxH, 26, "#f8fafc", "#cbd5e1", 2);
+
+    // Left Column
+    var ctaPillText = data.lang === "hi" ? "🧭 2 मिनट का मुफ़्त क्विज़" : "🧭 FREE 2-MINUTE QUIZ";
+    ctx.font = "700 18px 'Instrument Sans', system-ui, -apple-system, sans-serif";
+    var ctaPillMetrics = ctx.measureText(ctaPillText);
+    var cpW = ctaPillMetrics.width + 30;
+    var cpH = 34;
+    drawRoundRect(ctaBoxX + 30, ctaBoxY + 30, cpW, cpH, 17, "#4f46e5", null);
+    ctx.fillStyle = "#ffffff";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "middle";
+    ctx.fillText(ctaPillText, ctaBoxX + 45, ctaBoxY + 30 + cpH / 2);
+
+    var ctaTitle = data.lang === "hi" ? "आपकी विचारधारा क्या है?" : "Which ideology are you?";
+    ctx.font = "bold 35px 'Instrument Serif', Georgia, serif";
+    ctx.fillStyle = "#0f172a";
+    ctx.textBaseline = "alphabetic";
+    ctx.fillText(ctaTitle, ctaBoxX + 30, ctaBoxY + 115);
+
+    var ctaSub = data.lang === "hi"
+      ? "क्विज़ खेलें और देखें कि आप अपने दोस्त से कितने सहमत हैं!"
+      : "Take the quiz & compare your compass with me!";
+    ctx.font = "20px 'Instrument Sans', system-ui, -apple-system, sans-serif";
+    ctx.fillStyle = "#475569";
+    wrapText(ctaSub, ctaBoxX + 30, ctaBoxY + 158, 480, 28, 2);
+
+    // Website Domain Pill
+    var host = location.hostname && location.hostname !== "localhost" && location.hostname !== "127.0.0.1"
+      ? location.hostname
+      : "ideomap.org";
+    var urlText = "👉 " + host;
+    ctx.font = "700 24px 'Instrument Sans', system-ui, -apple-system, sans-serif";
+    var urlMetrics = ctx.measureText(urlText);
+    drawRoundRect(ctaBoxX + 30, ctaBoxY + 252, urlMetrics.width + 34, 46, 23, "#ffffff", "#94a3b8", 1.5);
+    ctx.fillStyle = "#2563eb";
+    ctx.textBaseline = "middle";
+    ctx.fillText(urlText, ctaBoxX + 47, ctaBoxY + 275);
+
+    var stickerTip = data.lang === "hi"
+      ? "🔗 लिंक स्टिकर टैप करें या QR स्कैन करें"
+      : "🔗 Tap Link Sticker or Scan QR to take test";
+    ctx.font = "600 18px 'Instrument Sans', system-ui, -apple-system, sans-serif";
+    ctx.fillStyle = "#15803d";
+    ctx.fillText(stickerTip, ctaBoxX + 30, ctaBoxY + 345);
+
+    // Right Column: QR Code Box
+    var qrBoxW = 210;
+    var qrBoxH = 260;
+    var qrBoxX = ctaBoxX + ctaBoxW - qrBoxW - 30;
+    var qrBoxY = ctaBoxY + (ctaBoxH - qrBoxH) / 2;
+
+    drawRoundRect(qrBoxX, qrBoxY, qrBoxW, qrBoxH, 20, "#ffffff", "#cbd5e1", 2);
+
+    if (typeof qrcode !== "undefined" || (window && window.qrcode)) {
+      try {
+        var qrGen = (typeof qrcode !== "undefined" ? qrcode : window.qrcode);
+        var qr = qrGen(0, "M");
+        qr.addData(data.shareUrl);
+        qr.make();
+        var modCount = qr.getModuleCount();
+        var qrSize = 160;
+        var modSize = qrSize / modCount;
+        var qX = qrBoxX + (qrBoxW - qrSize) / 2;
+        var qY = qrBoxY + 22;
+
+        ctx.fillStyle = "#0f172a";
+        for (var r = 0; r < modCount; r++) {
+          for (var c = 0; c < modCount; c++) {
+            if (qr.isDark(r, c)) {
+              ctx.fillRect(qX + c * modSize, qY + r * modSize, modSize + 0.35, modSize + 0.35);
+            }
+          }
+        }
+
+        ctx.font = "700 15px 'Instrument Sans', system-ui, -apple-system, sans-serif";
+        ctx.fillStyle = "#475569";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "alphabetic";
+        var scanLabel = data.lang === "hi" ? "स्कैन करें" : "SCAN TO TAKE";
+        ctx.fillText(scanLabel, qrBoxX + qrBoxW / 2, qrBoxY + qrBoxH - 18);
+      } catch (e) {
+        console.error("QR Code rendering error:", e);
+      }
+    }
+
+    return canvas;
+  }
+
+  function shareOrDownloadStoryCard(answers, title, overall, ideo, s, ranked, name, mode) {
+    var source = mode === "instagram" ? "insta_story" : (mode === "download" ? "story_dl" : "share");
+    var link = shareUrl(answers, source);
     var message = t("shareText", { result: title, overall: overall });
 
+    // Always copy link to clipboard first so it's ready to paste into Instagram Link Sticker!
+    copyLinkWithFeedback(link);
+
+    var textData = ideo[lang] || ideo.en;
+    var leadText = name ? t("resultLeadNamed", { name: name }) : t("resultLead");
+
+    var domainList = DOMAINS.map(function (d) {
+      var dom = QUIZ.domains[d];
+      var val = s[d];
+      var leftP = Math.round((100 - val) / 2);
+      var rightP = 100 - leftP;
+      var lean = leftP >= rightP ? leftP + "% " + dom[lang].left : rightP + "% " + dom[lang].right;
+      return {
+        icon: dom.icon,
+        name: dom[lang].name,
+        lean: lean
+      };
+    });
+
+    var cardData = {
+      name: name,
+      leadText: leadText,
+      title: title,
+      desc: textData.desc,
+      emoji: ideo.emoji,
+      overall: overall,
+      overallScore: s.overall,
+      leftName: t("left"),
+      rightName: t("right"),
+      alsoClose: (ranked || []).slice(1, 3).map(function (r) {
+        return { emoji: r.emoji, title: r[lang].title };
+      }),
+      domains: domainList,
+      shareUrl: link,
+      lang: lang
+    };
+
+    var canvas = buildStoryCardCanvas(cardData);
+
+    canvas.toBlob(function (blob) {
+      if (!blob) return;
+      var filename = "ideomap-" + ideo.key + "-story.png";
+      var file = new File([blob], filename, { type: "image/png" });
+
+      if (mode === "instagram" || mode === "native") {
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+          navigator.share({
+            files: [file],
+            title: t("siteName"),
+            text: message,
+            url: link
+          }).then(function () {
+            showQuickShareToast(t("storyCopiedHint"), "success");
+          }).catch(function (err) {
+            if (err.name !== "AbortError") {
+              downloadBlob(blob, filename);
+              showQuickShareToast(t("storySavedToast") + " " + t("storyCopiedHint"), "info");
+            }
+          });
+          return;
+        }
+      }
+
+      // Fallback or explicit download
+      downloadBlob(blob, filename);
+      if (mode === "instagram") {
+        showQuickShareToast(t("storySavedToast") + " " + t("storyCopiedHint"), "info");
+      } else {
+        showQuickShareToast(t("storySavedToast"), "success");
+      }
+    }, "image/png");
+  }
+
+  function setupShare(answers, title, overall, ideo, s, ranked, name) {
+    var key = ideo ? ideo.key : "";
+    var message = t("shareText", { result: title, overall: overall });
+    var friendLink = shareUrl(answers, "whatsapp");
+
+    // 1. Direct WhatsApp Button in Quick Share Bar
+    var heroWa = document.getElementById("hero-share-wa");
+    if (heroWa) {
+      heroWa.href = "https://wa.me/?text=" + encodeURIComponent(message + " " + friendLink);
+      heroWa.addEventListener("click", function () {
+        track("share", { method: "whatsapp_hero", result: key });
+      });
+    }
+
+    // 2. Direct Instagram Story Share Button
+    var heroInsta = document.getElementById("hero-share-insta");
+    if (heroInsta) {
+      heroInsta.addEventListener("click", function () {
+        track("share", { method: "instagram_story", result: key });
+        shareOrDownloadStoryCard(answers, title, overall, ideo, s, ranked, name, "instagram");
+      });
+    }
+
+    // 3. Save Story Image Button
+    var heroDownload = document.getElementById("hero-share-download");
+    if (heroDownload) {
+      heroDownload.addEventListener("click", function () {
+        track("share", { method: "download_story", result: key });
+        shareOrDownloadStoryCard(answers, title, overall, ideo, s, ranked, name, "download");
+      });
+    }
+
+    // 4. Copy Quiz Link Button
+    var heroCopy = document.getElementById("hero-share-copy");
+    if (heroCopy) {
+      heroCopy.addEventListener("click", function () {
+        var link = shareUrl(answers, "copy");
+        track("share", { method: "copy_hero", result: key });
+        copyLinkWithFeedback(link, function () {
+          showQuickShareToast("✓ " + t("copied"), "success");
+        });
+      });
+    }
+
+    // Synchronize bottom Challenge section share buttons:
     var wa = document.getElementById("share-whatsapp");
-    wa.href = "https://wa.me/?text=" + encodeURIComponent(message + " " + shareUrl(answers, "whatsapp"));
-    wa.addEventListener("click", function () { track("share", { method: "whatsapp", result: key }); });
+    if (wa) {
+      wa.href = "https://wa.me/?text=" + encodeURIComponent(message + " " + shareUrl(answers, "whatsapp"));
+      wa.addEventListener("click", function () { track("share", { method: "whatsapp", result: key }); });
+    }
 
     var more = document.getElementById("share-native");
-    if (navigator.share) {
+    if (more && navigator.share) {
       more.hidden = false;
       more.addEventListener("click", function () {
         track("share", { method: "native", result: key });
-        navigator.share({ title: t("siteName"), text: message, url: shareUrl(answers, "share") }).catch(function () {});
+        shareOrDownloadStoryCard(answers, title, overall, ideo, s, ranked, name, "native");
       });
     }
 
     var copy = document.getElementById("share-copy");
     var status = document.getElementById("copy-status");
-    copy.addEventListener("click", function () {
-      var link = shareUrl(answers, "copy");
-      track("share", { method: "copy", result: key });
-      var done = function () {
-        status.textContent = "✓ " + t("copied");
-        setTimeout(function () { status.textContent = ""; }, 3200);
-      };
-      if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(link).then(done, function () { fallbackCopy(link); done(); });
-      } else {
-        fallbackCopy(link);
-        done();
-      }
-    });
+    if (copy) {
+      copy.addEventListener("click", function () {
+        var link = shareUrl(answers, "copy");
+        track("share", { method: "copy", result: key });
+        copyLinkWithFeedback(link, function () {
+          if (status) {
+            status.textContent = "✓ " + t("copied");
+            setTimeout(function () { status.textContent = ""; }, 3200);
+          }
+        });
+      });
+    }
   }
 
   function fallbackCopy(text) {
@@ -1005,211 +1851,11 @@
     document.getElementById("compass").innerHTML = svg;
   }
 
-  function renderCommunityCompass(averages, container) {
-    var civil = QUIZ.domains.civil[lang];
-    var econVal = averages.econ || 0;
-    var civilVal = averages.civil || 0;
-    var x = 100 + (econVal / 100) * 84;
-    var y = 100 - (civilVal / 100) * 84;
-
-    var grid = "";
-    for (var i = 16; i <= 184; i += 21) {
-      grid += '<line x1="' + i + '" y1="16" x2="' + i + '" y2="184"/>' +
-              '<line x1="16" y1="' + i + '" x2="184" y2="' + i + '"/>';
-    }
-    var svg =
-      '<svg class="compass" viewBox="0 0 200 210" role="img" aria-label="' + esc(t("statsCompassHeading") || "Community Compass") + '">' +
-      '<defs>' +
-      '  <clipPath id="comm-compass-clip"><rect x="16" y="16" width="168" height="168" rx="14"/></clipPath>' +
-      '  <filter id="comm-compass-shadow" x="-30%" y="-30%" width="160%" height="160%">' +
-      '    <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-opacity="0.22"/>' +
-      '  </filter>' +
-      '</defs>' +
-      '<g clip-path="url(#comm-compass-clip)">' +
-      '  <rect x="16" y="16" width="84" height="84" fill="var(--q-auth-left)"/>' +
-      '  <rect x="100" y="16" width="84" height="84" fill="var(--q-auth-right)"/>' +
-      '  <rect x="16" y="100" width="84" height="84" fill="var(--q-lib-left)"/>' +
-      '  <rect x="100" y="100" width="84" height="84" fill="var(--q-lib-right)"/>' +
-      '  <g stroke="var(--surface)" stroke-width="0.75" opacity="0.95">' + grid + '</g>' +
-      '</g>' +
-      '<rect x="16" y="16" width="168" height="168" rx="14" fill="none" stroke="var(--border-strong)" stroke-width="1"/>' +
-      '<line x1="100" y1="16" x2="100" y2="184" stroke="var(--ink)" stroke-width="0.85" opacity="0.35"/>' +
-      '<line x1="16" y1="100" x2="184" y2="100" stroke="var(--ink)" stroke-width="0.85" opacity="0.35"/>' +
-      '<path d="M' + x.toFixed(1) + ' 100V' + y.toFixed(1) + 'M100 ' + y.toFixed(1) + 'H' + x.toFixed(1) + '" fill="none" stroke="var(--accent)" stroke-width="0.85" stroke-dasharray="2.5 2.5" opacity="0.65"/>' +
-      '<text x="100" y="11" text-anchor="middle" class="compass-label">' + esc(civil.right) + '</text>' +
-      '<text x="100" y="198" text-anchor="middle" class="compass-label">' + esc(civil.left) + '</text>' +
-      '<text x="9" y="100" text-anchor="middle" transform="rotate(-90 9 100)" class="compass-label">' + esc(t("left")) + '</text>' +
-      '<text x="191" y="100" text-anchor="middle" transform="rotate(90 191 100)" class="compass-label">' + esc(t("right")) + '</text>' +
-      '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="14" fill="var(--accent)" opacity="0.18">' +
-      '  <animate attributeName="r" values="8;18;8" dur="3s" repeatCount="indefinite"/>' +
-      '  <animate attributeName="opacity" values="0.25;0.05;0.25" dur="3s" repeatCount="indefinite"/>' +
-      '</circle>' +
-      '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="5.5" fill="var(--accent)" stroke="#ffffff" stroke-width="2" filter="url(#comm-compass-shadow)"/>' +
-      '</svg>';
-    container.innerHTML = svg;
-  }
-
   /* ---------- Community Stats Dashboard Page ---------- */
 
+  // The dashboard itself is rendered by stats.js; this only sets the translated title.
   function statsPage() {
-    document.title = t("statsTitle") || "Community Ideology Statistics";
-    var refreshBtn = document.getElementById("stats-refresh");
-
-    function loadAndRenderStats() {
-      if (refreshBtn) refreshBtn.classList.add("is-spinning");
-      if (!window.QUIZ_DB) return;
-
-      window.QUIZ_DB.getStats().then(function (stats) {
-        if (refreshBtn) refreshBtn.classList.remove("is-spinning");
-        if (!stats) return;
-
-        // Badge
-        var badge = document.getElementById("stats-badge");
-        if (badge) {
-          badge.textContent = stats.isLive ? (t("statsLiveBadge") || "Live Database") : (stats.total + "+ " + (t("statsParticipantsCount", { n: "" }) || "Quiz Takers")).trim();
-          badge.className = "badge " + (stats.isLive ? "badge--live" : "badge--sample");
-        }
-
-        // KPIs
-        var kpiTotal = document.getElementById("kpi-total");
-        if (kpiTotal) kpiTotal.textContent = stats.total.toLocaleString();
-
-        var topIdeoKey = stats.topIdeology;
-        var topIdeoObj = QUIZ_RESULTS.ideologies.find(function (i) { return i.key === topIdeoKey; });
-        var kpiTop = document.getElementById("kpi-top");
-        if (kpiTop && topIdeoObj) {
-          kpiTop.textContent = (topIdeoObj.emoji || "") + " " + topIdeoObj[lang].title;
-        }
-
-        var kpiAvg = document.getElementById("kpi-avg");
-        if (kpiAvg) {
-          var avgOverall = stats.averages.overall;
-          var sign = avgOverall > 0 ? "+" : "";
-          kpiAvg.textContent = sign + avgOverall;
-        }
-
-        var kpiLang = document.getElementById("kpi-lang");
-        if (kpiLang && stats.langCounts) {
-          var enC = stats.langCounts.en || 0;
-          var hiC = stats.langCounts.hi || 0;
-          var totalL = enC + hiC || 1;
-          kpiLang.textContent = Math.round((enC / totalL) * 100) + "% / " + Math.round((hiC / totalL) * 100) + "%";
-        }
-
-        // Ideology Bars
-        var barsContainer = document.getElementById("stats-ideology-bars");
-        if (barsContainer) {
-          barsContainer.innerHTML = "";
-          var sorted = Object.keys(stats.ideologies).map(function (k) {
-            var item = stats.ideologies[k];
-            var obj = QUIZ_RESULTS.ideologies.find(function (i) { return i.key === k; });
-            return {
-              key: k,
-              title: obj ? obj[lang].title : k,
-              emoji: obj ? obj.emoji : "🏛️",
-              count: item.count,
-              pct: item.pct
-            };
-          }).sort(function (a, b) { return b.count - a.count; });
-
-          sorted.slice(0, 8).forEach(function (row) {
-            var item = el("div", "stats-bar-item");
-            item.innerHTML =
-              '<div class="stats-bar-head">' +
-              '  <span class="stats-bar-title"><span class="stats-bar-emoji">' + esc(row.emoji) + '</span> ' + esc(row.title) + '</span>' +
-              '  <span class="stats-bar-meta">' + row.pct + '% (' + row.count + ')</span>' +
-              '</div>' +
-              '<div class="stats-bar-track">' +
-              '  <div class="stats-bar-fill" style="width: ' + row.pct + '%;"></div>' +
-              '</div>';
-            barsContainer.appendChild(item);
-          });
-        }
-
-        // Spectrum 7 Bands
-        var spectrumContainer = document.getElementById("stats-spectrum-bars");
-        if (spectrumContainer) {
-          spectrumContainer.innerHTML = "";
-          var bandNames = [
-            t("bandL2"), t("bandL1"), t("bandLM"),
-            t("bandMid"),
-            t("bandRM"), t("bandR1"), t("bandR2")
-          ];
-          var bandColors = [
-            "#f43f5e", "#fb7185", "#fda4af",
-            "#cbd5e1",
-            "#93c5fd", "#60a5fa", "#3b82f6"
-          ];
-          for (var b = 0; b < 7; b++) {
-            var bData = stats.bands[b] || { count: 0, pct: 0 };
-            var bRow = el("div", "spectrum-band-row");
-            bRow.innerHTML =
-              '<div class="spectrum-band-head">' +
-              '  <span class="spectrum-band-dot" style="background: ' + bandColors[b] + ';"></span>' +
-              '  <span class="spectrum-band-name">' + esc(bandNames[b] || "Band " + b) + '</span>' +
-              '  <span class="spectrum-band-pct">' + bData.pct + '% (' + bData.count + ')</span>' +
-              '</div>' +
-              '<div class="spectrum-band-track">' +
-              '  <div class="spectrum-band-fill" style="width: ' + bData.pct + '%; background: ' + bandColors[b] + ';"></div>' +
-              '</div>';
-            spectrumContainer.appendChild(bRow);
-          }
-        }
-
-        // 4 Domains Grid
-        var domainsGrid = document.getElementById("stats-domains-grid");
-        if (domainsGrid) {
-          domainsGrid.innerHTML = "";
-          DOMAINS.forEach(function (d) {
-            var dom = QUIZ.domains[d];
-            var names = dom[lang];
-            var avgVal = stats.averages[d] || 0;
-            var band = QUIZ.bands[d][bandIndex(avgVal)][lang];
-            var card = el("div", "stats-domain-card");
-            var sign = avgVal > 0 ? "+" : "";
-
-            card.innerHTML =
-              '<div class="stats-domain-header">' +
-              '  <span class="stats-domain-title">' + dom.icon + ' ' + esc(names.name) + '</span>' +
-              '  <span class="badge badge--accent">' + esc(band.label) + ' (' + sign + avgVal + ')</span>' +
-              '</div>';
-            card.appendChild(meter(avgVal, names.left, names.right, band.label, DOMAIN_SEGS, bandIndex(avgVal)));
-            domainsGrid.appendChild(card);
-          });
-        }
-
-        // Community Compass
-        var compassBox = document.getElementById("stats-compass");
-        if (compassBox) {
-          renderCommunityCompass(stats.averages, compassBox);
-        }
-
-        // Recent Feed
-        var recentFeed = document.getElementById("stats-recent-feed");
-        if (recentFeed && stats.recent) {
-          recentFeed.innerHTML = "";
-          stats.recent.forEach(function (rec) {
-            var ideoObj = QUIZ_RESULTS.ideologies.find(function (i) { return i.key === rec.ideology; });
-            var item = el("div", "recent-feed-item");
-            var sign = rec.overall_score > 0 ? "+" : "";
-            item.innerHTML =
-              '<span class="recent-feed-icon">' + (ideoObj ? ideoObj.emoji : "🧭") + '</span>' +
-              '<div class="recent-feed-body">' +
-              '  <div class="recent-feed-title">' + (ideoObj ? esc(ideoObj[lang].title) : esc(rec.ideology)) + '</div>' +
-              '  <div class="recent-feed-meta">Score: ' + sign + rec.overall_score + ' · ' + (rec.lang === "hi" ? "हिन्दी" : "English") + '</div>' +
-              '</div>' +
-              '<span class="recent-feed-time">' + esc(rec.timeAgo) + '</span>';
-            recentFeed.appendChild(item);
-          });
-        }
-      });
-    }
-
-    if (refreshBtn) {
-      refreshBtn.addEventListener("click", loadAndRenderStats);
-    }
-
-    loadAndRenderStats();
+    document.title = t("statsTitle");
   }
 
   function esc(str) {

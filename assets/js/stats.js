@@ -81,12 +81,12 @@
       if (topIdeoObj) {
         kpiTopIdeo.textContent = topIdeoObj.emoji + " " + topIdeoObj[lang].title.split(" (")[0];
         if (kpiTopPct) {
-          kpiTopPct.textContent = data.ideologies[data.topIdeology].pct + "% of participants";
+          kpiTopPct.textContent = t("statsKpiTopSub", { pct: (data.ideologies[data.topIdeology] || {}).pct || 0 });
         }
       }
     }
 
-    if (kpiLang && data.langCounts) {
+    if (kpiLang && data.langCounts && data.total) {
       var enPct = Math.round(((data.langCounts.en || 0) / data.total) * 100);
       var hiPct = 100 - enPct;
       kpiLang.textContent = enPct + "% / " + hiPct + "%";
@@ -97,10 +97,12 @@
     if (barsContainer) {
       var list = QUIZ.ideologies.map(function (ideo) {
         var stat = data.ideologies[ideo.key] || { count: 0, pct: 0 };
+        var textObj = ideo[lang] || ideo.en;
         return {
           key: ideo.key,
           emoji: ideo.emoji,
-          title: ideo[lang].title,
+          title: textObj.title,
+          examplePerson: textObj.examplePerson || "",
           count: stat.count,
           pct: stat.pct
         };
@@ -111,11 +113,23 @@
       var maxPct = Math.max(1, list[0].pct);
       var barsHtml = list.map(function (item) {
         var widthRatio = ((item.pct / maxPct) * 100).toFixed(1);
+        var exHtml = item.examplePerson
+          ? '<span class="stats-bar-sub">' + (lang === "hi" ? "उदा. " : "e.g. ") + esc(item.examplePerson) + '</span>'
+          : '';
         return (
-          '<div class="stats-bar-item">' +
-          '  <div class="stats-bar-head">' +
-          '    <span class="stats-bar-title"><span class="stats-bar-emoji">' + item.emoji + '</span> ' + esc(item.title) + '</span>' +
-          '    <span class="stats-bar-meta"><strong>' + item.pct + '%</strong> <span class="muted">(' + item.count + ')</span></span>' +
+          '<div class="stats-bar-item" data-key="' + esc(item.key) + '">' +
+          '  <div class="stats-bar-main">' +
+          '    <div class="stats-bar-icon" aria-hidden="true">' + item.emoji + '</div>' +
+          '    <div class="stats-bar-content">' +
+          '      <div class="stats-bar-title-wrap">' +
+          '        <span class="stats-bar-title">' + esc(item.title) + '</span>' +
+          '      </div>' +
+          exHtml +
+          '    </div>' +
+          '    <div class="stats-bar-metric">' +
+          '      <span class="stats-bar-pct">' + item.pct + '%</span>' +
+          '      <span class="stats-bar-count">(' + item.count + ')</span>' +
+          '    </div>' +
           '  </div>' +
           '  <div class="stats-bar-track">' +
           '    <div class="stats-bar-fill" style="width: ' + widthRatio + '%;"></div>' +
@@ -199,9 +213,9 @@
     var feedContainer = document.getElementById("recent-feed");
     if (feedContainer) {
       if (!data.recent || data.recent.length === 0) {
-        feedContainer.innerHTML = '<p class="muted">No recent submissions yet.</p>';
+        feedContainer.innerHTML = '<p class="muted">' + esc(t("statsNoRecent")) + '</p>';
       } else {
-        var feedHtml = data.recent.map(function (r) {
+        var feedHtml = data.recent.slice(0, 8).map(function (r) {
           var ideoObj = findIdeology(r.ideology);
           var emoji = ideoObj ? ideoObj.emoji : "🧭";
           var title = ideoObj ? ideoObj[lang].title.split(" (")[0] : r.ideology;

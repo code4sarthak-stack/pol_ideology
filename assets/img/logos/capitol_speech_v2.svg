@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Background Circle -->
+    <linearGradient id="v2-card-bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f8fafc"/>
+    </linearGradient>
+
+    <!-- Left Bubble: Indigo/Cyan -->
+    <linearGradient id="v2-blue-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#1d4ed8"/>
+    </linearGradient>
+
+    <!-- Right Bubble: Amber/Orange -->
+    <linearGradient id="v2-orange-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fb923c"/>
+      <stop offset="100%" stop-color="#ea580c"/>
+    </linearGradient>
+
+    <filter id="v2-shadow" x="-12%" y="-12%" width="124%" height="124%">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#0f172a" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <!-- Background Canvas -->
+  <rect width="512" height="512" rx="112" fill="url(#v2-card-bg)"/>
+  <rect width="512" height="512" rx="112" fill="none" stroke="#e2e8f0" stroke-width="2"/>
+
+  <!-- Soft Sunlight Halo -->
+  <circle cx="256" cy="240" r="160" fill="#fffbeb" opacity="0.8"/>
+
+  <!-- Speech Bubbles (Smooth Modern Rounded Forms) -->
+  <!-- Left Speech Bubble -->
+  <g filter="url(#v2-shadow)">
+    <path d="M 120, 130
+             C 175, 130 215, 155 215, 190
+             C 215, 225 180, 248 135, 248
+             C 125, 248 118, 258 110, 275
+             C 112, 260 102, 248 92, 242
+             C 65, 228 55, 205 55, 185
+             C 55, 145 85, 130 120, 130 Z"
+          fill="url(#v2-blue-grad)"/>
+    <!-- Dialogue lines inside left bubble -->
+    <rect x="95" y="172" width="65" height="7" rx="3.5" fill="#ffffff" opacity="0.6"/>
+    <rect x="95" y="188" width="45" height="7" rx="3.5" fill="#ffffff" opacity="0.6"/>
+
+    <!-- Right Speech Bubble -->
+    <path d="M 392, 130
+             C 427, 130 457, 145 457, 185
+             C 457, 205 447, 228 420, 242
+             C 410, 248 400, 260 402, 275
+             C 394, 258 387, 248 377, 248
+             C 332, 248 297, 225 297, 190
+             C 297, 155 337, 130 392, 130 Z"
+          fill="url(#v2-orange-grad)"/>
+    <!-- Dialogue lines inside right bubble -->
+    <rect x="352" y="172" width="65" height="7" rx="3.5" fill="#ffffff" opacity="0.6"/>
+    <rect x="372" y="188" width="45" height="7" rx="3.5" fill="#ffffff" opacity="0.6"/>
+  </g>
+
+  <!-- Civic Capitol / Parliament Silhouette (Ultra-Clean Geometric) -->
+  <g filter="url(#v2-shadow)" fill="#1e293b">
+    <!-- Top Finial / Flag -->
+    <rect x="254" y="148" width="4" height="32" rx="2"/>
+    <path d="M 258, 150 C 267, 147 274, 153 283, 150 L 283, 163 C 274, 166 267, 160 258, 163 Z" fill="#3b82f6"/>
+
+    <!-- Dome Top Cap -->
+    <path d="M 248, 180 L 264, 180 L 260, 187 L 252, 187 Z"/>
+
+    <!-- Clean Semi-Circular Dome -->
+    <path d="M 204, 250 A 52 52 0 0 1 308, 250 Z"/>
+
+    <!-- Middle Architectural Band with 3 Arches -->
+    <rect x="194" y="254" width="124" height="20" rx="3"/>
+    <circle cx="218" cy="264" r="5" fill="#ffffff"/>
+    <circle cx="256" cy="264" r="5" fill="#ffffff"/>
+    <circle cx="294" cy="264" r="5" fill="#ffffff"/>
+
+    <!-- Pediment Cornice -->
+    <rect x="180" y="278" width="152" height="10" rx="2"/>
+
+    <!-- Minimal Pillars (4 Bold Modern Columns) -->
+    <rect x="194" y="292" width="16" height="58" rx="4"/>
+    <rect x="226" y="292" width="16" height="58" rx="4"/>
+    <rect x="270" y="292" width="16" height="58" rx="4"/>
+    <rect x="302" y="292" width="16" height="58" rx="4"/>
+
+    <!-- Base Steps (3 Bold Proportional Steps) -->
+    <rect x="174" y="354" width="164" height="12" rx="3"/>
+    <rect x="156" y="370" width="200" height="12" rx="3"/>
+    <rect x="136" y="386" width="240" height="14" rx="3"/>
+  </g>
+</svg>
