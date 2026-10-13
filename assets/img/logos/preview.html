@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ideoMap — Logo Design Templates Showcase</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --accent: #4f46e5;
+      --accent-gold: #fbbf24;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 2.5rem 1.5rem 4rem;
+      line-height: 1.5;
+    }
+    header {
+      max-width: 1200px;
+      margin: 0 auto 3rem;
+      text-align: center;
+    }
+    .badge {
+      display: inline-block;
+      padding: 0.35rem 0.85rem;
+      background: rgba(79, 70, 229, 0.2);
+      color: #a5b4fc;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+    }
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.75rem;
+    }
+    p.subtitle {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 650px;
+      margin: 0 auto;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 1.25rem;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(99, 102, 241, 0.4);
+    }
+    .preview-box {
+      background: #ffffff;
+      padding: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 280px;
+      position: relative;
+    }
+    .preview-box img {
+      max-width: 200px;
+      max-height: 200px;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 8px 16px rgba(0,0,0,0.06));
+    }
+    .card-body {
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .tag {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.08);
+      color: var(--muted);
+    }
+    .card-desc {
+      font-size: 0.95rem;
+      color: var(--muted);
+      margin-bottom: 1.25rem;
+      flex: 1;
+    }
+    .navbar-preview {
+      background: #f8fafc;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+      border: 1px solid #e2e8f0;
+    }
+    .navbar-preview img {
+      width: 26px;
+      height: 26px;
+      border-radius: 4px;
+    }
+    .navbar-preview span {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #0f172a;
+      letter-spacing: -0.01em;
+    }
+    .links {
+      display: flex;
+      gap: 0.75rem;
+    }
+    .btn {
+      flex: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.6rem 0.85rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: 0.15s;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #ffffff;
+    }
+    .btn-primary:hover {
+      background: #4338ca;
+    }
+    .btn-secondary {
+      background: rgba(255,255,255,0.08);
+      color: #e2e8f0;
+    }
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.15);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="badge">Branding & Identity</div>
+    <h1>ideoMap Logo Templates</h1>
+    <p class="subtitle">5 simple, modern, and elegant logo templates crafted for the ideoMap political quiz & compass app.</p>
+  </header>
+
+  <div class="grid">
+    <!-- Template 1 -->
+    <div class="card">
+      <div class="preview-box">
+        <img src="logo_template_1.png" alt="Template 1: Minimalist Compass Star">
+      </div>
+      <div class="card-body">
+        <div class="card-title">
+          <span>1. The Compass Star</span>
+          <span class="tag">Geometric Line Art</span>
+        </div>
+        <p class="card-desc">Clean four-point faceted navigational star with multi-dimensional ideological axis rings. Royal indigo, amber gold, and subtle slate.</p>
+        <div class="navbar-preview">
+          <img src="logo_template_1.svg" alt="App preview">
+          <span>ideoMap</span>
+        </div>
+        <div class="links">
+          <a href="logo_template_1.svg" class="btn btn-primary" download>Download SVG</a>
+          <a href="logo_template_1.png" class="btn btn-secondary" download>PNG Image</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Template 2 -->
+    <div class="card">
+      <div class="preview-box">
+        <img src="logo_template_2.jpg" alt="Template 2: Intersecting Ideological Axes">
+      </div>
+      <div class="card-body">
+        <div class="card-title">
+          <span>2. The Spectrum Grid</span>
+          <span class="tag">Swiss Modernism</span>
+        </div>
+        <p class="card-desc">Minimalist political compass coordinate axes dividing 4 geometric quadrants in indigo, muted teal, slate, and warm amber gradients.</p>
+        <div class="navbar-preview">
+          <img src="logo_template_2.svg" alt="App preview">
+          <span>ideoMap</span>
+        </div>
+        <div class="links">
+          <a href="logo_template_2.svg" class="btn btn-primary" download>Download SVG</a>
+          <a href="logo_template_2.jpg" class="btn btn-secondary" download>JPG Image</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Template 3 -->
+    <div class="card">
+      <div class="preview-box">
+        <img src="logo_template_3.jpg" alt="Template 3: Origami Monogram M">
+      </div>
+      <div class="card-body">
+        <div class="card-title">
+          <span>3. The Origami 'M' Monogram</span>
+          <span class="tag">Luxury Monogram</span>
+        </div>
+        <p class="card-desc">Geometric 'M' lettermark seamlessly rising into an upward navigation compass arrow with faceted indigo shading and glowing amber apex.</p>
+        <div class="navbar-preview">
+          <img src="logo_template_3.svg" alt="App preview">
+          <span>ideoMap</span>
+        </div>
+        <div class="links">
+          <a href="logo_template_3.svg" class="btn btn-primary" download>Download SVG</a>
+          <a href="logo_template_3.jpg" class="btn btn-secondary" download>JPG Image</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Template 4 -->
+    <div class="card">
+      <div class="preview-box">
+        <img src="logo_template_4.jpg" alt="Template 4: Ideological Balance Dial">
+      </div>
+      <div class="card-body">
+        <div class="card-title">
+          <span>4. The Spectrum Dial</span>
+          <span class="tag">Architectural Precision</span>
+        </div>
+        <p class="card-desc">Sleek calibrated semicircular meter with fine radial tick marks and an equilibrium needle highlighted by a warm amber tip.</p>
+        <div class="navbar-preview">
+          <img src="logo_template_4.svg" alt="App preview">
+          <span>ideoMap</span>
+        </div>
+        <div class="links">
+          <a href="logo_template_4.svg" class="btn btn-primary" download>Download SVG</a>
+          <a href="logo_template_4.jpg" class="btn btn-secondary" download>JPG Image</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Template 5 -->
+    <div class="card">
+      <div class="preview-box">
+        <img src="logo_template_5.png" alt="Template 5: Map Pin Compass Core">
+      </div>
+      <div class="card-body">
+        <div class="card-title">
+          <span>5. The Map Marker & Core</span>
+          <span class="tag">Iconic Brand Mark</span>
+        </div>
+        <p class="card-desc">Sculpted modern map marker silhouette encapsulating a golden navigational compass star, instantly communicating political mapping.</p>
+        <div class="navbar-preview">
+          <img src="logo_template_5.svg" alt="App preview">
+          <span>ideoMap</span>
+        </div>
+        <div class="links">
+          <a href="logo_template_5.svg" class="btn btn-primary" download>Download SVG</a>
+          <a href="logo_template_5.png" class="btn btn-secondary" download>PNG Image</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
