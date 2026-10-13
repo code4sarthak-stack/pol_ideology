@@ -1679,99 +1679,71 @@
       }
     }
 
-    // 13. Bottom "TAKE THE TEST" Conversion Block
+    // 13. Bottom "TAKE THE TEST" Conversion Block — the website link is the call to action
     var ctaBoxY = (data.domains && data.domains.length === 4)
       ? gridStartY + 2 * (dCardH + 12) + 30
       : closeY + 60;
-    var ctaBoxH = 420;
+    var ctaBoxH = 390;
     var ctaBoxW = cardW - 72;
     var ctaBoxX = cardX + 36;
 
     drawRoundRect(ctaBoxX, ctaBoxY, ctaBoxW, ctaBoxH, 26, "#f8fafc", "#cbd5e1", 2);
 
-    // Left Column
     var ctaPillText = data.lang === "hi" ? "🧭 2 मिनट का मुफ़्त क्विज़" : "🧭 FREE 2-MINUTE QUIZ";
     ctx.font = "700 18px 'Instrument Sans', system-ui, -apple-system, sans-serif";
     var ctaPillMetrics = ctx.measureText(ctaPillText);
     var cpW = ctaPillMetrics.width + 30;
     var cpH = 34;
-    drawRoundRect(ctaBoxX + 30, ctaBoxY + 30, cpW, cpH, 17, "#4f46e5", null);
+    drawRoundRect(540 - cpW / 2, ctaBoxY + 32, cpW, cpH, 17, "#4f46e5", null);
     ctx.fillStyle = "#ffffff";
-    ctx.textAlign = "left";
+    ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText(ctaPillText, ctaBoxX + 45, ctaBoxY + 30 + cpH / 2);
+    ctx.fillText(ctaPillText, 540, ctaBoxY + 32 + cpH / 2);
 
     var ctaTitle = data.lang === "hi" ? "आपकी विचारधारा क्या है?" : "Which ideology are you?";
-    ctx.font = "bold 35px 'Instrument Serif', Georgia, serif";
+    ctx.font = "bold 40px 'Instrument Serif', Georgia, serif";
     ctx.fillStyle = "#0f172a";
     ctx.textBaseline = "alphabetic";
-    ctx.fillText(ctaTitle, ctaBoxX + 30, ctaBoxY + 115);
+    ctx.fillText(ctaTitle, 540, ctaBoxY + 124);
 
     var ctaSub = data.lang === "hi"
       ? "क्विज़ खेलें और देखें कि आप अपने दोस्त से कितने सहमत हैं!"
       : "Take the quiz & compare your compass with me!";
-    ctx.font = "20px 'Instrument Sans', system-ui, -apple-system, sans-serif";
+    ctx.font = "22px 'Instrument Sans', system-ui, -apple-system, sans-serif";
     ctx.fillStyle = "#475569";
-    wrapText(ctaSub, ctaBoxX + 30, ctaBoxY + 158, 480, 28, 2);
+    wrapText(ctaSub, 540, ctaBoxY + 166, ctaBoxW - 60, 30, 2);
 
-    // Website Domain Pill
+    // Website link, drawn as a button so it reads as the place to go
     var host = location.hostname && location.hostname !== "localhost" && location.hostname !== "127.0.0.1"
       ? location.hostname
       : "ideomap.org";
     var urlText = "👉 " + host;
-    ctx.font = "700 24px 'Instrument Sans', system-ui, -apple-system, sans-serif";
-    var urlMetrics = ctx.measureText(urlText);
-    drawRoundRect(ctaBoxX + 30, ctaBoxY + 252, urlMetrics.width + 34, 46, 23, "#ffffff", "#94a3b8", 1.5);
-    ctx.fillStyle = "#2563eb";
-    ctx.textBaseline = "middle";
-    ctx.fillText(urlText, ctaBoxX + 47, ctaBoxY + 275);
-
-    var stickerTip = data.lang === "hi"
-      ? "🔗 लिंक स्टिकर टैप करें या QR स्कैन करें"
-      : "🔗 Tap Link Sticker or Scan QR to take test";
-    ctx.font = "600 18px 'Instrument Sans', system-ui, -apple-system, sans-serif";
-    ctx.fillStyle = "#15803d";
-    ctx.fillText(stickerTip, ctaBoxX + 30, ctaBoxY + 345);
-
-    // Right Column: QR Code Box
-    var qrBoxW = 210;
-    var qrBoxH = 260;
-    var qrBoxX = ctaBoxX + ctaBoxW - qrBoxW - 30;
-    var qrBoxY = ctaBoxY + (ctaBoxH - qrBoxH) / 2;
-
-    drawRoundRect(qrBoxX, qrBoxY, qrBoxW, qrBoxH, 20, "#ffffff", "#cbd5e1", 2);
-
-    if (typeof qrcode !== "undefined" || (window && window.qrcode)) {
-      try {
-        var qrGen = (typeof qrcode !== "undefined" ? qrcode : window.qrcode);
-        var qr = qrGen(0, "M");
-        qr.addData(data.shareUrl);
-        qr.make();
-        var modCount = qr.getModuleCount();
-        var qrSize = 160;
-        var modSize = qrSize / modCount;
-        var qX = qrBoxX + (qrBoxW - qrSize) / 2;
-        var qY = qrBoxY + 22;
-
-        ctx.fillStyle = "#0f172a";
-        for (var r = 0; r < modCount; r++) {
-          for (var c = 0; c < modCount; c++) {
-            if (qr.isDark(r, c)) {
-              ctx.fillRect(qX + c * modSize, qY + r * modSize, modSize + 0.35, modSize + 0.35);
-            }
-          }
-        }
-
-        ctx.font = "700 15px 'Instrument Sans', system-ui, -apple-system, sans-serif";
-        ctx.fillStyle = "#475569";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "alphabetic";
-        var scanLabel = data.lang === "hi" ? "स्कैन करें" : "SCAN TO TAKE";
-        ctx.fillText(scanLabel, qrBoxX + qrBoxW / 2, qrBoxY + qrBoxH - 18);
-      } catch (e) {
-        console.error("QR Code rendering error:", e);
-      }
+    var urlFontSize = 38;
+    ctx.font = "700 " + urlFontSize + "px 'Instrument Sans', system-ui, -apple-system, sans-serif";
+    while (ctx.measureText(urlText).width > ctaBoxW - 140 && urlFontSize > 24) {
+      urlFontSize -= 2;
+      ctx.font = "700 " + urlFontSize + "px 'Instrument Sans', system-ui, -apple-system, sans-serif";
     }
+    var urlBtnW = Math.max(520, ctx.measureText(urlText).width + 80);
+    var urlBtnH = 88;
+    var urlBtnY = ctaBoxY + 206;
+    ctx.save();
+    ctx.shadowColor = "rgba(79, 70, 229, 0.28)";
+    ctx.shadowBlur = 18;
+    ctx.shadowOffsetY = 6;
+    drawRoundRect(540 - urlBtnW / 2, urlBtnY, urlBtnW, urlBtnH, urlBtnH / 2, "#4f46e5", null);
+    ctx.restore();
+    ctx.fillStyle = "#ffffff";
+    ctx.textBaseline = "middle";
+    ctx.fillText(urlText, 540, urlBtnY + urlBtnH / 2 + 2);
+
+    var linkTip = data.lang === "hi"
+      ? "🔗 टेस्ट देने के लिए लिंक पर टैप करें"
+      : "🔗 Tap the link to take the test";
+    ctx.font = "600 20px 'Instrument Sans', system-ui, -apple-system, sans-serif";
+    ctx.fillStyle = "#15803d";
+    ctx.textBaseline = "alphabetic";
+    ctx.fillText(linkTip, 540, urlBtnY + urlBtnH + 50);
 
     return canvas;
   }
@@ -1825,11 +1797,12 @@
 
       if (mode === "instagram" || mode === "native") {
         if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+          // The link goes inside the caption text: with a file attached, apps such as WhatsApp
+          // often drop a separate `url`, and the caption is what keeps the link tappable.
           navigator.share({
             files: [file],
             title: t("siteName"),
-            text: message,
-            url: link
+            text: message + " " + link
           }).then(function () {
             showQuickShareToast(t("storyCopiedHint"), "success");
           }).catch(function (err) {
