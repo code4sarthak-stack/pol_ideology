@@ -32,15 +32,24 @@
       </div>
     </div>
 
-    <section class="card bento-card question">
+    <section class="card bento-card question" id="question-card">
       <p class="question__label" id="question-domain"></p>
       <h1 class="question__text" id="question-text"></h1>
       <div class="options" id="options"></div>
       <noscript><p>Please enable JavaScript to take the quiz.</p></noscript>
     </section>
 
+    <!-- Shown instead of a question after question 12 of the Quick quiz -->
+    <section class="card bento-card checkpoint" id="checkpoint" hidden>
+      <p class="checkpoint__icon" aria-hidden="true">🎯</p>
+      <h1 class="checkpoint__title" data-i18n="checkpointHeading">You've completed the Quick Quiz!</h1>
+      <p class="checkpoint__sub" data-i18n="checkpointSub">You can see your preliminary result now, or continue for 12 more questions to get a much more precise breakdown.</p>
+      <a class="btn btn--primary" id="checkpoint-continue" href="#" data-i18n="checkpointContinue">Continue to 24 Questions →</a>
+      <a class="btn btn--ghost" id="checkpoint-results" href="#" data-i18n="checkpointResults">See Results Now</a>
+    </section>
+
     <section class="note">
-      <h2 data-i18n="whyHeading">Why this matters</h2>
+      <h2 id="why-heading" data-i18n="whyHeading">Why this matters</h2>
       <p id="why-text"></p>
     </section>
 

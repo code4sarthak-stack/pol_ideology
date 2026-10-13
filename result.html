@@ -48,6 +48,16 @@
       <noscript><p>Please enable JavaScript to see the result.</p></noscript>
     </section>
 
+    <!-- Quick (12-answer) results only: offer questions 13–24 -->
+    <section class="card bento-card precision-card" id="precision-card" hidden>
+      <div class="bento-head">
+        <h2 class="bento-head__title" data-i18n="precisionHeading">Want a more precise result?</h2>
+        <span class="badge" data-i18n="precisionBadge">Quick result · 12 questions</span>
+      </div>
+      <p class="bento-card__sub" data-i18n="precisionSub">Answer 12 more questions (about 3 minutes) and each area will rest on twice as many answers. Your first 12 answers are kept.</p>
+      <a class="btn btn--primary" id="precision-link" href="#" data-i18n="checkpointContinue">Continue to 24 Questions →</a>
+    </section>
+
     <!-- Bento Tile: Ideological Neighbours -->
     <section class="card bento-card bento-card--neighbours" id="neighbours-card">
       <div class="bento-head">
@@ -146,12 +156,12 @@
       <div class="bento-head">
         <h2 class="bento-head__title" data-i18n="methodHeading">How your result is calculated</h2>
       </div>
-      <p data-i18n="method1"></p>
+      <p id="method1"></p>
       <p data-i18n="method2"></p>
       <p data-i18n="method3"></p>
     </section>
 
-    <a class="btn btn--ghost" id="retake-link" href="quiz.html" data-i18n="retake">Retake the quiz</a>
+    <a class="btn btn--ghost" id="retake-link" href="start.html" data-i18n="retake">Retake the quiz</a>
 
     <p class="disclaimer" data-i18n="disclaimer"></p>
 
