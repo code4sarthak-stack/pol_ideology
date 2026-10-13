@@ -25,12 +25,11 @@ start.html        Page 2: name + start
 quiz.html         One question per page (?q=1…24&total=12|24), plus the checkpoint after question 12 of the Quick quiz
 result.html       Last page: ideology, meters per area, comparison with all users, compass
 stats.html        Community Dashboard: overall ideology distribution, spectrum breakdown & averages
-schema.sql        PostgreSQL/Supabase schema & seed data for community quiz tracking
 about.html, privacy.html, contact.html   Needed for AdSense approval
 ads.txt           AdSense seller declaration (needs your pub ID)
 robots.txt, sitemap.xml, site.webmanifest
-assets/js/config.js     ← AdSense + Analytics + Cloud DB credentials
-assets/js/db.js         ← Firebase Realtime DB & Supabase tracking client + sample data fallback
+assets/js/config.js     ← AdSense + Analytics + Firebase settings
+assets/js/db.js         ← Firebase Realtime DB tracking client + sample data fallback
 assets/js/stats.js      ← Statistics dashboard controller & charts
 assets/js/questions.js  ← the 4 areas and 24 questions (1–12 Quick set, 13–24 In-depth set), in both languages
 assets/js/results.js    ← labels, descriptions and examples for every result, in both languages (result page only)
@@ -107,6 +106,7 @@ The project tracks overall ideological trends across all participants:
 1. **Anonymous Result Submission**:
    - When a user finishes the quiz, `assets/js/db.js` logs an anonymous record (ideology, overall band, Left-Right score, and 4 domain scores).
    - Friend shared views (`?s=1`) and page reloads are automatically deduplicated.
+   - **One entry per quiz.** A Quick (12-answer) result and the In-depth (24-answer) result that continues it share their first 12 answers, so they count as one quiz. When someone finishes all 24 after seeing their Quick result, the 24-answer result *replaces* the 12-answer one: the "quizzes taken" counter does not go up again, the summary swaps the old scores for the new ones, and the old entry is removed from the recent list. The browser remembers what it saved per quiz in `localStorage` (`pq_entry_…`, `pq_counted_…`: anonymous scores only, never the name). A different browser or cleared site data counts as a new quiz.
 2. **Community Statistics Dashboard (`stats.html`)**:
    - Total number of participants who took the quiz.
    - Percentage breakdown of all 16 ideologies sorted by popularity.
@@ -119,7 +119,6 @@ The project tracks overall ideological trends across all participants:
    - Compares the user's score directly against the community average with a dual-marker spectrum bar.
 4. **Cloud Database Backend**:
    - **Firebase Realtime Database**: Natively supported via the existing `SITE_CONFIG.FIREBASE` credentials in `assets/js/config.js`.
-   - **Supabase (PostgreSQL)**: Supported out of the box via `schema.sql` (just copy-paste into Supabase SQL Editor and add URL/key to `config.js`).
    - **Sample Preview Mode**: If offline or no database is connected yet, the system provides a realistic dataset of 100 diverse participants so all UI and charts work immediately in preview.
 
 ## How it works (for developers)
