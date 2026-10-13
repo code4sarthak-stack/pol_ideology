@@ -84,7 +84,7 @@ window.STRINGS = {
     statsHeading: "Overall Ideology of All Users",
     statsSub: "Aggregated statistics and worldview distribution across all quiz participants.",
     statsLiveBadge: "● Live Cloud Data",
-    statsPreviewBadge: "Preview Mode (Sample Data)",
+    statsPreviewBadge: "Sample data",
     statsTotalTakers: "Total Participants",
     statsAvgSpectrum: "Community Center",
     statsTopIdeology: "Top Worldview",
@@ -100,9 +100,17 @@ window.STRINGS = {
     statsRecentHeading: "Recent Anonymous Submissions",
     statsRecentSub: "Stream of recent quiz completions:",
     statsTakeQuizBtn: "Take the Quiz Yourself →",
-    statsRefreshBtn: "Refresh Data",
+    statsRefreshBtn: "Refresh",
     statsParticipantsCount: "{n} participants",
-    backBtn: "← Back"
+    statsKpiTotal: "Total takers",
+    statsKpiTotalSub: "Completed quizzes",
+    statsKpiTop: "Most common",
+    statsKpiTopSub: "{pct}% of participants",
+    statsKpiAvg: "Average",
+    statsKpiLang: "Languages",
+    statsKpiLangSub: "English / Hindi",
+    statsNoRecent: "No recent submissions yet.",
+    backBtn: "Back"
   },
 
   hi: {
@@ -186,7 +194,7 @@ window.STRINGS = {
     statsHeading: "सभी प्रतिभागियों की समग्र विचारधारा",
     statsSub: "क्विज़ लेने वाले सभी उपयोगकर्ताओं के समग्र आँकड़े और वैचारिक रुझान।",
     statsLiveBadge: "● लाइव क्लाउड डेटा",
-    statsPreviewBadge: "पूर्वावलोकन मोड (नमूना डेटा)",
+    statsPreviewBadge: "नमूना डेटा",
     statsTotalTakers: "कुल प्रतिभागी",
     statsAvgSpectrum: "सामुदायिक केंद्र",
     statsTopIdeology: "सबसे आम विचारधारा",
@@ -202,8 +210,16 @@ window.STRINGS = {
     statsRecentHeading: "हालिया अज्ञात परिणाम",
     statsRecentSub: "हाल ही में पूरे किए गए क्विज़ की सूची:",
     statsTakeQuizBtn: "स्वयं क्विज़ खेलें →",
-    statsRefreshBtn: "डेटा रीफ़्रेश करें",
+    statsRefreshBtn: "रीफ़्रेश",
     statsParticipantsCount: "{n} प्रतिभागी",
-    backBtn: "← वापस जाएँ"
+    statsKpiTotal: "कुल प्रतिभागी",
+    statsKpiTotalSub: "पूरे किए गए क्विज़",
+    statsKpiTop: "सबसे आम",
+    statsKpiTopSub: "{pct}% प्रतिभागी",
+    statsKpiAvg: "औसत",
+    statsKpiLang: "भाषाएँ",
+    statsKpiLangSub: "English / हिन्दी",
+    statsNoRecent: "अभी कोई हालिया परिणाम नहीं।",
+    backBtn: "वापस"
   }
 };

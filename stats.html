@@ -22,9 +22,9 @@
 
   <main class="container">
     <div class="stats-nav-bar">
-      <a class="btn-back" id="btn-back-top" href="javascript:history.back()">
+      <a class="btn-back" id="btn-back-top" href="index.html" data-link="index.html">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-        <span data-i18n="backBtn">← Back</span>
+        <span data-i18n="backBtn">Back</span>
       </a>
     </div>
 
@@ -32,9 +32,9 @@
 
     <section class="card bento-card stats-hero">
       <div class="stats-hero__header">
-        <span class="badge badge--live" id="stats-status-badge">100+ Quiz Takers</span>
-        <button class="btn-refresh" id="btn-refresh" type="button" aria-label="Refresh data">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.19"/></svg>
+        <span class="badge badge--sample" id="stats-status-badge">&nbsp;</span>
+        <button class="btn-refresh" id="btn-refresh" type="button">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
           <span data-i18n="statsRefreshBtn">Refresh</span>
         </button>
       </div>
@@ -43,78 +43,87 @@
 
       <div class="stats-kpi-grid">
         <div class="stats-kpi-card">
-          <span class="stats-kpi-card__label">Total Takers</span>
+          <span class="stats-kpi-card__label" data-i18n="statsKpiTotal">Total takers</span>
           <span class="stats-kpi-card__val" id="kpi-total">--</span>
-          <span class="stats-kpi-card__sub">Completed quizzes</span>
+          <span class="stats-kpi-card__sub" data-i18n="statsKpiTotalSub">Completed quizzes</span>
         </div>
         <div class="stats-kpi-card">
-          <span class="stats-kpi-card__label">Dominant</span>
-          <span class="stats-kpi-card__val" id="kpi-top-ideo" style="font-size: 1.3rem;">--</span>
-          <span class="stats-kpi-card__sub" id="kpi-top-pct">Most common</span>
+          <span class="stats-kpi-card__label" data-i18n="statsKpiTop">Most common</span>
+          <span class="stats-kpi-card__val stats-kpi-card__val--text" id="kpi-top-ideo">--</span>
+          <span class="stats-kpi-card__sub" id="kpi-top-pct">&nbsp;</span>
         </div>
         <div class="stats-kpi-card">
-          <span class="stats-kpi-card__label">Spectrum Avg</span>
+          <span class="stats-kpi-card__label" data-i18n="statsKpiAvg">Average</span>
           <span class="stats-kpi-card__val" id="kpi-center">--</span>
-          <span class="stats-kpi-card__sub" id="kpi-center-band">Left ↔ Right</span>
+          <span class="stats-kpi-card__sub" id="kpi-center-band">&nbsp;</span>
         </div>
         <div class="stats-kpi-card">
-          <span class="stats-kpi-card__label">Languages</span>
+          <span class="stats-kpi-card__label" data-i18n="statsKpiLang">Languages</span>
           <span class="stats-kpi-card__val" id="kpi-lang">--</span>
-          <span class="stats-kpi-card__sub">En / Hi split</span>
+          <span class="stats-kpi-card__sub" data-i18n="statsKpiLangSub">English / Hindi</span>
         </div>
       </div>
     </section>
 
-    <!-- Ideology Distribution Breakdown -->
-    <section class="card bento-card">
-      <div class="bento-head">
-        <h2 class="bento-head__title" data-i18n="statsIdeologyDistHeading">Ideological Distribution</h2>
-      </div>
-      <p class="bento-card__sub" data-i18n="statsIdeologyDistSub">Share of test takers by their closest political philosophy (16 total):</p>
-      <div class="stats-bars" id="ideology-bars"></div>
-    </section>
+    <div class="card-grid">
+      <!-- Ideology Distribution Breakdown -->
+      <section class="card bento-card">
+        <div class="bento-head">
+          <h2 class="bento-head__title" data-i18n="statsIdeologyDistHeading">Ideological Distribution</h2>
+        </div>
+        <p class="bento-card__sub" data-i18n="statsIdeologyDistSub">Share of test takers by their closest political philosophy (16 total):</p>
+        <div class="stats-bars" id="ideology-bars"></div>
+      </section>
 
-    <!-- 7-Spectrum Bands Breakdown -->
-    <section class="card bento-card">
-      <div class="bento-head">
-        <h2 class="bento-head__title">Overall Spectrum Breakdown</h2>
+      <div class="card-stack">
+        <!-- 7-Spectrum Bands Breakdown -->
+        <section class="card bento-card">
+          <div class="bento-head">
+            <h2 class="bento-head__title" data-i18n="statsSpectrumDistHeading">Left ↔ Right Distribution</h2>
+          </div>
+          <p class="bento-card__sub" data-i18n="statsSpectrumDistSub">Participants spread across the 7 political spectrum bands:</p>
+          <div class="spectrum-bars" id="spectrum-bars"></div>
+        </section>
+
+        <!-- 4 Policy Areas Community Average -->
+        <section class="card bento-card">
+          <div class="bento-head">
+            <h2 class="bento-head__title" data-i18n="statsDomainsHeading">Community Averages in 4 Areas</h2>
+          </div>
+          <p class="bento-card__sub" data-i18n="statsDomainsSub">Where the average participant stands on key debates:</p>
+          <div class="stats-domains-grid" id="stats-domains-grid"></div>
+        </section>
       </div>
-      <p class="bento-card__sub">Distribution across the 7 political spectrum bands:</p>
-      <div class="spectrum-bars" id="spectrum-bars"></div>
-    </section>
+    </div>
 
     <div class="ad" data-ad="middle"></div>
 
-    <!-- 4 Policy Areas Community Average -->
-    <section class="card bento-card">
-      <div class="bento-head">
-        <h2 class="bento-head__title" data-i18n="statsDomainsHeading">Community Averages in 4 Areas</h2>
-      </div>
-      <p class="bento-card__sub" data-i18n="statsDomainsSub">Where the average participant stands on key debates:</p>
-      <div class="stats-domains-grid" id="stats-domains-grid"></div>
-    </section>
+    <div class="card-grid">
+      <!-- Community Compass -->
+      <section class="card bento-card bento-card--compass">
+        <div class="bento-head">
+          <h2 class="bento-head__title" data-i18n="statsCompassHeading">Community Political Compass</h2>
+        </div>
+        <p class="bento-card__sub" data-i18n="statsCompassSub">Centroid of all participants on the Economic and Civil liberties axes:</p>
+        <div id="stats-compass"></div>
+      </section>
 
-    <!-- Community Compass -->
-    <section class="card bento-card bento-card--compass">
-      <div class="bento-head">
-        <h2 class="bento-head__title" data-i18n="statsCompassHeading">Community Political Compass</h2>
-      </div>
-      <p class="bento-card__sub" data-i18n="statsCompassSub">Centroid of all participants on the Economic and Civil liberties axes:</p>
-      <div id="stats-compass"></div>
-    </section>
+      <!-- Recent Activity Feed -->
+      <section class="card bento-card">
+        <div class="bento-head">
+          <h2 class="bento-head__title" data-i18n="statsRecentHeading">Recent Anonymous Results</h2>
+        </div>
+        <p class="bento-card__sub" data-i18n="statsRecentSub">Latest completed quizzes:</p>
+        <div class="recent-feed" id="recent-feed"></div>
+      </section>
+    </div>
 
-    <!-- Recent Activity Feed -->
-    <section class="card bento-card">
-      <div class="bento-head">
-        <h2 class="bento-head__title" data-i18n="statsRecentHeading">Recent Anonymous Results</h2>
-      </div>
-      <p class="bento-card__sub" data-i18n="statsRecentSub">Latest completed quizzes:</p>
-      <div class="recent-feed" id="recent-feed"></div>
-    </section>
-
-    <div class="btn-row stats-cta-row">
+    <div class="stats-cta-row">
       <a class="btn btn--primary" href="quiz.html" data-link="quiz.html" data-i18n="statsTakeQuizBtn">Take the quiz yourself →</a>
-      <button class="btn btn--ghost" id="btn-back-bottom" type="button" data-i18n="backBtn">← Back</button>
+      <button class="btn btn--ghost" id="btn-back-bottom" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        <span data-i18n="backBtn">Back</span>
+      </button>
     </div>
 
     <div class="ad" data-ad="bottom"></div>
