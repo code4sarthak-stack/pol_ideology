@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Soft Gradient Quadrants matching the AI generated image -->
+    <linearGradient id="t2-tl" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#312e81"/>
+      <stop offset="100%" stop-color="#4f46e5"/>
+    </linearGradient>
+    <linearGradient id="t2-tr" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2dd4bf"/>
+      <stop offset="100%" stop-color="#0f766e"/>
+    </linearGradient>
+    <linearGradient id="t2-bl" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#94a3b8"/>
+      <stop offset="100%" stop-color="#64748b"/>
+    </linearGradient>
+    <linearGradient id="t2-br" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <filter id="t2-shadow" x="-8%" y="-8%" width="116%" height="116%">
+      <feDropShadow dx="0" dy="10" stdDeviation="16" flood-color="#0f172a" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="512" height="512" rx="112" fill="#ffffff"/>
+  <rect width="512" height="512" rx="112" fill="none" stroke="#f1f5f9" stroke-width="2"/>
+
+  <!-- 4 Quadrants & Central Grid -->
+  <g transform="translate(256, 256)" filter="url(#t2-shadow)">
+    <!-- Top-Left Quadrant (Econ Left / Progressive) -->
+    <rect x="-145" y="-145" width="132" height="132" rx="8" fill="url(#t2-tl)"/>
+
+    <!-- Top-Right Quadrant (Econ Right / Progressive) -->
+    <rect x="13" y="-145" width="132" height="132" rx="8" fill="url(#t2-tr)"/>
+
+    <!-- Bottom-Left Quadrant (Econ Left / Traditional) -->
+    <rect x="-145" y="13" width="132" height="132" rx="8" fill="url(#t2-bl)"/>
+
+    <!-- Bottom-Right Quadrant (Econ Right / Traditional) -->
+    <rect x="13" y="13" width="132" height="132" rx="8" fill="url(#t2-br)"/>
+
+    <!-- Clean Precision Axis Lines (Crosshairs) -->
+    <!-- Horizontal Axis (Left to Right) -->
+    <line x1="-185" y1="0" x2="185" y2="0" stroke="#334155" stroke-width="7" stroke-linecap="round"/>
+    
+    <!-- Vertical Axis (Authoritarian to Libertarian) -->
+    <line x1="0" y1="-185" x2="0" y2="185" stroke="#334155" stroke-width="7" stroke-linecap="round"/>
+
+    <!-- Center Coordinate Pin -->
+    <circle cx="0" cy="0" r="5" fill="#ffffff"/>
+  </g>
+</svg>

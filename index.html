@@ -3,16 +3,16 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Political Ideology Quiz — Which ideology are you? | राजनीतिक विचारधारा क्विज़</title>
+  <title>ideoMap — Which ideology are you? | राजनीतिक विचारधारा क्विज़</title>
   <meta name="description" content="Free political ideology quiz in English and Hindi. Answer 12 questions on economy, society, civil liberties and world politics, and see how left or right you are in each, with examples from history. मुफ़्त राजनीतिक विचारधारा क्विज़ — हिन्दी और English में।">
   <meta name="google-adsense-account" content="ca-pub-XXXXXXXXXXXXXXXX">
-  <meta name="theme-color" content="#fafaf8">
+  <meta name="theme-color" content="#fcfcfd">
   <link rel="canonical" href="https://YOUR-DOMAIN.com/">
   <link rel="icon" href="assets/img/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="assets/img/icon-192.png">
   <link rel="manifest" href="site.webmanifest">
   <meta property="og:type" content="website">
-  <meta property="og:site_name" content="Political Ideology Quiz">
+  <meta property="og:site_name" content="ideoMap">
   <meta property="og:title" content="Which political ideology are you? 🧭 आपकी विचारधारा क्या है?">
   <meta property="og:description" content="12 questions in English or Hindi. See how left or right you are on economy, society, civil liberties and world politics.">
   <meta property="og:url" content="https://YOUR-DOMAIN.com/">
@@ -22,18 +22,19 @@
   <meta name="twitter:card" content="summary_large_image">
   <link rel="preload" href="assets/fonts/instrument-sans.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/instrument-serif.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/instrument-serif-italic.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body data-page="home">
   <header class="site-header">
-    <a class="brand" href="index.html"><img src="assets/img/icon.svg" alt="" width="28" height="28"><span>Political Ideology Quiz</span></a>
+    <a class="brand" href="index.html"><img src="assets/img/icon.svg" alt="" width="28" height="28"><span>ideoMap</span></a>
   </header>
 
   <main class="container">
     <section class="hero">
       <p class="eyebrow">English · <span lang="hi">हिन्दी</span></p>
       <h1>Which political <em>ideology</em> are you?</h1>
-      <p class="hero__hi" lang="hi">आपकी राजनीतिक विचारधारा क्या है?</p>
+      <p class="hero__hi" lang="hi">आपकी राजनीतिक <span class="hero-tiranga-text">विचारधारा</span> क्या है?</p>
       <p class="lead">Answer 12 questions and see where you stand on the economy, society, civil liberties and world politics.<br><span lang="hi">12 सवालों के जवाब दें और जानें कि अर्थव्यवस्था, समाज, नागरिक आज़ादी और विश्व राजनीति पर आप कहाँ खड़े हैं।</span></p>
     </section>
 
@@ -44,40 +45,64 @@
           <span class="lang-tile__glyph" aria-hidden="true">Aa</span>
           <span class="lang-tile__name">English</span>
           <span class="lang-tile__sub">Start in English</span>
-          <span class="lang-tile__go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          <span class="lang-tile__go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
         </a>
         <a class="lang-tile" href="start.html?lang=hi" data-choose-lang="hi" lang="hi">
           <span class="lang-tile__glyph" aria-hidden="true">अ</span>
           <span class="lang-tile__name">हिन्दी</span>
           <span class="lang-tile__sub">हिन्दी में शुरू करें</span>
-          <span class="lang-tile__go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          <span class="lang-tile__go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
         </a>
       </div>
-      <p class="meta">3 min · 12 questions · Free<br><span lang="hi">3 मिनट · 12 सवाल · मुफ़्त</span></p>
+      
+      <div class="meta-pill-bar">
+        <div class="meta-pill">
+          <span>⏱️ 3 min</span>
+          <span class="meta-pill__sep">·</span>
+          <span>📋 12 questions</span>
+          <span class="meta-pill__sep">·</span>
+          <span>✨ 100% Free</span>
+        </div>
+      </div>
+
+      <div class="live-counter-wrap" id="live-counter-wrap" hidden>
+        <div class="live-counter-pill">
+          <span class="live-pulse" aria-hidden="true"></span>
+          <span id="live-counter-text">...</span>
+        </div>
+      </div>
     </section>
 
     <div class="ad" data-ad="middle"></div>
 
-    <section class="content">
-      <h2>About this quiz</h2>
-      <p>Politics is about more than parties. This quiz draws on political science, sociology and history to look at four areas: who should control the economy, how far society should keep or change its traditions, how much power the state should have over individuals, and how your country should deal with the world.</p>
-      <p>Each question has its own answer choices, from one end of the debate to the other. You'll see how far left or right you lean overall and in each area, the ideology closest to you, and real examples from history of each position at its best and at its worst.</p>
-      <p>There are no right or wrong answers, and the quiz is not linked to any party or candidate. It is a way to reflect on your own views and compare them with your friends.</p>
-
-      <h2 lang="hi">इस क्विज़ के बारे में</h2>
-      <p lang="hi">राजनीति सिर्फ़ पार्टियों के बारे में नहीं है। यह क्विज़ राजनीति विज्ञान, समाजशास्त्र और इतिहास के आधार पर चार क्षेत्रों को देखता है: अर्थव्यवस्था पर किसका नियंत्रण हो, समाज अपनी परंपराएँ कितनी रखे या बदले, व्यक्ति पर सरकार की कितनी ताक़त हो, और आपका देश बाक़ी दुनिया से कैसे पेश आए।</p>
-      <p lang="hi">हर सवाल के अपने जवाब हैं, बहस के एक छोर से दूसरे छोर तक। आप देखेंगे कि कुल मिलाकर और हर क्षेत्र में आप कितने वाम या दक्षिण की ओर हैं, कौन-सी विचारधारा आपके सबसे क़रीब है, और इतिहास के असली उदाहरण जो हर सोच का सबसे अच्छा और सबसे बुरा रूप दिखाते हैं।</p>
-      <p lang="hi">कोई जवाब सही या ग़लत नहीं है, और इस क्विज़ का किसी पार्टी या उम्मीदवार से कोई संबंध नहीं है।</p>
-
-      <h2>What you'll find out <span lang="hi">· आप क्या जानेंगे</span></h2>
+    <section class="card bento-card">
+      <div class="bento-head">
+        <h2 class="bento-head__title">What you'll find out · <span lang="hi">आप क्या जानेंगे</span></h2>
+      </div>
       <ul class="result-list">
         <li><span class="result-list__icon" aria-hidden="true">🧭</span>Overall: Left ↔ Right <span class="result-list__hi" lang="hi">कुल मिलाकर: वाम ↔ दक्षिण</span></li>
         <li><span class="result-list__icon" aria-hidden="true">💰</span>Economy: Equality ↔ Markets <span class="result-list__hi" lang="hi">अर्थव्यवस्था: समानता ↔ बाज़ार</span></li>
         <li><span class="result-list__icon" aria-hidden="true">👪</span>Society: Progress ↔ Tradition <span class="result-list__hi" lang="hi">समाज: प्रगति ↔ परंपरा</span></li>
         <li><span class="result-list__icon" aria-hidden="true">🛡️</span>Civil liberties: Liberty ↔ Authority <span class="result-list__hi" lang="hi">नागरिक आज़ादी: स्वतंत्रता ↔ सत्ता</span></li>
         <li><span class="result-list__icon" aria-hidden="true">🌍</span>World politics: Global ↔ National <span class="result-list__hi" lang="hi">विश्व राजनीति: वैश्विक ↔ राष्ट्रीय</span></li>
-        <li><span class="result-list__icon" aria-hidden="true">🏛️</span>Your closest of 16 ideologies, with good and bad examples from history <span class="result-list__hi" lang="hi">16 विचारधाराओं में से आपकी सबसे क़रीबी, इतिहास के अच्छे और बुरे उदाहरणों के साथ</span></li>
+        <li><span class="result-list__icon" aria-hidden="true">🏛️</span>Your closest of 16 ideologies, with history examples <span class="result-list__hi" lang="hi">16 विचारधाराओं में से आपकी सबसे क़रीबी, इतिहास के उदाहरणों के साथ</span></li>
       </ul>
+    </section>
+
+    <section class="card bento-card">
+      <div class="bento-head">
+        <h2 class="bento-head__title">About this quiz</h2>
+      </div>
+      <p>Politics is about more than parties. This quiz draws on political science, sociology and history to look at four areas: who should control the economy, how far society should keep or change its traditions, how much power the state should have over individuals, and how your country should deal with the world.</p>
+      <p>Each question has its own answer choices, from one end of the debate to the other. You'll see how far left or right you lean overall and in each area, the ideology closest to you, and real examples from history of each position at its best and at its worst.</p>
+      <p>There are no right or wrong answers, and the quiz is not linked to any party or candidate. It is a way to reflect on your own views and compare them with your friends.</p>
+
+      <div style="margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border);">
+        <h3 lang="hi" style="margin-bottom: 8px;">इस क्विज़ के बारे में</h3>
+        <p lang="hi" style="margin-bottom: 8px;">राजनीति सिर्फ़ पार्टियों के बारे में नहीं है। यह क्विज़ राजनीति विज्ञान, समाजशास्त्र और इतिहास के आधार पर चार क्षेत्रों को देखता है: अर्थव्यवस्था पर किसका नियंत्रण हो, समाज अपनी परंपराएँ कितनी रखे या बदले, व्यक्ति पर सरकार की कितनी ताक़त हो, और आपका देश बाक़ी दुनिया से कैसे पेश आए।</p>
+        <p lang="hi" style="margin-bottom: 8px;">हर सवाल के अपने जवाब हैं, बहस के एक छोर से दूसरे छोर तक। आप देखेंगे कि कुल मिलाकर और हर क्षेत्र में आप कितने वाम या दक्षिण की ओर हैं, कौन-सी विचारधारा आपके सबसे क़रीब है, और इतिहास के असली उदाहरण जो हर सोच का सबसे अच्छा और सबसे बुरा रूप दिखाते हैं।</p>
+        <p lang="hi">कोई जवाब सही या ग़लत नहीं है, और इस क्विज़ का किसी पार्टी या उम्मीदवार से कोई संबंध नहीं है।</p>
+      </div>
     </section>
 
     <div class="ad" data-ad="bottom"></div>
@@ -88,11 +113,13 @@
       <a href="about.html">About</a>
       <a href="privacy.html">Privacy Policy</a>
       <a href="contact.html">Contact</a>
+      <a href="stats.html">Community Stats</a>
     </nav>
-    <p>© Political Ideology Quiz</p>
+    <p>© ideoMap</p>
   </footer>
 
   <script src="assets/js/config.js"></script>
+  <script src="assets/js/db.js"></script>
   <script src="assets/js/strings.js"></script>
   <script src="assets/js/questions.js"></script>
   <script src="assets/js/app.js"></script>

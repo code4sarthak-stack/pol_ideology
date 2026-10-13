@@ -1,4 +1,4 @@
-/* Political Ideology Quiz — page logic shared by every page. No frameworks, no build step. */
+/* ideoMap — page logic shared by every page. No frameworks, no build step. */
 (function () {
   "use strict";
 
@@ -199,9 +199,85 @@
     }).sort(function (a, b) { return a.d - b.d; }).map(function (r) { return r.ideo; });
   }
 
+  /* ---------- Firebase Live Counter (Atomic Concurrency-Safe) ---------- */
+
+  var fbDbInstance = null;
+
+  function getFirebaseDb() {
+    if (fbDbInstance) return fbDbInstance;
+    if (!window.firebase || !CFG.FIREBASE || !CFG.FIREBASE.apiKey) return null;
+    try {
+      if (!window.firebase.apps || !window.firebase.apps.length) {
+        window.firebase.initializeApp(CFG.FIREBASE);
+      }
+      fbDbInstance = window.firebase.database();
+      return fbDbInstance;
+    } catch (e) {
+      console.warn("Firebase initialization error:", e);
+      return null;
+    }
+  }
+
+  function bindLiveCounter(elementId, wrapId) {
+    var el = document.getElementById(elementId);
+    var wrap = wrapId ? document.getElementById(wrapId) : null;
+    if (!el) return;
+
+    var db = getFirebaseDb();
+    if (db) {
+      try {
+        var counterRef = db.ref("quiz_count");
+        counterRef.on("value", function (snapshot) {
+          var count = snapshot.val();
+          if (typeof count === "number" && count >= 0) {
+            el.textContent = t("liveCounter", { count: count.toLocaleString() });
+            if (wrap) wrap.hidden = false;
+          }
+        });
+        return;
+      } catch (e) {
+        console.warn("Live counter listener warning:", e);
+      }
+    }
+
+    if (window.QUIZ_DB) {
+      window.QUIZ_DB.getStats().then(function (stats) {
+        if (stats && stats.total) {
+          el.textContent = t("liveCounter", { count: stats.total.toLocaleString() });
+          if (wrap) wrap.hidden = false;
+        }
+      });
+    }
+  }
+
+  function incrementQuizCounter(answers) {
+    if (params.get("s") === "1") return; // Never increment on friend shared preview links
+    var countedKey = "pq_counted_" + (answers || "submitted");
+    if (load(countedKey)) return; // Prevent incrementing on page refresh or revisit
+
+    var db = getFirebaseDb();
+    if (!db) return;
+
+    try {
+      var counterRef = db.ref("quiz_count");
+      // Atomic transaction: locks and sequences concurrent submissions so counts never collide
+      counterRef.transaction(function (current) {
+        return (current || 0) + 1;
+      }, function (error, committed) {
+        if (committed) {
+          save(countedKey, "1");
+        }
+      });
+    } catch (e) {
+      console.warn("Quiz counter transaction error:", e);
+    }
+  }
+
   /* ---------- Pages ---------- */
 
   function homePage() {
+    bindLiveCounter("live-counter-text", "live-counter-wrap");
+
     document.querySelectorAll("[data-choose-lang]").forEach(function (el) {
       el.addEventListener("click", function () {
         var chosen = el.getAttribute("data-choose-lang");
@@ -318,12 +394,28 @@
     document.getElementById("result-title").textContent = text.title;
     document.getElementById("result-desc").textContent = text.desc;
 
+    var badgeEl = document.getElementById("result-badge");
+    if (badgeEl) badgeEl.textContent = overall;
+
     var overallBox = document.getElementById("overall");
-    overallBox.appendChild(meterHead(t("overall"), overall));
-    overallBox.appendChild(meter(s.overall, t("left"), t("right"), overall, OVERALL_SEGS, overallBand));
-    document.getElementById("also-close").textContent = t("alsoClose", {
-      list: ranked.slice(1, 3).map(function (r) { return r.emoji + " " + r[lang].title; }).join(" · ")
-    });
+    if (overallBox) {
+      overallBox.innerHTML = "";
+      overallBox.appendChild(renderRadialGauge(s.overall, t("left"), t("right"), overall, overallBand));
+    }
+
+    // Template 3 Bento: Ideological neighbours chips
+    var chipsContainer = document.getElementById("neighbour-chips");
+    if (chipsContainer) {
+      chipsContainer.innerHTML = "";
+      ranked.slice(1, 4).forEach(function (r) {
+        var chip = el("div", "neighbour-chip");
+        var em = el("span", "neighbour-chip__emoji", r.emoji);
+        var title = el("span", "neighbour-chip__name", r[lang].title);
+        chip.appendChild(em);
+        chip.appendChild(title);
+        chipsContainer.appendChild(chip);
+      });
+    }
 
     document.getElementById("ideology-examples-heading").textContent = t("ideologyExamples", { ideology: text.title });
     document.getElementById("ideology-examples").appendChild(examples(text.good, text.bad));
@@ -346,6 +438,32 @@
 
     renderCompass(s);
     setupShare(answers, text.title, overall, ideo.key);
+
+    // Atomic live quiz counter increment and live badge
+    incrementQuizCounter(answers);
+    bindLiveCounter("live-counter-text", "live-counter-wrap");
+
+    // Save quiz result anonymously and display community comparison
+    if (!friend && window.QUIZ_DB) {
+      window.QUIZ_DB.saveSubmission({
+        ideology: ideo.key,
+        overall_band: overallBand,
+        overall_score: s.overall,
+        econ_score: s.econ,
+        social_score: s.social,
+        civil_score: s.civil,
+        world_score: s.world,
+        lang: lang,
+        answers: answers
+      }).then(function () {
+        renderCommunityComparison(s.overall, ideo, overallBand);
+      }).catch(function () {
+        renderCommunityComparison(s.overall, ideo, overallBand);
+      });
+    } else {
+      renderCommunityComparison(s.overall, ideo, overallBand);
+    }
+
     track("view_result", { result: ideo.key, overall: s.overall, shared_view: friend });
   }
 
@@ -356,6 +474,303 @@
     if (className) node.className = className;
     if (text !== undefined) node.textContent = text;
     return node;
+  }
+
+  function overallBandLabel(score) {
+    var idx = overallIndex(score);
+    return QUIZ.overallBands[idx][lang];
+  }
+
+  function findIdeology(key) {
+    for (var i = 0; i < QUIZ.ideologies.length; i++) {
+      if (QUIZ.ideologies[i].key === key) return QUIZ.ideologies[i];
+    }
+    return null;
+  }
+
+  /* Community Comparison Widget (Below Compass) */
+  function renderCommunityComparison(userScore, userIdeo, userBand) {
+    var card = document.getElementById("community-card");
+    if (!card || !window.QUIZ_DB) return;
+
+    window.QUIZ_DB.getStats().then(function (stats) {
+      // 1. Badge & Subtitle
+      var badge = document.getElementById("community-badge");
+      if (badge) {
+        badge.textContent = stats.isLive ? t("statsLiveBadge") : (stats.total + " " + (t("statsParticipantsCount", { n: "" }) || "quiz takers")).trim();
+        badge.className = "badge " + (stats.isLive ? "badge--live" : "badge--sample");
+      }
+      var sub = document.getElementById("community-sub");
+      if (sub) {
+        sub.textContent = t("communityOverallSub");
+      }
+
+      // 2. KPIs
+      var kpiTotal = document.getElementById("comm-kpi-total");
+      var kpiAvg = document.getElementById("comm-kpi-avg");
+      var kpiTop = document.getElementById("comm-kpi-top");
+
+      if (kpiTotal) kpiTotal.textContent = stats.total.toLocaleString();
+      if (kpiAvg) {
+        var avgVal = stats.averages.overall;
+        kpiAvg.textContent = (avgVal > 0 ? "+" : "") + avgVal + " · " + (overallBandLabel ? overallBandLabel(avgVal) : "");
+      }
+      if (kpiTop && stats.topIdeology) {
+        var topIdeoObj = findIdeology(stats.topIdeology);
+        if (topIdeoObj) {
+          var topPct = (stats.ideologies[stats.topIdeology] || {}).pct || 0;
+          kpiTop.textContent = topIdeoObj.emoji + " " + topIdeoObj[lang].title.split(" (")[0] + " (" + topPct + "%)";
+        }
+      }
+
+      // 3. User Comparison Callout
+      var userIdeoStat = stats.ideologies[userIdeo.key] || { count: 0, pct: 0 };
+      var diff = userScore - stats.averages.overall;
+      var absDiff = Math.abs(diff);
+      var userScoreFmt = (userScore > 0 ? "+" : "") + userScore;
+      var avgFmt = (stats.averages.overall > 0 ? "+" : "") + stats.averages.overall;
+
+      var diffDesc = "";
+      if (absDiff <= 4) {
+        diffDesc = t("communityDiffCenter", { userScore: userScoreFmt, avg: avgFmt });
+      } else if (diff < 0) {
+        diffDesc = t("communityDiffLeft", { userScore: userScoreFmt, points: absDiff, avg: avgFmt });
+      } else {
+        diffDesc = t("communityDiffRight", { userScore: userScoreFmt, points: absDiff, avg: avgFmt });
+      }
+
+      var calloutText = document.getElementById("community-callout-text");
+      if (calloutText) {
+        calloutText.innerHTML =
+          '<strong>' + esc(t("communityShareStat", { pct: userIdeoStat.pct, ideology: userIdeo[lang].title.split(" (")[0] })) + '</strong> ' +
+          esc(diffDesc);
+      }
+
+      // 4. Dual-Marker Comparison Bar
+      var bar = document.getElementById("community-compare-bar");
+      if (bar) {
+        bar.innerHTML = renderCommunityCompareBar(userScore, stats.averages.overall);
+      }
+
+      // 5. Left ↔ Right Spectrum 7-Band Distribution
+      var specContainer = document.getElementById("community-spectrum-bars");
+      if (specContainer) {
+        var bandColors = [
+          "var(--div-l2)",
+          "var(--div-lm)",
+          "var(--div-l1)",
+          "var(--div-mid)",
+          "var(--div-r1)",
+          "var(--div-rm)",
+          "var(--div-r2)"
+        ];
+        var specHtml = QUIZ.overallBands.map(function (band, i) {
+          var bStat = stats.bands[i] || { count: 0, pct: 0 };
+          var isUserBand = (i === userBand);
+          return (
+            '<div class="spectrum-band-row' + (isUserBand ? ' is-user-row' : '') + '">' +
+            '  <div class="spectrum-band-head">' +
+            '    <span class="spectrum-band-dot" style="background: ' + bandColors[i] + ';"></span>' +
+            '    <span class="spectrum-band-name">' + esc(band[lang]) + (isUserBand ? ' <span class="badge stats-bar-user-badge">' + esc(t("youTag")) + '</span>' : '') + '</span>' +
+            '    <span class="spectrum-band-pct">' + bStat.pct + '% (' + bStat.count + ')</span>' +
+            '  </div>' +
+            '  <div class="spectrum-band-track">' +
+            '    <div class="spectrum-band-fill" style="width: ' + bStat.pct + '%; background: ' + bandColors[i] + ';"></div>' +
+            '  </div>' +
+            '</div>'
+          );
+        }).join("");
+        specContainer.innerHTML = specHtml;
+      }
+
+      // 6. Ideological Distribution Bars (all 16, ranked by popularity, with user highlight)
+      var ideoBarsContainer = document.getElementById("community-ideology-bars");
+      if (ideoBarsContainer) {
+        var list = QUIZ.ideologies.map(function (item) {
+          var iStat = stats.ideologies[item.key] || { count: 0, pct: 0 };
+          return {
+            key: item.key,
+            emoji: item.emoji,
+            title: item[lang].title,
+            count: iStat.count,
+            pct: iStat.pct,
+            isUser: (item.key === userIdeo.key)
+          };
+        }).sort(function (a, b) {
+          return b.count - a.count;
+        });
+
+        var maxPct = Math.max(1, list[0].pct);
+        var barsHtml = list.map(function (item) {
+          var widthRatio = ((item.pct / maxPct) * 100).toFixed(1);
+          return (
+            '<div class="stats-bar-item' + (item.isUser ? ' is-user' : '') + '">' +
+            '  <div class="stats-bar-head">' +
+            '    <span class="stats-bar-title">' +
+            '      <span class="stats-bar-emoji">' + item.emoji + '</span> ' +
+            '      <span>' + esc(item.title) + '</span>' +
+            (item.isUser ? ' <span class="badge stats-bar-user-badge">' + esc(t("youTag")) + '</span>' : '') +
+            '    </span>' +
+            '    <span class="stats-bar-meta"><strong>' + item.pct + '%</strong> <span class="muted">(' + item.count + ')</span></span>' +
+            '  </div>' +
+            '  <div class="stats-bar-track">' +
+            '    <div class="stats-bar-fill' + (item.isUser ? ' is-user-fill' : '') + '" style="width: ' + widthRatio + '%;"></div>' +
+            '  </div>' +
+            '</div>'
+          );
+        }).join("");
+
+        ideoBarsContainer.innerHTML = barsHtml;
+      }
+    });
+  }
+
+  function renderCommunityCompareBar(userScore, avgScore) {
+    var userPct = Math.min(95, Math.max(5, (userScore + 100) / 2));
+    var avgPct = Math.min(95, Math.max(5, (avgScore + 100) / 2));
+
+    var avgFmt = (avgScore > 0 ? "+" : "") + avgScore;
+    var userFmt = (userScore > 0 ? "+" : "") + userScore;
+
+    return (
+      '<div class="compare-bar">' +
+      '  <div class="compare-bar__track">' +
+      '    <div class="compare-bar__avg-line" style="left: ' + avgPct.toFixed(1) + '%;">' +
+      '      <span class="compare-bar__avg-tag">' + esc(t("statsAvgSpectrum")) + ' (' + avgFmt + ')</span>' +
+      '    </div>' +
+      '    <div class="compare-bar__user-pin" style="left: ' + userPct.toFixed(1) + '%;">' +
+      '      <span class="compare-bar__user-dot"></span>' +
+      '      <span class="compare-bar__user-tag">' + esc(t("overall")) + ' (' + userFmt + ')</span>' +
+      '    </div>' +
+      '  </div>' +
+      '  <div class="compare-bar__ends">' +
+      '    <span>' + esc(t("left")) + ' (-100)</span>' +
+      '    <span>' + esc(t("right")) + ' (+100)</span>' +
+      '  </div>' +
+      '</div>'
+    );
+  }
+
+  /* Template 3: Semi-Circular Radial Gauge (Speedometer) */
+  function renderRadialGauge(value, leftName, rightName, bandLabel, activeBand) {
+    var leftPct = Math.round((100 - value) / 2);
+    var rightPct = 100 - leftPct;
+
+    var mainPctText = leftPct > rightPct
+      ? leftPct + "% " + leftName
+      : rightPct > leftPct
+      ? rightPct + "% " + rightName
+      : "50% " + leftName + " / " + rightName;
+
+    var wrap = el("div", "gauge-widget");
+
+    // Palette matching Template 3 bento gauge
+    var colors = [
+      "#e57379", // Far Left (terracotta / rose)
+      "#f09a9e", // Left (soft rose)
+      "#f4baa5", // Centre-Left (soft peach)
+      "#edebe5", // Centre (warm neutral)
+      "#b8cde8", // Centre-Right (soft sky tint)
+      "#8eb0db", // Right (soft slate blue)
+      "#557a95"  // Far Right (deep steel slate)
+    ];
+
+    var segWidths = [20, 13.75, 11, 10.5, 11, 13.75, 20];
+    var cx = 160;
+    var cy = 145;
+    var rOut = 124;
+    var rIn = 80;
+
+    var rad = Math.PI / 180;
+    var currentDeg = 180;
+    var pathsHtml = "";
+
+    for (var i = 0; i < segWidths.length; i++) {
+      var span = segWidths[i] * 1.8;
+      var startDeg = currentDeg;
+      var endDeg = currentDeg - span;
+      currentDeg = endDeg;
+
+      // Subtle 1.2-deg separation gap between segments
+      var sAngle = (startDeg - 0.6) * rad;
+      var eAngle = (endDeg + 0.6) * rad;
+
+      var x1 = cx + rOut * Math.cos(sAngle);
+      var y1 = cy - rOut * Math.sin(sAngle);
+      var x2 = cx + rOut * Math.cos(eAngle);
+      var y2 = cy - rOut * Math.sin(eAngle);
+      var x3 = cx + rIn * Math.cos(eAngle);
+      var y3 = cy - rIn * Math.sin(eAngle);
+      var x4 = cx + rIn * Math.cos(sAngle);
+      var y4 = cy - rIn * Math.sin(sAngle);
+
+      var d = "M " + x1.toFixed(2) + " " + y1.toFixed(2) +
+              " A " + rOut + " " + rOut + " 0 0 1 " + x2.toFixed(2) + " " + y2.toFixed(2) +
+              " L " + x3.toFixed(2) + " " + y3.toFixed(2) +
+              " A " + rIn + " " + rIn + " 0 0 0 " + x4.toFixed(2) + " " + y4.toFixed(2) +
+              " Z";
+
+      var isActive = (i === activeBand);
+      var opacity = isActive ? "1" : "0.55";
+      var stroke = isActive ? "var(--ink)" : "none";
+      var strokeW = isActive ? "1.5" : "0";
+
+      pathsHtml += '<path d="' + d + '" fill="' + colors[i] + '" opacity="' + opacity + '" stroke="' + stroke + '" stroke-width="' + strokeW + '" class="gauge-seg' + (isActive ? " is-active" : "") + '"/>';
+    }
+
+    // Needle pointing angle: value ranges from -100 to +100
+    var needleAngleDeg = 180 - ((value + 100) / 200) * 180;
+    var needleRad = needleAngleDeg * rad;
+
+    var tipL = 112;
+    var tipX = cx + tipL * Math.cos(needleRad);
+    var tipY = cy - tipL * Math.sin(needleRad);
+
+    var tailL = 16;
+    var tailX = cx - tailL * Math.cos(needleRad);
+    var tailY = cy + tailL * Math.sin(needleRad);
+
+    var pRad = needleRad + Math.PI / 2;
+    var b1X = cx + 5.5 * Math.cos(pRad);
+    var b1Y = cy - 5.5 * Math.sin(pRad);
+    var b2X = cx - 5.5 * Math.cos(pRad);
+    var b2Y = cy + 5.5 * Math.sin(pRad);
+
+    var needlePoints = tipX.toFixed(2) + "," + tipY.toFixed(2) + " " +
+                       b1X.toFixed(2) + "," + b1Y.toFixed(2) + " " +
+                       tailX.toFixed(2) + "," + tailY.toFixed(2) + " " +
+                       b2X.toFixed(2) + "," + b2Y.toFixed(2);
+
+    var svg =
+      '<svg class="gauge-svg" viewBox="0 0 320 180" role="img" aria-label="' + esc(bandLabel) + ': ' + esc(mainPctText) + '">' +
+      '<defs>' +
+      '  <filter id="needle-shadow" x="-30%" y="-30%" width="160%" height="160%">' +
+      '    <feDropShadow dx="0" dy="2.5" stdDeviation="3.5" flood-opacity="0.28"/>' +
+      '  </filter>' +
+      '  <linearGradient id="needle-grad" x1="0%" y1="100%" x2="0%" y2="0%">' +
+      '    <stop offset="0%" stop-color="#4a709c"/>' +
+      '    <stop offset="60%" stop-color="#7bb7e8"/>' +
+      '    <stop offset="100%" stop-color="#eef6fc"/>' +
+      '  </linearGradient>' +
+      '</defs>' +
+      '<g class="gauge-tracks">' + pathsHtml + '</g>' +
+      '<polygon points="' + needlePoints + '" fill="url(#needle-grad)" filter="url(#needle-shadow)"/>' +
+      '<line x1="' + cx + '" y1="' + cy + '" x2="' + tipX.toFixed(2) + '" y2="' + tipY.toFixed(2) + '" stroke="#ffffff" stroke-width="1.2" opacity="0.85"/>' +
+      '<circle cx="' + cx + '" cy="' + cy + '" r="13" fill="#ffffff" stroke="var(--border-strong)" stroke-width="2" filter="url(#needle-shadow)"/>' +
+      '<circle cx="' + cx + '" cy="' + cy + '" r="5.5" fill="var(--ink)"/>' +
+      '</svg>';
+
+    var legend =
+      '<div class="gauge-legend">' +
+      '  <span class="gauge-end gauge-end--left">' + esc(t("farLeft")) + '</span>' +
+      '  <div class="gauge-center">' +
+      '    <strong class="gauge-pct">' + esc(mainPctText) + '</strong>' +
+      '  </div>' +
+      '  <span class="gauge-end gauge-end--right">' + esc(t("farRight")) + '</span>' +
+      '</div>';
+
+    wrap.innerHTML = svg + legend;
+    return wrap;
   }
 
   function meterHead(title, label) {
@@ -456,7 +871,10 @@
     copy.addEventListener("click", function () {
       var link = shareUrl(answers, "copy");
       track("share", { method: "copy", result: key });
-      var done = function () { status.textContent = t("copied"); };
+      var done = function () {
+        status.textContent = "✓ " + t("copied");
+        setTimeout(function () { status.textContent = ""; }, 3200);
+      };
       if (navigator.clipboard && window.isSecureContext) {
         navigator.clipboard.writeText(link).then(done, function () { fallbackCopy(link); done(); });
       } else {
@@ -483,32 +901,249 @@
     var civil = QUIZ.domains.civil[lang];
     var x = 100 + (s.econ / 100) * 84;
     var y = 100 - (s.civil / 100) * 84;
+
     var grid = "";
     for (var i = 16; i <= 184; i += 21) {
       grid += '<line x1="' + i + '" y1="16" x2="' + i + '" y2="184"/>' +
               '<line x1="16" y1="' + i + '" x2="184" y2="' + i + '"/>';
     }
     var svg =
-      '<svg class="compass" viewBox="0 0 200 200" role="img" aria-label="' + esc(t("compassHeading")) + '">' +
-      '<defs><clipPath id="compass-clip"><rect x="16" y="16" width="168" height="168" rx="12"/></clipPath></defs>' +
+      '<svg class="compass" viewBox="0 0 200 210" role="img" aria-label="' + esc(t("compassHeading")) + '">' +
+      '<defs>' +
+      '  <clipPath id="compass-clip"><rect x="16" y="16" width="168" height="168" rx="14"/></clipPath>' +
+      '  <filter id="compass-shadow" x="-30%" y="-30%" width="160%" height="160%">' +
+      '    <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-opacity="0.22"/>' +
+      '  </filter>' +
+      '</defs>' +
       '<g clip-path="url(#compass-clip)">' +
-      '<rect x="16" y="16" width="84" height="84" fill="var(--q-auth-left)"/>' +
-      '<rect x="100" y="16" width="84" height="84" fill="var(--q-auth-right)"/>' +
-      '<rect x="16" y="100" width="84" height="84" fill="var(--q-lib-left)"/>' +
-      '<rect x="100" y="100" width="84" height="84" fill="var(--q-lib-right)"/>' +
-      '<g stroke="var(--surface)" stroke-width="0.6" opacity="0.9">' + grid + '</g>' +
+      '  <rect x="16" y="16" width="84" height="84" fill="var(--q-auth-left)"/>' +
+      '  <rect x="100" y="16" width="84" height="84" fill="var(--q-auth-right)"/>' +
+      '  <rect x="16" y="100" width="84" height="84" fill="var(--q-lib-left)"/>' +
+      '  <rect x="100" y="100" width="84" height="84" fill="var(--q-lib-right)"/>' +
+      '  <g stroke="var(--surface)" stroke-width="0.75" opacity="0.95">' + grid + '</g>' +
       '</g>' +
-      '<line x1="100" y1="16" x2="100" y2="184" stroke="var(--ink)" stroke-width="0.75" opacity="0.35"/>' +
-      '<line x1="16" y1="100" x2="184" y2="100" stroke="var(--ink)" stroke-width="0.75" opacity="0.35"/>' +
-      '<path d="M' + x + ' 100V' + y + 'M100 ' + y + 'H' + x + '" fill="none" stroke="var(--accent)" stroke-width="0.75" stroke-dasharray="2 2" opacity="0.6"/>' +
-      '<text x="100" y="10" text-anchor="middle">' + esc(civil.right) + '</text>' +
-      '<text x="100" y="196" text-anchor="middle">' + esc(civil.left) + '</text>' +
-      '<text x="10" y="100" text-anchor="middle" transform="rotate(-90 10 100)">' + esc(t("left")) + '</text>' +
-      '<text x="190" y="100" text-anchor="middle" transform="rotate(90 190 100)">' + esc(t("right")) + '</text>' +
-      '<circle cx="' + x + '" cy="' + y + '" r="12" fill="var(--accent)" opacity="0.14"/>' +
-      '<circle cx="' + x + '" cy="' + y + '" r="5.5" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/>' +
+      '<rect x="16" y="16" width="168" height="168" rx="14" fill="none" stroke="var(--border-strong)" stroke-width="1"/>' +
+      '<line x1="100" y1="16" x2="100" y2="184" stroke="var(--ink)" stroke-width="0.85" opacity="0.35"/>' +
+      '<line x1="16" y1="100" x2="184" y2="100" stroke="var(--ink)" stroke-width="0.85" opacity="0.35"/>' +
+      '<path d="M' + x.toFixed(1) + ' 100V' + y.toFixed(1) + 'M100 ' + y.toFixed(1) + 'H' + x.toFixed(1) + '" fill="none" stroke="var(--accent)" stroke-width="0.85" stroke-dasharray="2.5 2.5" opacity="0.65"/>' +
+      '<text x="100" y="11" text-anchor="middle" class="compass-label">' + esc(civil.right) + '</text>' +
+      '<text x="100" y="198" text-anchor="middle" class="compass-label">' + esc(civil.left) + '</text>' +
+      '<text x="9" y="100" text-anchor="middle" transform="rotate(-90 9 100)" class="compass-label">' + esc(t("left")) + '</text>' +
+      '<text x="191" y="100" text-anchor="middle" transform="rotate(90 191 100)" class="compass-label">' + esc(t("right")) + '</text>' +
+      '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="14" fill="var(--accent)" opacity="0.18">' +
+      '  <animate attributeName="r" values="8;18;8" dur="3s" repeatCount="indefinite"/>' +
+      '  <animate attributeName="opacity" values="0.25;0.05;0.25" dur="3s" repeatCount="indefinite"/>' +
+      '</circle>' +
+      '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="5.5" fill="var(--accent)" stroke="#ffffff" stroke-width="2" filter="url(#compass-shadow)"/>' +
       '</svg>';
     document.getElementById("compass").innerHTML = svg;
+  }
+
+  function renderCommunityCompass(averages, container) {
+    var civil = QUIZ.domains.civil[lang];
+    var econVal = averages.econ || 0;
+    var civilVal = averages.civil || 0;
+    var x = 100 + (econVal / 100) * 84;
+    var y = 100 - (civilVal / 100) * 84;
+
+    var grid = "";
+    for (var i = 16; i <= 184; i += 21) {
+      grid += '<line x1="' + i + '" y1="16" x2="' + i + '" y2="184"/>' +
+              '<line x1="16" y1="' + i + '" x2="184" y2="' + i + '"/>';
+    }
+    var svg =
+      '<svg class="compass" viewBox="0 0 200 210" role="img" aria-label="' + esc(t("statsCompassHeading") || "Community Compass") + '">' +
+      '<defs>' +
+      '  <clipPath id="comm-compass-clip"><rect x="16" y="16" width="168" height="168" rx="14"/></clipPath>' +
+      '  <filter id="comm-compass-shadow" x="-30%" y="-30%" width="160%" height="160%">' +
+      '    <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-opacity="0.22"/>' +
+      '  </filter>' +
+      '</defs>' +
+      '<g clip-path="url(#comm-compass-clip)">' +
+      '  <rect x="16" y="16" width="84" height="84" fill="var(--q-auth-left)"/>' +
+      '  <rect x="100" y="16" width="84" height="84" fill="var(--q-auth-right)"/>' +
+      '  <rect x="16" y="100" width="84" height="84" fill="var(--q-lib-left)"/>' +
+      '  <rect x="100" y="100" width="84" height="84" fill="var(--q-lib-right)"/>' +
+      '  <g stroke="var(--surface)" stroke-width="0.75" opacity="0.95">' + grid + '</g>' +
+      '</g>' +
+      '<rect x="16" y="16" width="168" height="168" rx="14" fill="none" stroke="var(--border-strong)" stroke-width="1"/>' +
+      '<line x1="100" y1="16" x2="100" y2="184" stroke="var(--ink)" stroke-width="0.85" opacity="0.35"/>' +
+      '<line x1="16" y1="100" x2="184" y2="100" stroke="var(--ink)" stroke-width="0.85" opacity="0.35"/>' +
+      '<path d="M' + x.toFixed(1) + ' 100V' + y.toFixed(1) + 'M100 ' + y.toFixed(1) + 'H' + x.toFixed(1) + '" fill="none" stroke="var(--accent)" stroke-width="0.85" stroke-dasharray="2.5 2.5" opacity="0.65"/>' +
+      '<text x="100" y="11" text-anchor="middle" class="compass-label">' + esc(civil.right) + '</text>' +
+      '<text x="100" y="198" text-anchor="middle" class="compass-label">' + esc(civil.left) + '</text>' +
+      '<text x="9" y="100" text-anchor="middle" transform="rotate(-90 9 100)" class="compass-label">' + esc(t("left")) + '</text>' +
+      '<text x="191" y="100" text-anchor="middle" transform="rotate(90 191 100)" class="compass-label">' + esc(t("right")) + '</text>' +
+      '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="14" fill="var(--accent)" opacity="0.18">' +
+      '  <animate attributeName="r" values="8;18;8" dur="3s" repeatCount="indefinite"/>' +
+      '  <animate attributeName="opacity" values="0.25;0.05;0.25" dur="3s" repeatCount="indefinite"/>' +
+      '</circle>' +
+      '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="5.5" fill="var(--accent)" stroke="#ffffff" stroke-width="2" filter="url(#comm-compass-shadow)"/>' +
+      '</svg>';
+    container.innerHTML = svg;
+  }
+
+  /* ---------- Community Stats Dashboard Page ---------- */
+
+  function statsPage() {
+    document.title = t("statsTitle") || "Community Ideology Statistics";
+    var refreshBtn = document.getElementById("stats-refresh");
+
+    function loadAndRenderStats() {
+      if (refreshBtn) refreshBtn.classList.add("is-spinning");
+      if (!window.QUIZ_DB) return;
+
+      window.QUIZ_DB.getStats().then(function (stats) {
+        if (refreshBtn) refreshBtn.classList.remove("is-spinning");
+        if (!stats) return;
+
+        // Badge
+        var badge = document.getElementById("stats-badge");
+        if (badge) {
+          badge.textContent = stats.isLive ? (t("statsLiveBadge") || "Live Database") : (stats.total + "+ " + (t("statsParticipantsCount", { n: "" }) || "Quiz Takers")).trim();
+          badge.className = "badge " + (stats.isLive ? "badge--live" : "badge--sample");
+        }
+
+        // KPIs
+        var kpiTotal = document.getElementById("kpi-total");
+        if (kpiTotal) kpiTotal.textContent = stats.total.toLocaleString();
+
+        var topIdeoKey = stats.topIdeology;
+        var topIdeoObj = QUIZ_RESULTS.ideologies.find(function (i) { return i.key === topIdeoKey; });
+        var kpiTop = document.getElementById("kpi-top");
+        if (kpiTop && topIdeoObj) {
+          kpiTop.textContent = (topIdeoObj.emoji || "") + " " + topIdeoObj[lang].title;
+        }
+
+        var kpiAvg = document.getElementById("kpi-avg");
+        if (kpiAvg) {
+          var avgOverall = stats.averages.overall;
+          var sign = avgOverall > 0 ? "+" : "";
+          kpiAvg.textContent = sign + avgOverall;
+        }
+
+        var kpiLang = document.getElementById("kpi-lang");
+        if (kpiLang && stats.langCounts) {
+          var enC = stats.langCounts.en || 0;
+          var hiC = stats.langCounts.hi || 0;
+          var totalL = enC + hiC || 1;
+          kpiLang.textContent = Math.round((enC / totalL) * 100) + "% / " + Math.round((hiC / totalL) * 100) + "%";
+        }
+
+        // Ideology Bars
+        var barsContainer = document.getElementById("stats-ideology-bars");
+        if (barsContainer) {
+          barsContainer.innerHTML = "";
+          var sorted = Object.keys(stats.ideologies).map(function (k) {
+            var item = stats.ideologies[k];
+            var obj = QUIZ_RESULTS.ideologies.find(function (i) { return i.key === k; });
+            return {
+              key: k,
+              title: obj ? obj[lang].title : k,
+              emoji: obj ? obj.emoji : "🏛️",
+              count: item.count,
+              pct: item.pct
+            };
+          }).sort(function (a, b) { return b.count - a.count; });
+
+          sorted.slice(0, 8).forEach(function (row) {
+            var item = el("div", "stats-bar-item");
+            item.innerHTML =
+              '<div class="stats-bar-head">' +
+              '  <span class="stats-bar-title"><span class="stats-bar-emoji">' + esc(row.emoji) + '</span> ' + esc(row.title) + '</span>' +
+              '  <span class="stats-bar-meta">' + row.pct + '% (' + row.count + ')</span>' +
+              '</div>' +
+              '<div class="stats-bar-track">' +
+              '  <div class="stats-bar-fill" style="width: ' + row.pct + '%;"></div>' +
+              '</div>';
+            barsContainer.appendChild(item);
+          });
+        }
+
+        // Spectrum 7 Bands
+        var spectrumContainer = document.getElementById("stats-spectrum-bars");
+        if (spectrumContainer) {
+          spectrumContainer.innerHTML = "";
+          var bandNames = [
+            t("bandL2"), t("bandL1"), t("bandLM"),
+            t("bandMid"),
+            t("bandRM"), t("bandR1"), t("bandR2")
+          ];
+          var bandColors = [
+            "#f43f5e", "#fb7185", "#fda4af",
+            "#cbd5e1",
+            "#93c5fd", "#60a5fa", "#3b82f6"
+          ];
+          for (var b = 0; b < 7; b++) {
+            var bData = stats.bands[b] || { count: 0, pct: 0 };
+            var bRow = el("div", "spectrum-band-row");
+            bRow.innerHTML =
+              '<div class="spectrum-band-head">' +
+              '  <span class="spectrum-band-dot" style="background: ' + bandColors[b] + ';"></span>' +
+              '  <span class="spectrum-band-name">' + esc(bandNames[b] || "Band " + b) + '</span>' +
+              '  <span class="spectrum-band-pct">' + bData.pct + '% (' + bData.count + ')</span>' +
+              '</div>' +
+              '<div class="spectrum-band-track">' +
+              '  <div class="spectrum-band-fill" style="width: ' + bData.pct + '%; background: ' + bandColors[b] + ';"></div>' +
+              '</div>';
+            spectrumContainer.appendChild(bRow);
+          }
+        }
+
+        // 4 Domains Grid
+        var domainsGrid = document.getElementById("stats-domains-grid");
+        if (domainsGrid) {
+          domainsGrid.innerHTML = "";
+          DOMAINS.forEach(function (d) {
+            var dom = QUIZ.domains[d];
+            var names = dom[lang];
+            var avgVal = stats.averages[d] || 0;
+            var band = QUIZ.bands[d][bandIndex(avgVal)][lang];
+            var card = el("div", "stats-domain-card");
+            var sign = avgVal > 0 ? "+" : "";
+
+            card.innerHTML =
+              '<div class="stats-domain-header">' +
+              '  <span class="stats-domain-title">' + dom.icon + ' ' + esc(names.name) + '</span>' +
+              '  <span class="badge badge--accent">' + esc(band.label) + ' (' + sign + avgVal + ')</span>' +
+              '</div>';
+            card.appendChild(meter(avgVal, names.left, names.right, band.label, DOMAIN_SEGS, bandIndex(avgVal)));
+            domainsGrid.appendChild(card);
+          });
+        }
+
+        // Community Compass
+        var compassBox = document.getElementById("stats-compass");
+        if (compassBox) {
+          renderCommunityCompass(stats.averages, compassBox);
+        }
+
+        // Recent Feed
+        var recentFeed = document.getElementById("stats-recent-feed");
+        if (recentFeed && stats.recent) {
+          recentFeed.innerHTML = "";
+          stats.recent.forEach(function (rec) {
+            var ideoObj = QUIZ_RESULTS.ideologies.find(function (i) { return i.key === rec.ideology; });
+            var item = el("div", "recent-feed-item");
+            var sign = rec.overall_score > 0 ? "+" : "";
+            item.innerHTML =
+              '<span class="recent-feed-icon">' + (ideoObj ? ideoObj.emoji : "🧭") + '</span>' +
+              '<div class="recent-feed-body">' +
+              '  <div class="recent-feed-title">' + (ideoObj ? esc(ideoObj[lang].title) : esc(rec.ideology)) + '</div>' +
+              '  <div class="recent-feed-meta">Score: ' + sign + rec.overall_score + ' · ' + (rec.lang === "hi" ? "हिन्दी" : "English") + '</div>' +
+              '</div>' +
+              '<span class="recent-feed-time">' + esc(rec.timeAgo) + '</span>';
+            recentFeed.appendChild(item);
+          });
+        }
+      });
+    }
+
+    if (refreshBtn) {
+      refreshBtn.addEventListener("click", loadAndRenderStats);
+    }
+
+    loadAndRenderStats();
   }
 
   function esc(str) {
@@ -521,7 +1156,7 @@
 
   applyI18n();
   initAnalytics();
-  var pages = { home: homePage, start: startPage, quiz: quizPage, result: resultPage };
+  var pages = { home: homePage, start: startPage, quiz: quizPage, result: resultPage, stats: statsPage };
   var redirecting = pages[page] ? pages[page]() === false : false;
   if (!redirecting) renderAds(); // never request ads on a page that is about to redirect
 })();

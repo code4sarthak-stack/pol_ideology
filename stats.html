@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title data-i18n="statsTitle">Community Ideology Statistics — ideoMap</title>
+  <meta name="description" content="Aggregate political ideology statistics from all quiz participants in English and Hindi.">
+  <meta name="robots" content="noindex, follow">
+  <meta name="theme-color" content="#fcfcfd">
+  <link rel="icon" href="assets/img/icon.svg" type="image/svg+xml">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="preload" href="assets/fonts/instrument-sans.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/instrument-serif.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/instrument-serif-italic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="stats">
+  <header class="site-header">
+    <a class="brand" href="index.html" data-link="index.html"><img src="assets/img/icon.svg" alt="" width="28" height="28"><span data-i18n="siteName">ideoMap</span></a>
+    <a class="lang-switch" href="#" data-lang-switch>हिन्दी</a>
+  </header>
+
+  <main class="container">
+    <div class="stats-nav-bar">
+      <a class="btn-back" id="btn-back-top" href="javascript:history.back()">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        <span data-i18n="backBtn">← Back</span>
+      </a>
+    </div>
+
+    <div class="ad" data-ad="top"></div>
+
+    <section class="card bento-card stats-hero">
+      <div class="stats-hero__header">
+        <span class="badge badge--live" id="stats-status-badge">100+ Quiz Takers</span>
+        <button class="btn-refresh" id="btn-refresh" type="button" aria-label="Refresh data">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.19"/></svg>
+          <span data-i18n="statsRefreshBtn">Refresh</span>
+        </button>
+      </div>
+      <h1 class="stats-hero__title" data-i18n="statsHeading">Community Ideology Statistics</h1>
+      <p class="stats-hero__sub" data-i18n="statsSub">Aggregated results from all quiz participants across policy areas and ideologies.</p>
+
+      <div class="stats-kpi-grid">
+        <div class="stats-kpi-card">
+          <span class="stats-kpi-card__label">Total Takers</span>
+          <span class="stats-kpi-card__val" id="kpi-total">--</span>
+          <span class="stats-kpi-card__sub">Completed quizzes</span>
+        </div>
+        <div class="stats-kpi-card">
+          <span class="stats-kpi-card__label">Dominant</span>
+          <span class="stats-kpi-card__val" id="kpi-top-ideo" style="font-size: 1.3rem;">--</span>
+          <span class="stats-kpi-card__sub" id="kpi-top-pct">Most common</span>
+        </div>
+        <div class="stats-kpi-card">
+          <span class="stats-kpi-card__label">Spectrum Avg</span>
+          <span class="stats-kpi-card__val" id="kpi-center">--</span>
+          <span class="stats-kpi-card__sub" id="kpi-center-band">Left ↔ Right</span>
+        </div>
+        <div class="stats-kpi-card">
+          <span class="stats-kpi-card__label">Languages</span>
+          <span class="stats-kpi-card__val" id="kpi-lang">--</span>
+          <span class="stats-kpi-card__sub">En / Hi split</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ideology Distribution Breakdown -->
+    <section class="card bento-card">
+      <div class="bento-head">
+        <h2 class="bento-head__title" data-i18n="statsIdeologyDistHeading">Ideological Distribution</h2>
+      </div>
+      <p class="bento-card__sub" data-i18n="statsIdeologyDistSub">Share of test takers by their closest political philosophy (16 total):</p>
+      <div class="stats-bars" id="ideology-bars"></div>
+    </section>
+
+    <!-- 7-Spectrum Bands Breakdown -->
+    <section class="card bento-card">
+      <div class="bento-head">
+        <h2 class="bento-head__title">Overall Spectrum Breakdown</h2>
+      </div>
+      <p class="bento-card__sub">Distribution across the 7 political spectrum bands:</p>
+      <div class="spectrum-bars" id="spectrum-bars"></div>
+    </section>
+
+    <div class="ad" data-ad="middle"></div>
+
+    <!-- 4 Policy Areas Community Average -->
+    <section class="card bento-card">
+      <div class="bento-head">
+        <h2 class="bento-head__title" data-i18n="statsDomainsHeading">Community Averages in 4 Areas</h2>
+      </div>
+      <p class="bento-card__sub" data-i18n="statsDomainsSub">Where the average participant stands on key debates:</p>
+      <div class="stats-domains-grid" id="stats-domains-grid"></div>
+    </section>
+
+    <!-- Community Compass -->
+    <section class="card bento-card bento-card--compass">
+      <div class="bento-head">
+        <h2 class="bento-head__title" data-i18n="statsCompassHeading">Community Political Compass</h2>
+      </div>
+      <p class="bento-card__sub" data-i18n="statsCompassSub">Centroid of all participants on the Economic and Civil liberties axes:</p>
+      <div id="stats-compass"></div>
+    </section>
+
+    <!-- Recent Activity Feed -->
+    <section class="card bento-card">
+      <div class="bento-head">
+        <h2 class="bento-head__title" data-i18n="statsRecentHeading">Recent Anonymous Results</h2>
+      </div>
+      <p class="bento-card__sub" data-i18n="statsRecentSub">Latest completed quizzes:</p>
+      <div class="recent-feed" id="recent-feed"></div>
+    </section>
+
+    <div class="btn-row stats-cta-row">
+      <a class="btn btn--primary" href="quiz.html" data-link="quiz.html" data-i18n="statsTakeQuizBtn">Take the quiz yourself →</a>
+      <button class="btn btn--ghost" id="btn-back-bottom" type="button" data-i18n="backBtn">← Back</button>
+    </div>
+
+    <div class="ad" data-ad="bottom"></div>
+  </main>
+
+  <footer class="site-footer">
+    <nav>
+      <a href="about.html" data-link="about.html" data-i18n="footerAbout">About</a>
+      <a href="privacy.html" data-link="privacy.html" data-i18n="footerPrivacy">Privacy Policy</a>
+      <a href="contact.html" data-link="contact.html" data-i18n="footerContact">Contact</a>
+      <a href="stats.html" data-link="stats.html" data-i18n="footerStats">Community Stats</a>
+    </nav>
+    <p>© <span data-i18n="siteName">ideoMap</span></p>
+  </footer>
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/db.js"></script>
+  <script src="assets/js/strings.js"></script>
+  <script src="assets/js/questions.js"></script>
+  <script src="assets/js/results.js"></script>
+  <script src="assets/js/stats.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

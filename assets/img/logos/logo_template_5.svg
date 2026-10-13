@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="t5-pin-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4f46e5"/>
+      <stop offset="100%" stop-color="#3730a3"/>
+    </linearGradient>
+    <linearGradient id="t5-star-north" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+    <linearGradient id="t5-star-east" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <filter id="t5-shadow" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#4f46e5" flood-opacity="0.22"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="512" height="512" rx="112" fill="#ffffff"/>
+  <rect width="512" height="512" rx="112" fill="none" stroke="#f1f5f9" stroke-width="2"/>
+
+  <!-- Pin & Compass Group -->
+  <g transform="translate(256, 240)">
+    <!-- Elegant Location Pin Silhouette -->
+    <path d="M 0, -170 
+             C 94,-170 160,-104 160,-10 
+             C 160,80 60,165 0,225 
+             C -60,165 -160,80 -160,-10 
+             C -160,-104 -94,-170 0,-170 Z"
+          fill="url(#t5-pin-grad)"
+          filter="url(#t5-shadow)"/>
+
+    <!-- Inner Clean Circular Aperture -->
+    <circle cx="0" cy="-10" r="88" fill="#ffffff"/>
+    
+    <!-- Fine Coordinate Compass Dial Inside Pin -->
+    <circle cx="0" cy="-10" r="76" fill="none" stroke="#e2e8f0" stroke-width="2"/>
+    <circle cx="0" cy="-10" r="76" fill="none" stroke="#4f46e5" stroke-width="2.5" stroke-dasharray="3 17" opacity="0.5"/>
+
+    <!-- Fine Axis Crosshairs -->
+    <line x1="-80" y1="-10" x2="80" y2="-10" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="4 4"/>
+    <line x1="0" y1="-90" x2="0" y2="70" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="4 4"/>
+
+    <!-- Golden Precision 4-Point Compass Rose -->
+    <g transform="translate(0, -10)">
+      <!-- North Pointer -->
+      <polygon points="0,0 0,-56 -14,-14" fill="#fbbf24"/>
+      <polygon points="0,0 0,-56 14,-14" fill="#f59e0b"/>
+
+      <!-- South Pointer -->
+      <polygon points="0,0 0,56 -14,14" fill="#cbd5e1"/>
+      <polygon points="0,0 0,56 14,14" fill="#94a3b8"/>
+
+      <!-- East Pointer -->
+      <polygon points="0,0 56,0 14,-14" fill="url(#t5-star-east)"/>
+      <polygon points="0,0 56,0 14,14" fill="#b45309"/>
+
+      <!-- West Pointer -->
+      <polygon points="0,0 -56,0 -14,-14" fill="#e2e8f0"/>
+      <polygon points="0,0 -56,0 -14,14" fill="#cbd5e1"/>
+
+      <!-- Center Pinpoint -->
+      <circle r="9" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+      <circle r="5" fill="#4f46e5"/>
+    </g>
+
+    <!-- Subtle Anchor Shadow at Base -->
+    <ellipse cx="0" cy="235" rx="50" ry="10" fill="#4f46e5" opacity="0.15"/>
+  </g>
+</svg>

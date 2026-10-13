@@ -3,18 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Political Ideology Quiz</title>
+  <title>ideoMap</title>
   <meta name="robots" content="noindex, follow">
-  <meta name="theme-color" content="#fafaf8">
+  <meta name="theme-color" content="#fcfcfd">
   <link rel="icon" href="assets/img/icon.svg" type="image/svg+xml">
   <link rel="manifest" href="site.webmanifest">
   <link rel="preload" href="assets/fonts/instrument-sans.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/instrument-serif.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/instrument-serif-italic.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body data-page="quiz">
   <header class="site-header">
-    <a class="brand" href="index.html" data-link="index.html"><img src="assets/img/icon.svg" alt="" width="28" height="28"><span data-i18n="siteName">Political Ideology Quiz</span></a>
+    <a class="brand" href="index.html" data-link="index.html"><img src="assets/img/icon.svg" alt="" width="28" height="28"><span data-i18n="siteName">ideoMap</span></a>
     <a class="lang-switch" href="#" data-lang-switch>हिन्दी</a>
   </header>
 
@@ -31,14 +32,14 @@
       </div>
     </div>
 
-    <section class="card question">
+    <section class="card bento-card question">
       <p class="question__label" id="question-domain"></p>
       <h1 class="question__text" id="question-text"></h1>
       <div class="options" id="options"></div>
       <noscript><p>Please enable JavaScript to take the quiz.</p></noscript>
     </section>
 
-    <section class="content note">
+    <section class="note">
       <h2 data-i18n="whyHeading">Why this matters</h2>
       <p id="why-text"></p>
     </section>
@@ -51,8 +52,9 @@
       <a href="about.html" data-link="about.html" data-i18n="footerAbout">About</a>
       <a href="privacy.html" data-link="privacy.html" data-i18n="footerPrivacy">Privacy Policy</a>
       <a href="contact.html" data-link="contact.html" data-i18n="footerContact">Contact</a>
+      <a href="stats.html" data-link="stats.html" data-i18n="footerStats">Community Stats</a>
     </nav>
-    <p>© <span data-i18n="siteName">Political Ideology Quiz</span></p>
+    <p>© <span data-i18n="siteName">ideoMap</span></p>
   </footer>
 
   <script src="assets/js/config.js"></script>

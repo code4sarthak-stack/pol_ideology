@@ -1,12 +1,12 @@
 /* UI text in both languages. Keys are used by data-i18n attributes and app.js. */
 window.STRINGS = {
   en: {
-    siteName: "Political Ideology Quiz",
+    siteName: "ideoMap",
     adLabel: "Advertisement",
     langSwitch: "हिन्दी",
 
     // Name page
-    startTitle: "Political Ideology Quiz — Start",
+    startTitle: "ideoMap — Start",
     startHeading: "What should we call you?",
     startSub: "Your name appears on your result card. It stays on your phone — we never upload it.",
     namePlaceholder: "Enter your name",
@@ -18,12 +18,12 @@ window.STRINGS = {
     how3: "Takes about 3 minutes. See how far left or right you lean overall and in each area, your closest ideology, and real examples from history.",
 
     // Quiz page
-    quizTitle: "Question {n} of {total} — Political Ideology Quiz",
+    quizTitle: "Question {n} of {total} — ideoMap",
     progress: "Question {n} of {total}",
     whyHeading: "Why this matters",
 
     // Result page
-    resultTitle: "Your Result — Political Ideology Quiz",
+    resultTitle: "Your Result — ideoMap",
     resultLeadNamed: "{name}, your political ideology is",
     resultLead: "Your political ideology is",
     resultLeadFriend: "Your friend's political ideology is",
@@ -32,6 +32,11 @@ window.STRINGS = {
     left: "Left",
     right: "Right",
     alsoClose: "Also close to you: {list}",
+    neighboursHeading: "Ideological Neighbours",
+    neighboursSub: "Worldviews that closely align with your responses:",
+    farLeft: "Far Left",
+    farRight: "Far Right",
+    policyDimensions: "Policy Dimensions",
     goodTag: "👍 Inspiring example",
     badTag: "⚠️ Cautionary example",
     ideologyExamples: "{ideology} at its best and worst",
@@ -41,7 +46,7 @@ window.STRINGS = {
     shareMore: "More options",
     copyLink: "Copy link",
     copied: "Link copied!",
-    shareText: "I got \"{result}\" ({overall}) on the Political Ideology Quiz 🧭 Which ideology are you? Find out in 3 minutes 👉",
+    shareText: "I got \"{result}\" ({overall}) on ideoMap 🧭 Which ideology are you? Find out in 3 minutes 👉",
     domainsHeading: "Your ideology in 4 areas",
     domainsSub: "Each meter shows how far you lean to either side in that area. Below it are two real examples of that position: one at its best, and one where it went wrong.",
     meterValue: "{left}% {leftName}, {right}% {rightName}",
@@ -57,15 +62,55 @@ window.STRINGS = {
 
     footerAbout: "About",
     footerPrivacy: "Privacy Policy",
-    footerContact: "Contact"
+    footerContact: "Contact",
+    footerStats: "Community Stats",
+    liveCounter: "{count} quizzes taken so far",
+
+    // Community Comparison (result.html)
+    communityHeading: "How you compare to all users",
+    communityOverallHeading: "Overall Ideology of All Users",
+    communityOverallSub: "See how everyone who took this quiz is distributed across the political spectrum:",
+    communitySub: "Based on overall quiz results from {total} participants:",
+    communityShareStat: "{pct}% of test takers share your worldview ({ideology}).",
+    communityDiffLeft: "Your score ({userScore}) is {points} points more Left than the community average ({avg}).",
+    communityDiffRight: "Your score ({userScore}) is {points} points more Right than the community average ({avg}).",
+    communityDiffCenter: "Your score ({userScore}) aligns closely with the community average ({avg}).",
+    communityExploreBtn: "Explore overall ideology statistics & charts →",
+    youTag: "You",
+    statsViewFull: "View Full Community Analytics Dashboard →",
+
+    // Stats Dashboard (stats.html)
+    statsTitle: "Overall Ideology of All Users — ideoMap",
+    statsHeading: "Overall Ideology of All Users",
+    statsSub: "Aggregated statistics and worldview distribution across all quiz participants.",
+    statsLiveBadge: "● Live Cloud Data",
+    statsPreviewBadge: "Preview Mode (Sample Data)",
+    statsTotalTakers: "Total Participants",
+    statsAvgSpectrum: "Community Center",
+    statsTopIdeology: "Top Worldview",
+    statsLanguageShare: "Language Split",
+    statsIdeologyDistHeading: "Ideological Distribution",
+    statsIdeologyDistSub: "Share of test takers by their closest political philosophy (16 total):",
+    statsSpectrumDistHeading: "Left ↔ Right Distribution",
+    statsSpectrumDistSub: "Participants spread across the 7 political spectrum bands:",
+    statsDomainsHeading: "4 Policy Dimension Averages",
+    statsDomainsSub: "Where the average participant stands on key debate axes:",
+    statsCompassHeading: "Community Political Compass",
+    statsCompassSub: "Position of the community average on the economic and civil liberties axes:",
+    statsRecentHeading: "Recent Anonymous Submissions",
+    statsRecentSub: "Stream of recent quiz completions:",
+    statsTakeQuizBtn: "Take the Quiz Yourself →",
+    statsRefreshBtn: "Refresh Data",
+    statsParticipantsCount: "{n} participants",
+    backBtn: "← Back"
   },
 
   hi: {
-    siteName: "राजनीतिक विचारधारा क्विज़",
+    siteName: "ideoMap",
     adLabel: "विज्ञापन",
     langSwitch: "English",
 
-    startTitle: "राजनीतिक विचारधारा क्विज़ — शुरू करें",
+    startTitle: "ideoMap — शुरू करें",
     startHeading: "हम आपको किस नाम से बुलाएँ?",
     startSub: "आपका नाम आपके रिज़ल्ट कार्ड पर दिखेगा। यह सिर्फ़ आपके फ़ोन में रहता है — हम इसे कहीं अपलोड नहीं करते।",
     namePlaceholder: "अपना नाम लिखें",
@@ -76,11 +121,11 @@ window.STRINGS = {
     how2: "वह जवाब चुनें जो आपकी सोच के सबसे क़रीब हो। कोई जवाब सही या ग़लत नहीं है।",
     how3: "लगभग 3 मिनट लगेंगे। जानिए कि कुल मिलाकर और हर क्षेत्र में आप कितने वाम या दक्षिण की ओर हैं, आपकी सबसे क़रीबी विचारधारा कौन-सी है, और इतिहास से असली उदाहरण।",
 
-    quizTitle: "प्रश्न {n} / {total} — राजनीतिक विचारधारा क्विज़",
+    quizTitle: "प्रश्न {n} / {total} — ideoMap",
     progress: "प्रश्न {n} / {total}",
     whyHeading: "यह क्यों मायने रखता है",
 
-    resultTitle: "आपका रिज़ल्ट — राजनीतिक विचारधारा क्विज़",
+    resultTitle: "आपका रिज़ल्ट — ideoMap",
     resultLeadNamed: "{name}, आपकी राजनीतिक विचारधारा है",
     resultLead: "आपकी राजनीतिक विचारधारा है",
     resultLeadFriend: "आपके दोस्त की राजनीतिक विचारधारा है",
@@ -89,6 +134,11 @@ window.STRINGS = {
     left: "वाम",
     right: "दक्षिण",
     alsoClose: "आपके क़रीब ये भी हैं: {list}",
+    neighboursHeading: "क़रीबी विचारधाराएँ",
+    neighboursSub: "विचारधाराएँ जो आपके विचारों के सबसे नज़दीक हैं:",
+    farLeft: "धुर वाम",
+    farRight: "धुर दक्षिण",
+    policyDimensions: "नीतिगत आयाम",
     goodTag: "👍 प्रेरक उदाहरण",
     badTag: "⚠️ सबक़ देने वाला उदाहरण",
     ideologyExamples: "{ideology}: सबसे अच्छा और सबसे बुरा रूप",
@@ -98,7 +148,7 @@ window.STRINGS = {
     shareMore: "और विकल्प",
     copyLink: "लिंक कॉपी करें",
     copied: "लिंक कॉपी हो गया!",
-    shareText: "राजनीतिक विचारधारा क्विज़ में मेरा रिज़ल्ट आया: \"{result}\" ({overall}) 🧭 आपकी विचारधारा क्या है? 3 मिनट में जानिए 👉",
+    shareText: "ideoMap पर मेरा रिज़ल्ट आया: \"{result}\" ({overall}) 🧭 आपकी विचारधारा क्या है? 3 मिनट में जानिए 👉",
     domainsHeading: "4 क्षेत्रों में आपकी विचारधारा",
     domainsSub: "हर मीटर दिखाता है कि उस क्षेत्र में आपका झुकाव किस ओर और कितना है। उसके नीचे उस सोच के दो असली उदाहरण हैं: एक उसका सबसे अच्छा रूप, और एक जहाँ वह ग़लत साबित हुई।",
     meterValue: "{left}% {leftName}, {right}% {rightName}",
@@ -114,6 +164,46 @@ window.STRINGS = {
 
     footerAbout: "हमारे बारे में",
     footerPrivacy: "प्राइवेसी पॉलिसी",
-    footerContact: "संपर्क"
+    footerContact: "संपर्क",
+    footerStats: "सामुदायिक सांख्यिकी",
+    liveCounter: "अब तक {count} क्विज़ पूरे किए गए",
+
+    // Community Comparison (result.html)
+    communityHeading: "आप अन्य प्रतिभागियों की तुलना में कहाँ हैं",
+    communityOverallHeading: "सभी प्रतिभागियों की समग्र विचारधारा",
+    communityOverallSub: "देखें कि इस क्विज़ में भाग लेने वाले सभी लोग राजनीतिक स्पेक्ट्रम पर कहाँ खड़े हैं:",
+    communitySub: "{total} प्रतिभागियों के समग्र परिणामों के आधार पर:",
+    communityShareStat: "{pct}% प्रतिभागी आपकी विचारधारा ({ideology}) साझा करते हैं।",
+    communityDiffLeft: "आपका स्कोर ({userScore}) सामुदायिक औसत ({avg}) की तुलना में {points} अंक अधिक वामपंथी है।",
+    communityDiffRight: "आपका स्कोर ({userScore}) सामुदायिक औसत ({avg}) की तुलना में {points} अंक अधिक दक्षिणपंथी है।",
+    communityDiffCenter: "आपका स्कोर ({userScore}) सामुदायिक औसत ({avg}) के बेहद नज़दीक है।",
+    communityExploreBtn: "समग्र विचारधारा सांख्यिकी और चार्ट देखें →",
+    youTag: "आप",
+    statsViewFull: "विस्तृत सामुदायिक सांख्यिकी डैशबोर्ड देखें →",
+
+    // Stats Dashboard (stats.html)
+    statsTitle: "सभी प्रतिभागियों की समग्र विचारधारा — ideoMap",
+    statsHeading: "सभी प्रतिभागियों की समग्र विचारधारा",
+    statsSub: "क्विज़ लेने वाले सभी उपयोगकर्ताओं के समग्र आँकड़े और वैचारिक रुझान।",
+    statsLiveBadge: "● लाइव क्लाउड डेटा",
+    statsPreviewBadge: "पूर्वावलोकन मोड (नमूना डेटा)",
+    statsTotalTakers: "कुल प्रतिभागी",
+    statsAvgSpectrum: "सामुदायिक केंद्र",
+    statsTopIdeology: "सबसे आम विचारधारा",
+    statsLanguageShare: "भाषा का अनुपात",
+    statsIdeologyDistHeading: "विचारधाराओं का वितरण",
+    statsIdeologyDistSub: "16 राजनीतिक दर्शनों में प्रतिभागियों का प्रतिशत:",
+    statsSpectrumDistHeading: "वाम ↔ दक्षिण वितरण",
+    statsSpectrumDistSub: "7 राजनीतिक श्रेणियों में प्रतिभागियों का फैलाव:",
+    statsDomainsHeading: "4 नीतिगत क्षेत्रों में सामुदायिक औसत",
+    statsDomainsSub: "मुख्य मुद्दों पर औसत प्रतिभागी कहाँ खड़ा है:",
+    statsCompassHeading: "सामुदायिक पॉलिटिकल कंपास",
+    statsCompassSub: "आर्थिक और नागरिक स्वतंत्रता अक्ष पर सामुदायिक औसत:",
+    statsRecentHeading: "हालिया अज्ञात परिणाम",
+    statsRecentSub: "हाल ही में पूरे किए गए क्विज़ की सूची:",
+    statsTakeQuizBtn: "स्वयं क्विज़ खेलें →",
+    statsRefreshBtn: "डेटा रीफ़्रेश करें",
+    statsParticipantsCount: "{n} प्रतिभागी",
+    backBtn: "← वापस जाएँ"
   }
 };

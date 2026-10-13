@@ -1,4 +1,4 @@
-# Political Ideology Quiz (English + हिन्दी)
+# ideoMap (English + हिन्दी)
 
 A mobile-first quiz website that earns money from ads. A visitor:
 
@@ -21,11 +21,15 @@ It's plain HTML, CSS and JavaScript, with no framework and no build step. Upload
 index.html        Page 1: language choice (landing page)
 start.html        Page 2: name + start
 quiz.html         Pages 3–14: one question per page (?q=1…12)
-result.html       Page 15: ideology, meters per area, examples, compass, share buttons
+result.html       Page 15: ideology, meters per area, comparison with all users, compass
+stats.html        Community Dashboard: overall ideology distribution, spectrum breakdown & averages
+schema.sql        PostgreSQL/Supabase schema & seed data for community quiz tracking
 about.html, privacy.html, contact.html   Needed for AdSense approval
 ads.txt           AdSense seller declaration (needs your pub ID)
 robots.txt, sitemap.xml, site.webmanifest
-assets/js/config.js     ← AdSense + Analytics IDs (the only code file you must edit)
+assets/js/config.js     ← AdSense + Analytics + Cloud DB credentials
+assets/js/db.js         ← Firebase Realtime DB & Supabase tracking client + sample data fallback
+assets/js/stats.js      ← Statistics dashboard controller & charts
 assets/js/questions.js  ← the 4 areas and 12 questions, in both languages
 assets/js/results.js    ← labels, descriptions and examples for every result, in both languages (result page only)
 assets/js/strings.js    ← all button and label text, in both languages
@@ -93,6 +97,28 @@ Keep 3 questions per area and 5 options per question. Answers are stored as one 
 - **Overall Left ↔ Right** = 50% economy + 50% the average of society, civil liberties and world politics. This is the economic dimension plus the cultural "GAL–TAN" dimension used in comparative politics. It has 7 labels, from *Far Left* to *Far Right*.
 - **Ideology**: each of the 16 ideologies in `results.js` has a typical position `pos: [econ, social, civil, world]`. The result is the ideology closest to the user's four scores. The next two closest are shown as "Also close to you".
 - **Compass**: the classic chart, economy (x) against civil liberties (y).
+
+## Tracking Overall Ideology of All Users
+
+The project tracks overall ideological trends across all participants:
+
+1. **Anonymous Result Submission**:
+   - When a user finishes the quiz, `assets/js/db.js` logs an anonymous record (ideology, overall band, Left-Right score, and 4 domain scores).
+   - Friend shared views (`?s=1`) and page reloads are automatically deduplicated.
+2. **Community Statistics Dashboard (`stats.html`)**:
+   - Total number of participants who took the quiz.
+   - Percentage breakdown of all 16 ideologies sorted by popularity.
+   - Distribution across the 7 political spectrum bands.
+   - Community averages across Economy, Society, Civil Liberties, and World Politics.
+   - 2D Community Political Compass with density clusters.
+   - Live stream of recent anonymous completions.
+3. **"How You Compare" Widget on `result.html`**:
+   - Displays what percentage of all participants share the user's worldview.
+   - Compares the user's score directly against the community average with a dual-marker spectrum bar.
+4. **Cloud Database Backend**:
+   - **Firebase Realtime Database**: Natively supported via the existing `SITE_CONFIG.FIREBASE` credentials in `assets/js/config.js`.
+   - **Supabase (PostgreSQL)**: Supported out of the box via `schema.sql` (just copy-paste into Supabase SQL Editor and add URL/key to `config.js`).
+   - **Sample Preview Mode**: If offline or no database is connected yet, the system provides a realistic dataset of 100 diverse participants so all UI and charts work immediately in preview.
 
 ## How it works (for developers)
 

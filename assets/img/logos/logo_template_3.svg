@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Faceted Monogram Gradients -->
+    <linearGradient id="t3-left-arm" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4f46e5"/>
+      <stop offset="100%" stop-color="#3730a3"/>
+    </linearGradient>
+    <linearGradient id="t3-right-arm" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4338ca"/>
+      <stop offset="100%" stop-color="#312e81"/>
+    </linearGradient>
+    <linearGradient id="t3-inner-l" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#4f46e5"/>
+    </linearGradient>
+    <linearGradient id="t3-inner-r" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4f46e5"/>
+      <stop offset="100%" stop-color="#4338ca"/>
+    </linearGradient>
+    <linearGradient id="t3-arrow-core" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#4338ca"/>
+      <stop offset="100%" stop-color="#6366f1"/>
+    </linearGradient>
+    <linearGradient id="t3-arrow-tip" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#fbbf24"/>
+    </linearGradient>
+    <filter id="t3-shadow" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="16" stdDeviation="22" flood-color="#4f46e5" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+
+  <!-- Background Canvas -->
+  <rect width="512" height="512" rx="112" fill="#ffffff"/>
+  <rect width="512" height="512" rx="112" fill="none" stroke="#f1f5f9" stroke-width="2"/>
+
+  <!-- Origami M & Arrow Emblem -->
+  <g transform="translate(256, 265)" filter="url(#t3-shadow)">
+    <!-- Central Rising Arrow Shaft -->
+    <polygon points="0,-165 42,-80 0,-115" fill="#4338ca"/>
+    <polygon points="0,-165 -42,-80 0,-115" fill="#6366f1"/>
+
+    <!-- Central Arrow Stem down to baseline -->
+    <polygon points="0,-115 26,-40 0,60" fill="url(#t3-inner-r)"/>
+    <polygon points="0,-115 -26,-40 0,60" fill="url(#t3-inner-l)"/>
+
+    <!-- Left Outer Wing / Arm of M -->
+    <polygon points="-120,85 -120,-45 -48,45 -80,105" fill="url(#t3-left-arm)"/>
+    <polygon points="-120,-45 -80,-85 -48,45" fill="#6366f1"/>
+
+    <!-- Right Outer Wing / Arm of M -->
+    <polygon points="120,85 120,-45 48,45 80,105" fill="url(#t3-right-arm)"/>
+    <polygon points="120,-45 80,-85 48,45" fill="#4f46e5"/>
+
+    <!-- Diagonal Chevron Struts -->
+    <polygon points="-80,-85 0,-15 -48,45" fill="#3730a3"/>
+    <polygon points="80,-85 0,-15 48,45" fill="#312e81"/>
+
+    <!-- Golden Illuminated Compass Arrow Head -->
+    <polygon points="0,-165 -22,-120 0,-136" fill="url(#t3-arrow-tip)"/>
+    <polygon points="0,-165 22,-120 0,-136" fill="#f59e0b"/>
+  </g>
+</svg>

@@ -1,6 +1,6 @@
 {
-  "name": "Political Ideology Quiz",
-  "short_name": "Ideology Quiz",
+  "name": "ideoMap",
+  "short_name": "ideoMap",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#fafaf8",

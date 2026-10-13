@@ -3,15 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Your Result — Political Ideology Quiz</title>
+  <title>Your Result — ideoMap</title>
   <meta name="description" content="See which political ideology your friend got — then take the free 3-minute quiz in English or Hindi.">
   <meta name="robots" content="noindex, follow">
-  <meta name="theme-color" content="#fafaf8">
+  <meta name="theme-color" content="#fcfcfd">
   <link rel="icon" href="assets/img/icon.svg" type="image/svg+xml">
   <link rel="manifest" href="site.webmanifest">
   <!-- Shared WhatsApp links point to this page, so it carries the preview card tags too. -->
   <meta property="og:type" content="website">
-  <meta property="og:site_name" content="Political Ideology Quiz">
+  <meta property="og:site_name" content="ideoMap">
   <meta property="og:title" content="Which political ideology are you? 🧭 आपकी विचारधारा क्या है?">
   <meta property="og:description" content="See my result, then take the 3-minute quiz in English or Hindi.">
   <meta property="og:image" content="https://YOUR-DOMAIN.com/assets/img/og-image.jpg">
@@ -20,34 +20,50 @@
   <meta name="twitter:card" content="summary_large_image">
   <link rel="preload" href="assets/fonts/instrument-sans.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/instrument-serif.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/instrument-serif-italic.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body data-page="result">
   <header class="site-header">
-    <a class="brand" href="index.html" data-link="index.html"><img src="assets/img/icon.svg" alt="" width="28" height="28"><span data-i18n="siteName">Political Ideology Quiz</span></a>
+    <a class="brand" href="index.html" data-link="index.html"><img src="assets/img/icon.svg" alt="" width="28" height="28"><span data-i18n="siteName">ideoMap</span></a>
     <a class="lang-switch" href="#" data-lang-switch>हिन्दी</a>
   </header>
 
   <main class="container">
     <div class="ad" data-ad="top"></div>
 
-    <section class="card result-hero">
+    <section class="card result-hero bento-card">
       <div class="result-hero__emoji" id="result-emoji" aria-hidden="true"></div>
       <p class="result-hero__lead" id="result-lead"></p>
       <h1 class="result-hero__title" id="result-title"></h1>
+      <div class="result-hero__badge-wrap">
+        <span class="badge result-hero__badge" id="result-badge"></span>
+      </div>
+
+      <!-- Semi-Circular Radial Speedometer Gauge -->
+      <div class="gauge-container" id="overall"></div>
+
       <p class="result-hero__desc" id="result-desc"></p>
-      <div class="overall" id="overall"></div>
-      <p class="also-close" id="also-close"></p>
       <a class="btn btn--primary friend-cta" id="friend-cta" href="index.html" data-link="index.html" data-i18n="friendCta" hidden>Which ideology are you? Take the quiz →</a>
       <noscript><p>Please enable JavaScript to see the result.</p></noscript>
     </section>
 
-    <section class="card">
+    <!-- Bento Tile: Ideological Neighbours -->
+    <section class="card bento-card bento-card--neighbours" id="neighbours-card">
+      <div class="bento-head">
+        <h2 class="bento-head__title" data-i18n="neighboursHeading">Ideological Neighbours</h2>
+        <span class="badge" data-i18n="siteName">ideoMap</span>
+      </div>
+      <p class="bento-card__sub" data-i18n="neighboursSub">Worldviews that closely align with your responses:</p>
+      <div class="neighbour-chips" id="neighbour-chips"></div>
+    </section>
+
+    <section class="card bento-card">
       <h2 id="ideology-examples-heading"></h2>
       <div id="ideology-examples"></div>
     </section>
 
-    <section class="card">
+    <section class="card bento-card bento-card--share">
       <h2 data-i18n="shareHeading">Challenge your friends</h2>
       <p class="muted" data-i18n="shareSub">Send your result and see who agrees with you.</p>
       <a class="btn btn--whatsapp" id="share-whatsapp" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg><span data-i18n="shareWhatsapp">Share on WhatsApp</span></a>
@@ -68,14 +84,68 @@
 
     <div id="domains-b"></div>
 
-    <section class="card">
-      <h2 data-i18n="compassHeading">Your position on the political compass</h2>
+    <section class="card bento-card bento-card--compass">
+      <div class="bento-head">
+        <h2 class="bento-head__title" data-i18n="compassHeading">Your position on the political compass</h2>
+      </div>
       <p class="muted" data-i18n="compassSub"></p>
       <div id="compass"></div>
     </section>
 
-    <section class="content">
-      <h2 data-i18n="methodHeading">How your result is calculated</h2>
+    <!-- Overall Ideology of All Users (Below Political Compass Graph) -->
+    <section class="card bento-card bento-card--community-overall" id="community-card">
+      <div class="bento-head">
+        <h2 class="bento-head__title" data-i18n="communityOverallHeading">Overall Ideology of All Users</h2>
+        <span class="badge badge--live" id="community-badge">100+ quiz takers</span>
+      </div>
+      <p class="bento-card__sub" id="community-sub" data-i18n="communityOverallSub">See how everyone who took this quiz is distributed across the political spectrum:</p>
+
+      <!-- KPI Summary Row -->
+      <div class="community-kpis">
+        <div class="community-kpi">
+          <span class="community-kpi__label" data-i18n="statsTotalTakers">Total Participants</span>
+          <strong class="community-kpi__val" id="comm-kpi-total">--</strong>
+        </div>
+        <div class="community-kpi">
+          <span class="community-kpi__label" data-i18n="statsAvgSpectrum">Community Center</span>
+          <strong class="community-kpi__val" id="comm-kpi-avg">--</strong>
+        </div>
+        <div class="community-kpi">
+          <span class="community-kpi__label" data-i18n="statsTopIdeology">Top Worldview</span>
+          <strong class="community-kpi__val" id="comm-kpi-top">--</strong>
+        </div>
+      </div>
+
+      <!-- User Comparison Callout -->
+      <div class="community-callout" id="community-callout">
+        <div class="community-callout__icon" aria-hidden="true">🧭</div>
+        <div class="community-callout__text" id="community-callout-text">Loading comparison...</div>
+      </div>
+
+      <!-- Dual-Marker Spectrum Comparison Bar -->
+      <div class="community-compare-bar" id="community-compare-bar"></div>
+
+      <!-- Left ↔ Right Spectrum 7-Band Distribution -->
+      <div class="community-section">
+        <h3 class="community-section__title" data-i18n="statsSpectrumDistHeading">Left ↔ Right Distribution</h3>
+        <p class="community-section__sub" data-i18n="statsSpectrumDistSub">Participants spread across the 7 political spectrum bands:</p>
+        <div class="spectrum-bars" id="community-spectrum-bars"></div>
+      </div>
+
+      <!-- Ideological Distribution Bars -->
+      <div class="community-section">
+        <h3 class="community-section__title" data-i18n="statsIdeologyDistHeading">Ideological Distribution</h3>
+        <p class="community-section__sub" data-i18n="statsIdeologyDistSub">Share of test takers by their closest political philosophy (16 total):</p>
+        <div class="stats-bars" id="community-ideology-bars"></div>
+      </div>
+
+      <a class="btn btn--ghost community-btn" id="community-explore-link" href="stats.html" data-link="stats.html" data-i18n="statsViewFull">View Full Community Analytics Dashboard →</a>
+    </section>
+
+    <section class="card bento-card">
+      <div class="bento-head">
+        <h2 class="bento-head__title" data-i18n="methodHeading">How your result is calculated</h2>
+      </div>
       <p data-i18n="method1"></p>
       <p data-i18n="method2"></p>
       <p data-i18n="method3"></p>
@@ -93,11 +163,13 @@
       <a href="about.html" data-link="about.html" data-i18n="footerAbout">About</a>
       <a href="privacy.html" data-link="privacy.html" data-i18n="footerPrivacy">Privacy Policy</a>
       <a href="contact.html" data-link="contact.html" data-i18n="footerContact">Contact</a>
+      <a href="stats.html" data-link="stats.html" data-i18n="footerStats">Community Stats</a>
     </nav>
-    <p>© <span data-i18n="siteName">Political Ideology Quiz</span></p>
+    <p>© <span data-i18n="siteName">ideoMap</span></p>
   </footer>
 
   <script src="assets/js/config.js"></script>
+  <script src="assets/js/db.js"></script>
   <script src="assets/js/strings.js"></script>
   <script src="assets/js/questions.js"></script>
   <script src="assets/js/results.js"></script>
