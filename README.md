@@ -30,7 +30,8 @@ assets/js/questions.js  ← the 4 areas and 20 questions, in both languages
 assets/js/results.js    ← labels, descriptions and examples for every result, in both languages (result page only)
 assets/js/strings.js    ← all button and label text, in both languages
 assets/js/app.js        Page logic: scoring, navigation, ads, sharing
-assets/css/style.css    Styles (light + dark mode)
+assets/css/style.css    Styles (light theme)
+assets/fonts/           Self-hosted web fonts (Instrument Sans/Serif, Tiro Devanagari Hindi) + licence
 assets/img/             Icon and the WhatsApp/Facebook preview image
 ```
 
