@@ -3,8 +3,10 @@
 A mobile-first quiz website that earns money from ads. A visitor:
 
 1. **Picks a language**: English or Hindi.
-2. **Enters their name** and starts.
-3. **Answers 12 questions**, one per page. Each question has its own five answer choices, plus a short note on the history and research behind it.
+2. **Enters their name** and picks a length: **Quick** (12 questions, about 2 minutes) or **In-depth** (24 questions, about 5 minutes).
+3. **Answers the questions**, one per page. Each question has its own five answer choices, plus a short note on the history and research behind it.
+   - Quick-quiz takers reach a **checkpoint** after question 12: *See results now* or *Continue to 24 questions*. Their 12 answers are kept either way.
+   - A Quick result page also offers *Continue to 24 questions* (not shown in a friend's shared view).
 4. **Gets a result page** with:
    - their closest ideology (out of 16) and an overall Left ↔ Right meter
    - a meter for each of 4 areas: Economy, Society, Civil liberties and World politics
@@ -20,8 +22,8 @@ It's plain HTML, CSS and JavaScript, with no framework and no build step. Upload
 ```
 index.html        Page 1: language choice (landing page)
 start.html        Page 2: name + start
-quiz.html         Pages 3–14: one question per page (?q=1…12)
-result.html       Page 15: ideology, meters per area, comparison with all users, compass
+quiz.html         One question per page (?q=1…24&total=12|24), plus the checkpoint after question 12 of the Quick quiz
+result.html       Last page: ideology, meters per area, comparison with all users, compass
 stats.html        Community Dashboard: overall ideology distribution, spectrum breakdown & averages
 schema.sql        PostgreSQL/Supabase schema & seed data for community quiz tracking
 about.html, privacy.html, contact.html   Needed for AdSense approval
@@ -30,7 +32,7 @@ robots.txt, sitemap.xml, site.webmanifest
 assets/js/config.js     ← AdSense + Analytics + Cloud DB credentials
 assets/js/db.js         ← Firebase Realtime DB & Supabase tracking client + sample data fallback
 assets/js/stats.js      ← Statistics dashboard controller & charts
-assets/js/questions.js  ← the 4 areas and 12 questions, in both languages
+assets/js/questions.js  ← the 4 areas and 24 questions (1–12 Quick set, 13–24 In-depth set), in both languages
 assets/js/results.js    ← labels, descriptions and examples for every result, in both languages (result page only)
 assets/js/strings.js    ← all button and label text, in both languages
 assets/js/app.js        Page logic: scoring, navigation, ads, sharing
@@ -88,11 +90,11 @@ Edit `assets/js/questions.js`. Each question has:
 - **`scores`**: one score per option, in the order the options appear, from `-2` (left pole) to `+2` (right pole). The direction is mixed on purpose, so the leftmost answer isn't always first.
 - **Text in both languages**: the question, its options and a short "why this matters" note.
 
-Keep 3 questions per area and 5 options per question. Answers are stored as one digit per question in share links, so reordering questions or options changes the results of links that were already shared.
+The list has two halves. Questions 1–12 are the Quick quiz and questions 13–24 are the In-depth set; **each half must keep 3 questions per area**, so a 12-answer result is a complete, balanced sample on its own. Keep 5 options per question, and within each area run half the questions left → right and half right → left. Answers are stored as one digit per question in share links, so reordering questions or options changes the results of links that were already shared.
 
 ## How results are calculated
 
-- Each area's answers are added up and scaled from **−100** (fully left) to **+100** (fully right). The meters show this as a split, for example "70% Equality · 30% Markets".
+- Each area's answers are added up and scaled from **−100** (fully left) to **+100** (fully right). The scale is computed from the questions actually answered (3 per area in the Quick quiz, 6 in the In-depth quiz), so both lengths use the same −100 … +100 range and the same bands. The meters show this as a split, for example "70% Equality · 30% Markets".
 - Each area falls into one of 5 bands: ≤ −60, −59 to −21, −20 to 20, 21 to 59, ≥ 60. Each band has its own label, such as *Social Democrat* or *Law & Order*, a description, and a good and a cautionary example. These are all in `assets/js/results.js`.
 - **Overall Left ↔ Right** = 50% economy + 50% the average of society, civil liberties and world politics. This is the economic dimension plus the cultural "GAL–TAN" dimension used in comparative politics. It has 7 labels, from *Far Left* to *Far Right*.
 - **Ideology**: each of the 16 ideologies in `results.js` has a typical position `pos: [econ, social, civil, world]`. The result is the ideology closest to the user's four scores. The next two closest are shown as "Also close to you".
@@ -122,6 +124,8 @@ The project tracks overall ideological trends across all participants:
 
 ## How it works (for developers)
 
-- **State lives in the URL.** For example, `quiz.html?lang=hi&q=4&a=021` means Hindi, question 4, and options 0, 2 and 1 were chosen for questions 1–3. Every question is a real page load: one page view and fresh ads each time, and the Back button works.
+- **State lives in the URL.** For example, `quiz.html?lang=hi&q=4&a=021&total=12` means Hindi, Quick quiz, question 4, and options 0, 2 and 1 were chosen for questions 1–3. Every question is a real page load: one page view and fresh ads each time, and the Back button works.
+- **Quiz length** is `total=12` or `total=24`. After question 12 of the Quick quiz the next page is `quiz.html?step=checkpoint&a=…&total=12`; its two buttons are real links to `result.html?a=…` and `quiz.html?q=13&a=…&total=24`. Old links without `total` are treated as Quick, and any URL with more than 12 answers as In-depth. A result is valid with exactly 12 or 24 answers.
+- **GA4 events**: `quiz_start` and `answer` carry `total`; `checkpoint_choice` (`results` / `continue`) is sent at the checkpoint; `quiz_complete` is sent on the last answer of the In-depth quiz or on *See results now*; `precision_continue` is sent from the result page.
 - **The name is stored only in `localStorage`.** It is never put in a URL, because URLs are sent to ad and analytics servers.
 - **Shared links** look like `result.html?a=…&s=1`. They open a "friend view" with a *Take the quiz* call to action.

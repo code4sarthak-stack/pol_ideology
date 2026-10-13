@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Your Result — ideoMap</title>
-  <meta name="description" content="See which political ideology your friend got — then take the free 3-minute quiz in English or Hindi.">
+  <meta name="description" content="See which political ideology your friend got — then take the free 2-minute quiz in English or Hindi.">
   <meta name="robots" content="noindex, follow">
   <meta name="theme-color" content="#fcfcfd">
   <link rel="icon" href="assets/img/icon.svg" type="image/svg+xml">
@@ -13,7 +13,7 @@
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="ideoMap">
   <meta property="og:title" content="Which political ideology are you? 🧭 आपकी विचारधारा क्या है?">
-  <meta property="og:description" content="See my result, then take the 3-minute quiz in English or Hindi.">
+  <meta property="og:description" content="See my result, then take the 2-minute quiz in English or Hindi.">
   <meta property="og:image" content="https://YOUR-DOMAIN.com/assets/img/og-image.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -95,6 +95,16 @@
       <div class="quick-share__toast" id="hero-share-toast" aria-live="polite" hidden></div>
     </section>
 
+    <!-- Quick (12-answer) results only: offer questions 13–24 -->
+    <section class="card bento-card precision-card" id="precision-card" hidden>
+      <div class="bento-head">
+        <h2 class="bento-head__title" data-i18n="precisionHeading">Want a more precise result?</h2>
+        <span class="badge" data-i18n="precisionBadge">Quick result · 12 questions</span>
+      </div>
+      <p class="bento-card__sub" data-i18n="precisionSub">Answer 12 more questions (about 3 minutes) and each area will rest on twice as many answers. Your first 12 answers are kept.</p>
+      <a class="btn btn--primary" id="precision-link" href="#" data-i18n="checkpointContinue">Continue to 24 Questions →</a>
+    </section>
+
     <div class="card-grid">
       <!-- Bento Tile: Ideological Neighbours -->
       <section class="card bento-card bento-card--neighbours" id="neighbours-card">
@@ -148,7 +158,7 @@
         <div class="bento-head">
           <h2 class="bento-head__title" data-i18n="methodHeading">How your result is calculated</h2>
         </div>
-        <p data-i18n="method1"></p>
+        <p id="method1"></p>
         <p data-i18n="method2"></p>
         <p data-i18n="method3"></p>
       </section>
@@ -211,7 +221,7 @@
       <a class="btn btn--ghost community-btn" id="community-explore-link" href="stats.html" data-link="stats.html" data-i18n="statsViewFull">View Full Community Analytics Dashboard →</a>
     </section>
 
-    <a class="btn btn--ghost retake-btn" id="retake-link" href="quiz.html" data-i18n="retake">Retake the quiz</a>
+    <a class="btn btn--ghost retake-btn" id="retake-link" href="start.html" data-i18n="retake">Retake the quiz</a>
 
     <p class="disclaimer" data-i18n="disclaimer"></p>
 

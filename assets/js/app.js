@@ -5,13 +5,10 @@
   var CFG = window.SITE_CONFIG || {};
   var STR = window.STRINGS;
   var QUIZ = window.QUIZ;
-  var TOTAL = QUIZ.questions.length;
+  var FULL = QUIZ.questions.length; // In-depth quiz: all 24 questions, 6 per domain
+  var QUICK = 12;                   // Quick quiz: questions 1–12, 3 per domain
   var LANGS = ["en", "hi"];
   var DOMAINS = ["econ", "social", "civil", "world"]; // order matches each ideology's pos[]
-  var MAX = { econ: 0, social: 0, civil: 0, world: 0 }; // highest possible raw score per domain
-  QUIZ.questions.forEach(function (q) {
-    MAX[q.domain] += Math.max.apply(null, q.scores.map(Math.abs));
-  });
   var params = new URLSearchParams(location.search);
   var page = document.body.getAttribute("data-page");
 
@@ -146,28 +143,40 @@
 
   // Answers are one digit per question: the index of the chosen option.
   function isValidPrefix(a) {
-    if (!/^[0-9]*$/.test(a) || a.length > TOTAL) return false;
+    if (!/^[0-9]*$/.test(a) || a.length > FULL) return false;
     for (var i = 0; i < a.length; i++) {
       if (+a.charAt(i) >= QUIZ.questions[i].scores.length) return false;
     }
     return true;
   }
 
+  // A finished quiz is either the Quick (12) or the In-depth (24) set.
   function isCompleteAnswers(a) {
-    return !!a && a.length === TOTAL && isValidPrefix(a);
+    return !!a && (a.length === QUICK || a.length === FULL) && isValidPrefix(a);
+  }
+
+  // Highest possible raw score per domain over the first n questions, so a 12- and a
+  // 24-answer result are both scaled to the same -100 … +100 range.
+  function maxScores(n) {
+    var max = { econ: 0, social: 0, civil: 0, world: 0 };
+    QUIZ.questions.slice(0, n).forEach(function (q) {
+      max[q.domain] += Math.max.apply(null, q.scores.map(Math.abs));
+    });
+    return max;
   }
 
   // Each domain runs from -100 (left pole) to +100 (right pole).
   // Overall = 50% economics + 50% the cultural dimension (mean of society, civil liberties, world),
   // following the economic left-right + GAL-TAN model used in comparative politics.
   function score(answers) {
+    var max = maxScores(answers.length);
     var raw = { econ: 0, social: 0, civil: 0, world: 0 };
-    for (var i = 0; i < TOTAL; i++) {
+    for (var i = 0; i < answers.length; i++) {
       var q = QUIZ.questions[i];
       raw[q.domain] += q.scores[+answers.charAt(i)];
     }
     var s = {};
-    DOMAINS.forEach(function (d) { s[d] = Math.round((raw[d] / MAX[d]) * 100); });
+    DOMAINS.forEach(function (d) { s[d] = Math.round((raw[d] / max[d]) * 100); });
     s.overall = Math.round(0.5 * s.econ + 0.5 * ((s.social + s.civil + s.world) / 3));
     return s;
   }
@@ -374,9 +383,11 @@
         input.focus();
         return;
       }
+      var picked = form.querySelector('input[name="total"]:checked');
+      var total = picked && picked.value === String(FULL) ? FULL : QUICK;
       save("pq_name", name);
-      track("quiz_start", { language: lang });
-      location.href = url("quiz.html", { q: 1 });
+      track("quiz_start", { language: lang, total: total });
+      location.href = url("quiz.html", { q: 1, total: total });
     });
     input.addEventListener("input", function () {
       error.hidden = true;
@@ -384,38 +395,54 @@
     });
   }
 
+  function setProgress(n, total) {
+    document.getElementById("progress-text").textContent = t("progress", { n: n, total: total });
+    document.getElementById("progress-fill").style.width = (n / total) * 100 + "%";
+    var bar = document.getElementById("progress-bar");
+    bar.setAttribute("aria-valuenow", n);
+    bar.setAttribute("aria-valuemax", total);
+    bar.style.setProperty("--steps", total); // one segment per question
+  }
+
   function quizPage() {
-    // State lives in the URL (?q=3&a=12): every question is a real page load, so each one
-    // counts as a page view with fresh ads, and the browser Back button just works.
+    // State lives in the URL (?q=3&a=12&total=12): every question is a real page load, so each
+    // one counts as a page view with fresh ads, and the browser Back button just works.
     var answers = params.get("a") || "";
     if (!isValidPrefix(answers)) answers = "";
-    if (answers.length >= TOTAL) {
-      location.replace(url("result.html", { a: answers.slice(0, TOTAL) }));
+    if (answers.length >= FULL) {
+      location.replace(url("result.html", { a: answers }));
       return false;
     }
+    // Quiz length: 12 (Quick) or 24 (In-depth). Past question 12 only the In-depth quiz applies.
+    var total = params.get("total") === String(FULL) || answers.length > QUICK ? FULL : QUICK;
+    var checkpoint = total === QUICK && answers.length === QUICK;
     var q = answers.length + 1;
-    if (params.get("q") !== String(q) || (params.get("a") || "") !== answers) {
-      location.replace(url("quiz.html", { q: q, a: answers }));
+
+    // Normalise the URL (old links without total=, edited or stale parameters).
+    var expected = checkpoint
+      ? { step: "checkpoint", q: "", a: answers, total: total }
+      : { step: "", q: q, a: answers, total: total };
+    var isCanonical = Object.keys(expected).every(function (k) {
+      return (params.get(k) || "") === String(expected[k]);
+    });
+    if (!isCanonical) {
+      location.replace(url("quiz.html", expected));
       return false;
     }
+    if (checkpoint) return checkpointView(answers);
 
     var item = QUIZ.questions[q - 1];
     var question = item[lang];
     var domain = QUIZ.domains[item.domain];
-    document.title = t("quizTitle", { n: q, total: TOTAL });
-    document.getElementById("progress-text").textContent = t("progress", { n: q, total: TOTAL });
-    document.getElementById("progress-fill").style.width = (q / TOTAL) * 100 + "%";
-    var bar = document.getElementById("progress-bar");
-    bar.setAttribute("aria-valuenow", q);
-    bar.setAttribute("aria-valuemax", TOTAL);
-    bar.style.setProperty("--steps", TOTAL); // one segment per question
+    document.title = t("quizTitle", { n: q, total: total });
+    setProgress(q, total);
     document.getElementById("question-domain").textContent = domain.icon + " " + domain[lang].name;
     document.getElementById("question-text").textContent = question.text;
     document.getElementById("why-text").textContent = question.why;
 
     var back = document.getElementById("back-link");
     if (q > 1) {
-      back.href = url("quiz.html", { q: q - 1, a: answers.slice(0, -1) });
+      back.href = url("quiz.html", { q: q - 1, a: answers.slice(0, -1), total: total });
       back.hidden = false;
     }
 
@@ -425,7 +452,9 @@
       // Real links (not JS navigation) so AdSense vignette ads can show between questions.
       var a = document.createElement("a");
       a.className = "option";
-      a.href = q < TOTAL ? url("quiz.html", { q: q + 1, a: next }) : url("result.html", { a: next });
+      if (q < total) a.href = url("quiz.html", { q: q + 1, a: next, total: total });
+      else if (total === QUICK) a.href = url("quiz.html", { step: "checkpoint", a: next, total: QUICK });
+      else a.href = url("result.html", { a: next });
       var dot = document.createElement("span");
       dot.className = "option__dot";
       dot.setAttribute("aria-hidden", "true");
@@ -435,10 +464,37 @@
       a.appendChild(text);
       a.addEventListener("click", function () {
         a.classList.add("is-chosen");
-        track("answer", { question: q, choice: i });
-        if (q === TOTAL) track("quiz_complete", { language: lang });
+        track("answer", { question: q, choice: i, total: total });
+        if (q === FULL) track("quiz_complete", { language: lang, total: FULL });
       });
       list.appendChild(a);
+    });
+  }
+
+  // After question 12 of the Quick quiz: see the result now, or carry on to 24 questions.
+  // A page of its own (one more page view), and both choices are real links for vignette ads.
+  function checkpointView(answers) {
+    document.title = t("checkpointTitle");
+    setProgress(QUICK, QUICK);
+    document.getElementById("question-card").hidden = true;
+    document.getElementById("checkpoint").hidden = false;
+    document.getElementById("why-heading").textContent = t("checkpointWhyHeading");
+    document.getElementById("why-text").textContent = t("checkpointWhy");
+
+    var back = document.getElementById("back-link");
+    back.href = url("quiz.html", { q: QUICK, a: answers.slice(0, -1), total: QUICK });
+    back.hidden = false;
+
+    var more = document.getElementById("checkpoint-continue");
+    more.href = url("quiz.html", { q: QUICK + 1, a: answers, total: FULL });
+    more.addEventListener("click", function () {
+      track("checkpoint_choice", { choice: "continue" });
+    });
+    var now = document.getElementById("checkpoint-results");
+    now.href = url("result.html", { a: answers });
+    now.addEventListener("click", function () {
+      track("checkpoint_choice", { choice: "results" });
+      track("quiz_complete", { language: lang, total: QUICK });
     });
   }
 
@@ -520,8 +576,18 @@
       take.setAttribute("href", url("index.html"));
       take.textContent = t("friendCta");
     } else {
-      document.getElementById("retake-link").setAttribute("href", url("quiz.html", { q: 1 }));
+      document.getElementById("retake-link").setAttribute("href", url("start.html"));
     }
+
+    // A Quick (12-answer) result can be deepened: questions 13–24 pick up where it stopped.
+    if (!friend && answers.length === QUICK) {
+      var deeper = document.getElementById("precision-card");
+      deeper.hidden = false;
+      var deeperLink = document.getElementById("precision-link");
+      deeperLink.href = url("quiz.html", { q: QUICK + 1, a: answers, total: FULL });
+      deeperLink.addEventListener("click", function () { track("precision_continue", { result: ideo.key }); });
+    }
+    document.getElementById("method1").textContent = t("method1", { n: answers.length / DOMAINS.length });
 
     // Two domain cards, then the middle ad (static in the HTML), then the other two.
     DOMAINS.forEach(function (d, i) {
@@ -556,7 +622,7 @@
       renderCommunityComparison(s.overall, ideo, overallBand);
     }
 
-    track("view_result", { result: ideo.key, overall: s.overall, shared_view: friend });
+    track("view_result", { result: ideo.key, overall: s.overall, shared_view: friend, total: answers.length });
   }
 
   /* ---------- Result building blocks ---------- */
@@ -1490,7 +1556,7 @@
     drawRoundRect(ctaBoxX, ctaBoxY, ctaBoxW, ctaBoxH, 26, "#f8fafc", "#cbd5e1", 2);
 
     // Left Column
-    var ctaPillText = data.lang === "hi" ? "🧭 3 मिनट का मुफ़्त क्विज़" : "🧭 FREE 3-MINUTE QUIZ";
+    var ctaPillText = data.lang === "hi" ? "🧭 2 मिनट का मुफ़्त क्विज़" : "🧭 FREE 2-MINUTE QUIZ";
     ctx.font = "700 18px 'Instrument Sans', system-ui, -apple-system, sans-serif";
     var ctaPillMetrics = ctx.measureText(ctaPillText);
     var cpW = ctaPillMetrics.width + 30;

@@ -23,7 +23,9 @@ That gives you three levers:
 
 ### Why the structure matters (example)
 
-Every question is its own page, so one person who finishes the quiz produces **15 page views**: language, name, 12 questions and the result. A typical single-page quiz app produces 2 or 3.
+Every question is its own page, so one person who finishes the Quick quiz produces **16 page views**: language, name, 12 questions, the checkpoint and the result. Someone who takes the In-depth quiz produces **27** (language, name, 24 questions, result), and a Quick-quiz taker who continues at the checkpoint produces **28**. A typical single-page quiz app produces 2 or 3.
+
+**Why the hybrid length helps.** Visitors who only want a quick answer still get one in 12 questions, so the start rate and finish rate stay high. Visitors who are enjoying it, and who are told plainly that more answers give a more precise result, can opt into 12 more pages. The extra page views come only from people who chose them, which is better for retention than simply making everyone answer 24.
 
 > *Illustration only. Your real RPM will be different, so measure it.*
 > Say 1,000 people a day take the quiz, they average 12 pages after drop-off, and your page RPM is ₹40.
@@ -37,17 +39,17 @@ Every question is its own page, so one person who finishes the quiz produces **1
 | Feature | Why it earns more |
 |---|---|
 | One question per page (`quiz.html?q=3&a=12`) | Each question is a real page load: one page view and fresh ads every time. This is allowed by policy. Auto-refreshing ads is **not** allowed |
-| Answers are real `<a>` links | AdSense **vignette** (full-screen) ads only fire on link clicks between your pages. A quiz has 14 of these per visit |
+| Answers are real `<a>` links | AdSense **vignette** (full-screen) ads only fire on link clicks between your pages. A Quick quiz has 15 of these per visit, an In-depth one 26. Both checkpoint buttons are real links too |
 | Ad slots reserve their height | The page doesn't jump when an ad loads. That stops users tapping an ad by accident (which counts as invalid clicks and can get your account banned) and helps Core Web Vitals |
 | 320×50 top banner on short phones | More of the answers stay above the fold, so more people finish the quiz |
 | Very light pages: no framework, no web fonts | Fast on 4G/3G, so fewer people leave between questions |
 | WhatsApp share button with your result | Free traffic: every share brings new visitors |
-| A "friend view" for shared links | Someone who opens a shared result sees your friend's result plus a "Take the quiz" button. That's one extra ad page, and it starts a new 15-page visit |
+| A "friend view" for shared links | Someone who opens a shared result sees your friend's result plus a "Take the quiz" button. That's one extra ad page, and it starts a new visit of 16–28 pages |
 | Separate share-preview image (`og-image.jpg`, < 300 KB) | WhatsApp shows a large preview card, so more people tap the link |
 | "Why this matters" text on every question, and a long result page (4 areas, history examples, method) | Gives each page real content. AdSense rejects or limits sites that have "more ads than content" |
 | Name kept in the browser, never in URLs | Google policy forbids sending personal data (like names) to ad servers in page URLs |
 | About, Privacy Policy, Contact pages and `ads.txt` | Needed to get AdSense approval |
-| GA4 events (`select_language`, `quiz_start`, `answer`, `quiz_complete`, `share`, `view_result`) | Show where people drop off, so you know what to fix |
+| GA4 events (`select_language`, `quiz_start`, `answer`, `checkpoint_choice`, `quiz_complete`, `precision_continue`, `share`, `view_result`) | Show where people drop off, so you know what to fix. `total` (12/24) is attached where it matters |
 
 ---
 
@@ -57,9 +59,10 @@ Ad counts below are per page. In addition, Auto ads add a **sticky anchor** at t
 
 | Page | Top (320×100) | Middle (responsive) | Bottom (responsive) | Notes |
 |---|:-:|:-:|:-:|---|
-| Language (`index.html`) | – | ✅ | ✅ | No top ad: this is the landing page, so getting people to start matters most. Losing a visitor here loses all 15 page views |
+| Language (`index.html`) | – | ✅ | ✅ | No top ad: this is the landing page, so getting people to start matters most. Losing a visitor here loses all 16–28 page views |
 | Name (`start.html`) | ✅ | ✅ | – | The middle ad sits below "How it works", away from the Start button |
-| Question 1–12 (`quiz.html`) | ✅ | ✅ | – | Top ad is the most visible spot. Middle ad sits below the "Why this matters" text |
+| Question 1–12 or 1–24 (`quiz.html`) | ✅ | ✅ | – | Top ad is the most visible spot. Middle ad sits below the "Why this matters" text |
+| Checkpoint after Q12 (`quiz.html?step=checkpoint`) | ✅ | ✅ | – | Quick quiz only. Has its own content (the choice card plus "Why go deeper?"), so it is a real content page, not an empty ad screen. Both buttons are well away from the ads |
 | Result (`result.html`) | ✅ | ✅ | ✅ | Longest page with the most engaged visitor. The middle ad sits between the 2nd and 3rd area cards, away from the share buttons |
 | About / Privacy / Contact | – | – | – | No ads, by policy and for trust |
 
@@ -146,7 +149,7 @@ Compare **total earnings per visitor** (AdSense revenue ÷ GA4 users), not CTR a
 1. In-page Auto ads on at low ad load vs. off.
 2. Share card above vs. below the compass on the result page.
 3. A top ad on the language page vs. none. Watch the start rate.
-4. Quiz length. The quiz has 12 questions, three per area, as a balance between page views per finisher and drop-off. In GA4, compare `quiz_start` with `quiz_complete` and look at the `answer` event by question. If almost everyone finishes, test a longer version; 8 more questions (two per area) are in the git history from when the quiz had 20.
+4. Quiz length. Visitors choose Quick (12) or In-depth (24), and Quick takers can continue at the checkpoint. In GA4, track: the share of `quiz_start` with `total = 24`; the `checkpoint_choice` split between `continue` and `results`; and drop-off by question, using the `answer` event broken down by `question` and `total`. Things to test: making In-depth the default choice, and the wording or button order on the checkpoint. Judge each change by earnings per visitor, not by page views alone.
 5. More quizzes. **This is the biggest one.** Add a second and third quiz (for example a personality quiz, a GK quiz or "Which Indian city suits you?") and link to them from the result page ("Take another quiz →"). Each extra quiz finished is more page views from a visitor you already paid nothing to get.
 
 ---
