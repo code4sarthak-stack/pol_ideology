@@ -222,7 +222,10 @@
     document.title = t("quizTitle", { n: q, total: TOTAL });
     document.getElementById("progress-text").textContent = t("progress", { n: q, total: TOTAL });
     document.getElementById("progress-fill").style.width = (q / TOTAL) * 100 + "%";
-    document.getElementById("progress-bar").setAttribute("aria-valuenow", q);
+    var bar = document.getElementById("progress-bar");
+    bar.setAttribute("aria-valuenow", q);
+    bar.setAttribute("aria-valuemax", TOTAL);
+    bar.style.setProperty("--steps", TOTAL); // one segment per question
     document.getElementById("question-text").textContent = question.text;
     document.getElementById("why-text").textContent = question.why;
 
@@ -353,19 +356,23 @@
     }
     var svg =
       '<svg class="compass" viewBox="0 0 200 200" role="img" aria-label="' + esc(t("compassHeading")) + '">' +
+      '<defs><clipPath id="compass-clip"><rect x="16" y="16" width="168" height="168" rx="12"/></clipPath></defs>' +
+      '<g clip-path="url(#compass-clip)">' +
       '<rect x="16" y="16" width="84" height="84" fill="var(--q-auth-left)"/>' +
       '<rect x="100" y="16" width="84" height="84" fill="var(--q-auth-right)"/>' +
       '<rect x="16" y="100" width="84" height="84" fill="var(--q-lib-left)"/>' +
       '<rect x="100" y="100" width="84" height="84" fill="var(--q-lib-right)"/>' +
-      '<g stroke="var(--grid)" stroke-width="0.5" opacity="0.6">' + grid + '</g>' +
-      '<line x1="100" y1="16" x2="100" y2="184" stroke="var(--muted)" stroke-width="1"/>' +
-      '<line x1="16" y1="100" x2="184" y2="100" stroke="var(--muted)" stroke-width="1"/>' +
-      '<text x="100" y="11" text-anchor="middle">' + esc(t("socialAuth")) + '</text>' +
+      '<g stroke="var(--surface)" stroke-width="0.6" opacity="0.9">' + grid + '</g>' +
+      '</g>' +
+      '<line x1="100" y1="16" x2="100" y2="184" stroke="var(--ink)" stroke-width="0.75" opacity="0.35"/>' +
+      '<line x1="16" y1="100" x2="184" y2="100" stroke="var(--ink)" stroke-width="0.75" opacity="0.35"/>' +
+      '<path d="M' + x + ' 100V' + y + 'M100 ' + y + 'H' + x + '" fill="none" stroke="var(--accent)" stroke-width="0.75" stroke-dasharray="2 2" opacity="0.6"/>' +
+      '<text x="100" y="10" text-anchor="middle">' + esc(t("socialAuth")) + '</text>' +
       '<text x="100" y="196" text-anchor="middle">' + esc(t("socialLib")) + '</text>' +
-      '<text x="11" y="100" text-anchor="middle" transform="rotate(-90 11 100)">' + esc(t("econLeft")) + '</text>' +
-      '<text x="189" y="100" text-anchor="middle" transform="rotate(90 189 100)">' + esc(t("econRight")) + '</text>' +
-      '<circle cx="' + x + '" cy="' + y + '" r="9" fill="var(--primary)" opacity="0.25"/>' +
-      '<circle cx="' + x + '" cy="' + y + '" r="5.5" fill="var(--primary)" stroke="var(--surface)" stroke-width="2"/>' +
+      '<text x="10" y="100" text-anchor="middle" transform="rotate(-90 10 100)">' + esc(t("econLeft")) + '</text>' +
+      '<text x="190" y="100" text-anchor="middle" transform="rotate(90 190 100)">' + esc(t("econRight")) + '</text>' +
+      '<circle cx="' + x + '" cy="' + y + '" r="12" fill="var(--accent)" opacity="0.14"/>' +
+      '<circle cx="' + x + '" cy="' + y + '" r="5.5" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/>' +
       '</svg>';
     document.getElementById("compass").innerHTML = svg;
   }
@@ -376,7 +383,11 @@
     var el = document.getElementById(id);
     el.querySelector(".axis__name").textContent = name;
     el.querySelector(".axis__value").textContent = desc;
-    el.querySelector(".axis__marker").style.left = ((value + max) / (2 * max)) * 100 + "%";
+    var pos = ((value + max) / (2 * max)) * 100;
+    el.querySelector(".axis__marker").style.left = pos + "%";
+    var fill = el.querySelector(".axis__fill"); // bar from the centre out to the marker
+    fill.style.left = Math.min(pos, 50) + "%";
+    fill.style.width = Math.abs(pos - 50) + "%";
     el.querySelector(".axis__left").textContent = leftLabel;
     el.querySelector(".axis__right").textContent = rightLabel;
   }

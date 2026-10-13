@@ -6,7 +6,7 @@
   <title>Political Ideology Quiz — Which ideology are you? | राजनीतिक विचारधारा क्विज़</title>
   <meta name="description" content="Free 2-minute political ideology quiz in English and Hindi. Answer 10 questions and find your place on the political compass. मुफ़्त राजनीतिक विचारधारा क्विज़ — हिन्दी और English में।">
   <meta name="google-adsense-account" content="ca-pub-XXXXXXXXXXXXXXXX">
-  <meta name="theme-color" content="#4f46e5">
+  <meta name="theme-color" content="#fafaf8">
   <link rel="canonical" href="https://YOUR-DOMAIN.com/">
   <link rel="icon" href="assets/img/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="assets/img/icon-192.png">
@@ -20,6 +20,8 @@
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
+  <link rel="preload" href="assets/fonts/instrument-sans.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/instrument-serif.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body data-page="home">
@@ -29,23 +31,29 @@
 
   <main class="container">
     <section class="hero">
-      <div class="hero__icon" aria-hidden="true">🧭</div>
-      <h1>Which political ideology are you?</h1>
+      <p class="eyebrow">English · <span lang="hi">हिन्दी</span></p>
+      <h1>Which political <em>ideology</em> are you?</h1>
       <p class="hero__hi" lang="hi">आपकी राजनीतिक विचारधारा क्या है?</p>
       <p class="lead">Answer 10 quick questions and find out where you stand.<br><span lang="hi">10 आसान सवालों के जवाब दें और जानें आप कहाँ खड़े हैं।</span></p>
     </section>
 
-    <section class="card lang-pick">
-      <h2>Choose your language<br><span lang="hi">अपनी भाषा चुनें</span></h2>
-      <a class="btn btn--primary btn--lang" href="start.html?lang=en" data-choose-lang="en">
-        <span class="btn__main">English</span>
-        <span class="btn__sub">Start in English</span>
-      </a>
-      <a class="btn btn--primary btn--lang" href="start.html?lang=hi" data-choose-lang="hi" lang="hi">
-        <span class="btn__main">हिन्दी</span>
-        <span class="btn__sub">हिन्दी में शुरू करें</span>
-      </a>
-      <p class="meta">⏱ 2 min · 10 questions · Free<br><span lang="hi">2 मिनट · 10 सवाल · मुफ़्त</span></p>
+    <section class="lang-pick">
+      <h2>Choose your language · <span lang="hi">अपनी भाषा चुनें</span></h2>
+      <div class="lang-tiles">
+        <a class="lang-tile" href="start.html?lang=en" data-choose-lang="en">
+          <span class="lang-tile__glyph" aria-hidden="true">Aa</span>
+          <span class="lang-tile__name">English</span>
+          <span class="lang-tile__sub">Start in English</span>
+          <span class="lang-tile__go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a>
+        <a class="lang-tile" href="start.html?lang=hi" data-choose-lang="hi" lang="hi">
+          <span class="lang-tile__glyph" aria-hidden="true">अ</span>
+          <span class="lang-tile__name">हिन्दी</span>
+          <span class="lang-tile__sub">हिन्दी में शुरू करें</span>
+          <span class="lang-tile__go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a>
+      </div>
+      <p class="meta">2 min · 10 questions · Free<br><span lang="hi">2 मिनट · 10 सवाल · मुफ़्त</span></p>
     </section>
 
     <div class="ad" data-ad="middle"></div>
@@ -61,11 +69,11 @@
 
       <h2>5 possible results <span lang="hi">· 5 संभावित नतीजे</span></h2>
       <ul class="result-list">
-        <li>🌱 Progressive Liberal · <span lang="hi">प्रगतिशील उदारवादी</span></li>
-        <li>🤝 Communitarian · <span lang="hi">समुदायवादी</span></li>
-        <li>🗽 Libertarian · <span lang="hi">स्वतंत्रतावादी</span></li>
-        <li>🏛️ Conservative · <span lang="hi">परंपरावादी</span></li>
-        <li>⚖️ Centrist · <span lang="hi">मध्यमार्गी</span></li>
+        <li><span class="result-list__icon" aria-hidden="true">🌱</span>Progressive Liberal <span class="result-list__hi" lang="hi">प्रगतिशील उदारवादी</span></li>
+        <li><span class="result-list__icon" aria-hidden="true">🤝</span>Communitarian <span class="result-list__hi" lang="hi">समुदायवादी</span></li>
+        <li><span class="result-list__icon" aria-hidden="true">🗽</span>Libertarian <span class="result-list__hi" lang="hi">स्वतंत्रतावादी</span></li>
+        <li><span class="result-list__icon" aria-hidden="true">🏛️</span>Conservative <span class="result-list__hi" lang="hi">परंपरावादी</span></li>
+        <li><span class="result-list__icon" aria-hidden="true">⚖️</span>Centrist <span class="result-list__hi" lang="hi">मध्यमार्गी</span></li>
       </ul>
     </section>
 
