@@ -79,21 +79,14 @@
     if (kpiTopIdeo && data.topIdeology) {
       var topIdeoObj = findIdeology(data.topIdeology);
       if (topIdeoObj) {
-        var cleanTitle = topIdeoObj[lang].title.split(" (")[0];
-        var topPct = (data.ideologies[data.topIdeology] || {}).pct || 0;
-        kpiTopIdeo.innerHTML =
-          '<div class="community-kpi-top-row">' +
-            '<span class="community-kpi-top-row__icon" aria-hidden="true">' + topIdeoObj.emoji + '</span>' +
-            '<div class="community-kpi-top-row__body">' +
-              '<span class="community-kpi-top-row__title" style="font-size: 1.15rem;">' + esc(cleanTitle) + '</span>' +
-              '<span class="community-kpi-top-row__pct">' + topPct + '% of participants</span>' +
-            '</div>' +
-          '</div>';
-        if (kpiTopPct) kpiTopPct.style.display = "none";
+        kpiTopIdeo.textContent = topIdeoObj.emoji + " " + topIdeoObj[lang].title.split(" (")[0];
+        if (kpiTopPct) {
+          kpiTopPct.textContent = t("statsKpiTopSub", { pct: (data.ideologies[data.topIdeology] || {}).pct || 0 });
+        }
       }
     }
 
-    if (kpiLang && data.langCounts) {
+    if (kpiLang && data.langCounts && data.total) {
       var enPct = Math.round(((data.langCounts.en || 0) / data.total) * 100);
       var hiPct = 100 - enPct;
       kpiLang.textContent = enPct + "% / " + hiPct + "%";
@@ -220,9 +213,9 @@
     var feedContainer = document.getElementById("recent-feed");
     if (feedContainer) {
       if (!data.recent || data.recent.length === 0) {
-        feedContainer.innerHTML = '<p class="muted">No recent submissions yet.</p>';
+        feedContainer.innerHTML = '<p class="muted">' + esc(t("statsNoRecent")) + '</p>';
       } else {
-        var feedHtml = data.recent.map(function (r) {
+        var feedHtml = data.recent.slice(0, 8).map(function (r) {
           var ideoObj = findIdeology(r.ideology);
           var emoji = ideoObj ? ideoObj.emoji : "🧭";
           var title = ideoObj ? ideoObj[lang].title.split(" (")[0] : r.ideology;
