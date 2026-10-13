@@ -303,11 +303,14 @@ strong { color: var(--ink); font-weight: 600; }
   box-shadow: var(--shadow);
   padding: 26px 22px;
   margin-bottom: 20px;
+  overflow-wrap: break-word; /* wrap a word that is longer than the card instead of spilling out */
   transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
 }
 
-/* Two cards side by side on desktop; a single stack on phones and tablets. */
-.card-grid { display: grid; }
+/* Two cards side by side on desktop; a single stack on phones and tablets.
+   minmax(0, 1fr) keeps the column at the container width: an unsized track grows to fit the
+   longest unbreakable string (e.g. "Green/Alternative/Libertarian") and scrolls the page sideways. */
+.card-grid { display: grid; grid-template-columns: minmax(0, 1fr); }
 .card-stack { min-width: 0; }
 @media (min-width: 960px) {
   .card-grid {
@@ -827,6 +830,89 @@ strong { color: var(--ink); font-weight: 600; }
   line-height: 1;
 }
 
+/* Quiz length picker (Quick 12 / In-depth 24) */
+.mode-picker {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  margin: 4px 0 18px;
+  padding: 0;
+  border: 0;
+}
+.mode-picker__legend {
+  margin-bottom: 10px;
+  padding: 0;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.mode-option {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  box-shadow: var(--shadow-xs);
+  cursor: pointer;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.mode-option:has(.mode-option__radio:checked) {
+  border-color: var(--accent);
+  background: #f8faff;
+  box-shadow: 0 0 0 3px var(--accent-ring), var(--shadow-sm);
+}
+.mode-option__radio {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin: 2px 0 0;
+  accent-color: var(--accent);
+}
+.mode-option__radio:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+.mode-option__body {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.mode-option__title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+.mode-option__tag {
+  padding: 2px 9px;
+  font-size: 0.7rem;
+}
+.mode-option__meta {
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+.mode-option__desc {
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+@media (hover: hover) {
+  .mode-option:hover {
+    border-color: var(--accent);
+    box-shadow: var(--shadow-sm);
+  }
+}
+
 /* ---------- Quiz Page ---------- */
 
 .progress {
@@ -972,6 +1058,34 @@ strong { color: var(--ink); font-weight: 600; }
   .option:hover .option__dot {
     border-color: var(--accent);
   }
+}
+
+/* Checkpoint after question 12 of the Quick quiz */
+.checkpoint {
+  padding: 28px 22px 24px;
+  text-align: center;
+}
+.checkpoint__icon {
+  margin: 0 0 6px;
+  font-size: 2.2rem;
+  line-height: 1;
+}
+.checkpoint__title {
+  margin: 0 0 10px;
+  font-family: var(--font-sans);
+  font-size: 1.45rem;
+  font-weight: 700;
+  line-height: 1.28;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  color: var(--ink);
+}
+.checkpoint__sub {
+  margin: 0 0 22px;
+  font-size: 0.98rem;
+  line-height: 1.55;
+  color: var(--text);
+  text-wrap: pretty;
 }
 
 /* "Why this matters" editorial note */
@@ -1168,6 +1282,9 @@ strong { color: var(--ink); font-weight: 600; }
 }
 
 .friend-cta { margin-top: 20px; }
+.precision-card .bento-head { flex-wrap: wrap; }
+.precision-card .bento-card__sub { margin-bottom: 0; }
+.precision-card .btn { margin-top: 16px; }
 
 /* Quick Direct Share Block (Directly below Result Hero) */
 .quick-share {

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>ideoMap — Start</title>
-  <meta name="description" content="Enter your name and start the 12-question political ideology quiz.">
+  <meta name="description" content="Enter your name and choose the 12-question Quick quiz or the 24-question In-depth political ideology quiz.">
   <meta name="robots" content="noindex, follow">
   <meta name="theme-color" content="#fcfcfd">
   <link rel="icon" href="assets/img/icon.svg" type="image/svg+xml">
@@ -31,6 +31,25 @@
         <!-- No name="" attribute on purpose: the name must never end up in a URL. -->
         <input class="name-input" id="name-input" type="text" maxlength="30" autocomplete="given-name" enterkeyhint="go" placeholder="Enter your name" data-i18n-placeholder="namePlaceholder">
         <p class="error" id="name-error" role="alert" hidden data-i18n="nameError">Please enter your name to continue.</p>
+        <fieldset class="mode-picker">
+          <legend class="mode-picker__legend" data-i18n="modeHeading">Choose your quiz length</legend>
+          <label class="mode-option">
+            <input class="mode-option__radio" type="radio" name="total" value="12" checked>
+            <span class="mode-option__body">
+              <span class="mode-option__title" data-i18n="modeQuickTitle">Quick</span>
+              <span class="mode-option__meta" data-i18n="modeQuickMeta">12 questions · about 2 min</span>
+              <span class="mode-option__desc" data-i18n="modeQuickDesc">Fast and casual: a good first look at where you stand.</span>
+            </span>
+          </label>
+          <label class="mode-option">
+            <input class="mode-option__radio" type="radio" name="total" value="24">
+            <span class="mode-option__body">
+              <span class="mode-option__title"><span data-i18n="modeDeepTitle">In-depth</span> <span class="badge badge--accent mode-option__tag" data-i18n="modeRecommended">Recommended for precision</span></span>
+              <span class="mode-option__meta" data-i18n="modeDeepMeta">24 questions · about 5 min</span>
+              <span class="mode-option__desc" data-i18n="modeDeepDesc">6 questions in each area, for a much more precise result.</span>
+            </span>
+          </label>
+        </fieldset>
         <button class="btn btn--primary" type="submit" data-i18n="startButton">Start Quiz →</button>
       </form>
     </section>
@@ -40,9 +59,9 @@
         <h2 class="bento-head__title" data-i18n="howHeading">How it works</h2>
       </div>
       <ol class="steps">
-        <li data-i18n="how1">12 questions across 4 areas: economy, society, civil liberties and world politics.</li>
+        <li data-i18n="how1">Choose 12 quick questions or 24 in-depth ones, spread evenly across 4 areas: economy, society, civil liberties and world politics.</li>
         <li data-i18n="how2">Pick the answer closest to your view. There are no right or wrong answers.</li>
-        <li data-i18n="how3">Takes about 3 minutes. See how far left or right you lean overall and in each area, your closest ideology, and real examples from history.</li>
+        <li data-i18n="how3">Takes 2 to 5 minutes. See how far left or right you lean overall and in each area, your closest ideology, and real examples from history.</li>
       </ol>
     </section>
 
