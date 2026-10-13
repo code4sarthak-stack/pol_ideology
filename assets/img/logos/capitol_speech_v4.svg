@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Left Bubble Gradient (Left Ideology / Blue) -->
+    <linearGradient id="v4-blue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#1d4ed8"/>
+    </linearGradient>
+
+    <!-- Right Bubble Gradient (Right Ideology / Coral Orange) -->
+    <linearGradient id="v4-orange" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fb923c"/>
+      <stop offset="100%" stop-color="#ea580c"/>
+    </linearGradient>
+
+    <filter id="v4-shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#0f172a" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- Clean Canvas -->
+  <rect width="512" height="512" rx="112" fill="#ffffff"/>
+  <rect width="512" height="512" rx="112" fill="none" stroke="#f1f5f9" stroke-width="2"/>
+
+  <!-- Halo Ring -->
+  <circle cx="256" cy="256" r="185" fill="#f8fafc"/>
+
+  <!-- DUAL SPEECH BUBBLE COMPOSITION -->
+  <g filter="url(#v4-shadow)">
+    <!-- Left Bubble -->
+    <path d="M 160, 110
+             C 240, 110 270, 140 270, 190
+             C 270, 235 240, 265 190, 265
+             C 170, 265 155, 275 140, 298
+             C 142, 280 135, 265 120, 258
+             C 80, 240 60, 210 60, 175
+             C 60, 130 100, 110 160, 110 Z"
+          fill="url(#v4-blue)"/>
+
+    <!-- Right Bubble -->
+    <path d="M 352, 110
+             C 412, 110 452, 130 452, 175
+             C 452, 210 432, 240 392, 258
+             C 377, 265 370, 280 372, 298
+             C 357, 275 342, 265 322, 265
+             C 272, 265 242, 235 242, 190
+             C 242, 140 272, 110 352, 110 Z"
+          fill="url(#v4-orange)"/>
+  </g>
+
+  <!-- CAPITOL SILHOUETTE (Rooted in the Center Dialogue) -->
+  <g filter="url(#v4-shadow)" fill="#0f172a">
+    <!-- Flag atop Capitol -->
+    <line x1="256" y1="180" x2="256" y2="215" stroke="#0f172a" stroke-width="4.5" stroke-linecap="round"/>
+    <path d="M 256, 182 C 265, 179 272, 185 282, 182 L 282, 195 C 272, 198 265, 192 256, 195 Z" fill="#0f172a"/>
+
+    <!-- Dome Arch -->
+    <path d="M 206, 285 C 206, 225 228, 215 256, 215 C 284, 215 306, 225 306, 285 Z"/>
+    
+    <!-- Architrave / Entablature -->
+    <rect x="180" y="285" width="152" height="18" rx="3"/>
+    
+    <!-- 4 Clean Columns -->
+    <rect x="194" y="307" width="16" height="58" rx="3"/>
+    <rect x="226" y="307" width="16" height="58" rx="3"/>
+    <rect x="270" y="307" width="16" height="58" rx="3"/>
+    <rect x="302" y="307" width="16" height="58" rx="3"/>
+
+    <!-- Podium Plinth -->
+    <rect x="174" y="369" width="164" height="14" rx="3"/>
+
+    <!-- 2 Elegant Base Steps -->
+    <polygon points="155,387 357,387 349,401 163,401"/>
+    <polygon points="135,405 377,405 367,421 145,421"/>
+  </g>
+</svg>

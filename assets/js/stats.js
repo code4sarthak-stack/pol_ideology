@@ -79,10 +79,17 @@
     if (kpiTopIdeo && data.topIdeology) {
       var topIdeoObj = findIdeology(data.topIdeology);
       if (topIdeoObj) {
-        kpiTopIdeo.textContent = topIdeoObj.emoji + " " + topIdeoObj[lang].title.split(" (")[0];
-        if (kpiTopPct) {
-          kpiTopPct.textContent = data.ideologies[data.topIdeology].pct + "% of participants";
-        }
+        var cleanTitle = topIdeoObj[lang].title.split(" (")[0];
+        var topPct = (data.ideologies[data.topIdeology] || {}).pct || 0;
+        kpiTopIdeo.innerHTML =
+          '<div class="community-kpi-top-row">' +
+            '<span class="community-kpi-top-row__icon" aria-hidden="true">' + topIdeoObj.emoji + '</span>' +
+            '<div class="community-kpi-top-row__body">' +
+              '<span class="community-kpi-top-row__title" style="font-size: 1.15rem;">' + esc(cleanTitle) + '</span>' +
+              '<span class="community-kpi-top-row__pct">' + topPct + '% of participants</span>' +
+            '</div>' +
+          '</div>';
+        if (kpiTopPct) kpiTopPct.style.display = "none";
       }
     }
 
@@ -97,10 +104,12 @@
     if (barsContainer) {
       var list = QUIZ.ideologies.map(function (ideo) {
         var stat = data.ideologies[ideo.key] || { count: 0, pct: 0 };
+        var textObj = ideo[lang] || ideo.en;
         return {
           key: ideo.key,
           emoji: ideo.emoji,
-          title: ideo[lang].title,
+          title: textObj.title,
+          examplePerson: textObj.examplePerson || "",
           count: stat.count,
           pct: stat.pct
         };
@@ -111,11 +120,23 @@
       var maxPct = Math.max(1, list[0].pct);
       var barsHtml = list.map(function (item) {
         var widthRatio = ((item.pct / maxPct) * 100).toFixed(1);
+        var exHtml = item.examplePerson
+          ? '<span class="stats-bar-sub">' + (lang === "hi" ? "उदा. " : "e.g. ") + esc(item.examplePerson) + '</span>'
+          : '';
         return (
-          '<div class="stats-bar-item">' +
-          '  <div class="stats-bar-head">' +
-          '    <span class="stats-bar-title"><span class="stats-bar-emoji">' + item.emoji + '</span> ' + esc(item.title) + '</span>' +
-          '    <span class="stats-bar-meta"><strong>' + item.pct + '%</strong> <span class="muted">(' + item.count + ')</span></span>' +
+          '<div class="stats-bar-item" data-key="' + esc(item.key) + '">' +
+          '  <div class="stats-bar-main">' +
+          '    <div class="stats-bar-icon" aria-hidden="true">' + item.emoji + '</div>' +
+          '    <div class="stats-bar-content">' +
+          '      <div class="stats-bar-title-wrap">' +
+          '        <span class="stats-bar-title">' + esc(item.title) + '</span>' +
+          '      </div>' +
+          exHtml +
+          '    </div>' +
+          '    <div class="stats-bar-metric">' +
+          '      <span class="stats-bar-pct">' + item.pct + '%</span>' +
+          '      <span class="stats-bar-count">(' + item.count + ')</span>' +
+          '    </div>' +
           '  </div>' +
           '  <div class="stats-bar-track">' +
           '    <div class="stats-bar-fill" style="width: ' + widthRatio + '%;"></div>' +
