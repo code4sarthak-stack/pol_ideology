@@ -59,7 +59,7 @@ Use find-and-replace across the whole project (for example in VS Code):
 | `ca-pub-XXXXXXXXXXXXXXXX` | your AdSense publisher ID | `assets/js/config.js`, `index.html` |
 | `pub-XXXXXXXXXXXXXXXX` | the same ID **without** `ca-` | `ads.txt` |
 | `https://YOUR-DOMAIN.com` | your site address (done: `https://ideomap.in`) | `index.html`, `result.html`, `robots.txt`, `sitemap.xml` |
-| `YOUR-EMAIL@example.com` | your contact email | `privacy.html`, `contact.html` |
+| `YOUR-EMAIL@example.com` | your contact email (done: `code4sarthak@gmail.com`) | `privacy.html`, `contact.html`, `terms.html` |
 
 Then, in `assets/js/config.js`:
 
