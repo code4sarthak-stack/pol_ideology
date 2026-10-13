@@ -303,11 +303,14 @@ strong { color: var(--ink); font-weight: 600; }
   box-shadow: var(--shadow);
   padding: 26px 22px;
   margin-bottom: 20px;
+  overflow-wrap: break-word; /* wrap a word that is longer than the card instead of spilling out */
   transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
 }
 
-/* Two cards side by side on desktop; a single stack on phones and tablets. */
-.card-grid { display: grid; }
+/* Two cards side by side on desktop; a single stack on phones and tablets.
+   minmax(0, 1fr) keeps the column at the container width: an unsized track grows to fit the
+   longest unbreakable string (e.g. "Green/Alternative/Libertarian") and scrolls the page sideways. */
+.card-grid { display: grid; grid-template-columns: minmax(0, 1fr); }
 .card-stack { min-width: 0; }
 @media (min-width: 960px) {
   .card-grid {
