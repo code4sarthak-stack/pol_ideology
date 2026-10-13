@@ -18,6 +18,15 @@
   --q-auth-right: #dce8fd;
   --q-lib-right: #fdf1cf;
   --grid: #c9c6dc;
+  --div-l2: #d9434d;
+  --div-lm: #e57379;
+  --div-l1: #f0a3a6;
+  --div-mid: #d6d4dd;
+  --div-r1: #9cc0ee;
+  --div-rm: #639ce2;
+  --div-r2: #2a78d6;
+  --good: #0ca30c;
+  --warn: #e8a10c;
   --shadow: 0 1px 2px rgba(29, 27, 47, 0.06), 0 4px 16px rgba(29, 27, 47, 0.06);
   --radius: 16px;
   --gutter: 16px;
@@ -43,6 +52,15 @@
     --q-auth-right: #1d2d4a;
     --q-lib-right: #3f3618;
     --grid: #45425f;
+    --div-l2: #e66767;
+    --div-lm: #c4585c;
+    --div-l1: #a14a50;
+    --div-mid: #5a5873;
+    --div-r1: #2f5f96;
+    --div-rm: #3473be;
+    --div-r2: #3987e5;
+    --good: #22b14c;
+    --warn: #fab219;
     --shadow: none;
     color-scheme: dark;
   }
@@ -256,7 +274,8 @@ p { margin: 0 0 12px; }
   border-radius: 14px;
   background: var(--surface);
   color: var(--text);
-  font-weight: 600;
+  font-weight: 500;
+  line-height: 1.4;
   text-decoration: none;
   transition: border-color 0.12s ease, background-color 0.12s ease;
 }
@@ -283,13 +302,68 @@ p { margin: 0 0 12px; }
 .compass { display: block; width: 100%; max-width: 320px; height: auto; margin: 8px auto 16px; }
 .compass text { fill: var(--muted); font-size: 9px; font-weight: 700; font-family: inherit; }
 
-.axis { margin-top: 14px; }
-.axis__head { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 6px; }
-.axis__name { font-weight: 700; }
-.axis__value { color: var(--primary); font-weight: 700; }
-.axis__track { position: relative; height: 10px; border-radius: 999px; background: linear-gradient(90deg, var(--q-lib-left), var(--border) 50%, var(--q-auth-right)); }
-.axis__marker { position: absolute; top: 50%; width: 20px; height: 20px; margin-left: -10px; border-radius: 50%; background: var(--primary); border: 3px solid var(--surface); transform: translateY(-50%); box-shadow: 0 0 0 1px var(--primary); }
-.axis__ends { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+.overall { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border); text-align: left; }
+.also-close { margin: 12px 0 0; text-align: left; font-size: 0.9rem; color: var(--muted); }
+
+.section-intro { margin-top: 8px; }
+
+.meter-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.meter-head__title { font-weight: 700; font-size: 1.05rem; }
+.badge {
+  flex: none;
+  max-width: 60%;
+  padding: 3px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--primary-soft);
+  color: var(--text);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* Diverging meter: five band segments with a 2px surface gap, and a marker at the exact score. */
+.meter__track { position: relative; display: flex; gap: 2px; height: 12px; }
+.meter__seg { flex: 1 1 0; min-width: 0; border-radius: 3px; opacity: 0.45; }
+.meter__seg:first-child { border-radius: 999px 3px 3px 999px; }
+.meter__seg:nth-last-child(2) { border-radius: 3px 999px 999px 3px; } /* last segment; the marker comes after it */
+.meter__seg.is-active { opacity: 1; transform: scaleY(1.35); }
+.meter__seg--l2 { background: var(--div-l2); }
+.meter__seg--lm { background: var(--div-lm); }
+.meter__seg--l1 { background: var(--div-l1); }
+.meter__seg--mid { background: var(--div-mid); }
+.meter__seg--r1 { background: var(--div-r1); }
+.meter__seg--rm { background: var(--div-rm); }
+.meter__seg--r2 { background: var(--div-r2); }
+.meter__marker {
+  position: absolute;
+  top: 50%;
+  width: 20px;
+  height: 20px;
+  margin-left: -10px;
+  border-radius: 50%;
+  background: var(--text);
+  border: 3px solid var(--surface);
+  transform: translateY(-50%);
+}
+.meter__ends { display: flex; justify-content: space-between; gap: 12px; margin-top: 8px; font-size: 0.85rem; color: var(--muted); }
+.meter__ends strong { color: var(--text); }
+
+.domain__desc { margin: 12px 0 14px; font-size: 0.95rem; color: var(--muted); }
+
+.examples { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+.example {
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--good);
+  border-radius: 12px;
+  background: var(--bg);
+}
+.example--bad { border-left-color: var(--warn); }
+.example__tag { margin: 0 0 6px; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.02em; color: var(--muted); }
+.example__name { margin: 0 0 2px; font-size: 1rem; }
+.example__when { margin: 0 0 6px; font-size: 0.8rem; color: var(--muted); }
+.example__text { margin: 0; font-size: 0.9rem; }
 
 .copy-status { min-height: 1.4em; margin: 8px 0 0; text-align: center; font-size: 0.9rem; color: var(--primary); }
 

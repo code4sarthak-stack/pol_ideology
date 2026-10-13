@@ -4,8 +4,12 @@ A mobile-first quiz website that earns money from ads. A visitor:
 
 1. **Picks a language**: English or Hindi.
 2. **Enters their name** and starts.
-3. **Answers 10 questions**, one per page.
-4. **Gets a result page**: their ideology, a political-compass chart, and WhatsApp sharing.
+3. **Answers 20 questions**, one per page. Each question has its own five answer choices, plus a short note on the history and research behind it.
+4. **Gets a result page** with:
+   - their closest ideology (out of 16) and an overall Left ↔ Right meter
+   - a meter for each of 4 areas: Economy, Society, Civil liberties and World politics
+   - one good and one cautionary real-world example for their ideology and for each area
+   - a political-compass chart and WhatsApp sharing
 
 Every page shows ads. **See [AD_STRATEGY.md](AD_STRATEGY.md) for the full monetisation plan.**
 
@@ -16,13 +20,14 @@ It's plain HTML, CSS and JavaScript, with no framework and no build step. Upload
 ```
 index.html        Page 1: language choice (landing page)
 start.html        Page 2: name + start
-quiz.html         Pages 3–12: one question per page (?q=1…10)
-result.html       Page 13: result, compass chart, share buttons
+quiz.html         Pages 3–22: one question per page (?q=1…20)
+result.html       Page 23: ideology, meters per area, examples, compass, share buttons
 about.html, privacy.html, contact.html   Needed for AdSense approval
 ads.txt           AdSense seller declaration (needs your pub ID)
 robots.txt, sitemap.xml, site.webmanifest
 assets/js/config.js     ← AdSense + Analytics IDs (the only code file you must edit)
-assets/js/questions.js  ← the 10 questions and 5 results, in both languages
+assets/js/questions.js  ← the 4 areas and 20 questions, in both languages
+assets/js/results.js    ← labels, descriptions and examples for every result, in both languages (result page only)
 assets/js/strings.js    ← all button and label text, in both languages
 assets/js/app.js        Page logic: scoring, navigation, ads, sharing
 assets/css/style.css    Styles (light + dark mode)
@@ -74,24 +79,22 @@ AdSense approves sites on a domain you own, so buy a domain (`.com` / `.in`) and
 
 Edit `assets/js/questions.js`. Each question has:
 
-- **`axis`**: `econ` (Left ↔ Right) or `social` (Freedom ↔ Order).
-- **`dir`**: `1` if agreeing pushes the score towards Right/Order, `-1` if it pushes towards Left/Freedom.
-- **Text in both languages**, plus a short "why this matters" note.
+- **`domain`**: `econ` (Equality ↔ Markets), `social` (Progress ↔ Tradition), `civil` (Liberty ↔ Authority) or `world` (Global ↔ National).
+- **`scores`**: one score per option, in the order the options appear, from `-2` (left pole) to `+2` (right pole). The direction is mixed on purpose, so the leftmost answer isn't always first.
+- **Text in both languages**: the question, its options and a short "why this matters" note.
 
-Keep 10 questions with 5 per axis. Answers are stored by position in share links, so reordering questions changes the results of links that were already shared.
+Keep 5 questions per area and 5 options per question. Answers are stored as one digit per question in share links, so reordering questions or options changes the results of links that were already shared.
 
-Scoring:
+## How results are calculated
 
-- Each answer gives −2 to +2 points, so each axis runs from −10 to +10.
-- Both axes within ±2 gives **Centrist**.
-- Otherwise the quadrant decides the result:
-  - Left + Freedom: **Progressive Liberal**
-  - Left + Order: **Communitarian**
-  - Right + Freedom: **Libertarian**
-  - Right + Order: **Conservative**
+- Each area's answers are added up and scaled from **−100** (fully left) to **+100** (fully right). The meters show this as a split, for example "70% Equality · 30% Markets".
+- Each area falls into one of 5 bands: ≤ −60, −59 to −21, −20 to 20, 21 to 59, ≥ 60. Each band has its own label, such as *Social Democrat* or *Law & Order*, a description, and a good and a cautionary example. These are all in `assets/js/results.js`.
+- **Overall Left ↔ Right** = 50% economy + 50% the average of society, civil liberties and world politics. This is the economic dimension plus the cultural "GAL–TAN" dimension used in comparative politics. It has 7 labels, from *Far Left* to *Far Right*.
+- **Ideology**: each of the 16 ideologies in `results.js` has a typical position `pos: [econ, social, civil, world]`. The result is the ideology closest to the user's four scores. The next two closest are shown as "Also close to you".
+- **Compass**: the classic chart, economy (x) against civil liberties (y).
 
 ## How it works (for developers)
 
-- **State lives in the URL.** For example, `quiz.html?lang=hi&q=4&a=021` means Hindi, question 4, previous answers 0, 2, 1. Every question is a real page load: one page view and fresh ads each time, and the Back button works.
+- **State lives in the URL.** For example, `quiz.html?lang=hi&q=4&a=021` means Hindi, question 4, and options 0, 2 and 1 were chosen for questions 1–3. Every question is a real page load: one page view and fresh ads each time, and the Back button works.
 - **The name is stored only in `localStorage`.** It is never put in a URL, because URLs are sent to ad and analytics servers.
 - **Shared links** look like `result.html?a=…&s=1`. They open a "friend view" with a *Take the quiz* call to action.

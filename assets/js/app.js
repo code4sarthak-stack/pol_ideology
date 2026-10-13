@@ -7,8 +7,11 @@
   var QUIZ = window.QUIZ;
   var TOTAL = QUIZ.questions.length;
   var LANGS = ["en", "hi"];
-  var MAX = { econ: 0, social: 0 }; // highest possible score on each axis (2 points per question)
-  QUIZ.questions.forEach(function (q) { MAX[q.axis] += 2; });
+  var DOMAINS = ["econ", "social", "civil", "world"]; // order matches each ideology's pos[]
+  var MAX = { econ: 0, social: 0, civil: 0, world: 0 }; // highest possible raw score per domain
+  QUIZ.questions.forEach(function (q) {
+    MAX[q.domain] += Math.max.apply(null, q.scores.map(Math.abs));
+  });
   var params = new URLSearchParams(location.search);
   var page = document.body.getAttribute("data-page");
 
@@ -141,28 +144,59 @@
 
   /* ---------- Scoring ---------- */
 
-  var POINTS = [2, 1, 0, -1, -2]; // Strongly agree … Strongly disagree
-
-  function score(answers) {
-    var s = { econ: 0, social: 0 };
-    for (var i = 0; i < TOTAL; i++) {
-      var q = QUIZ.questions[i];
-      s[q.axis] += POINTS[+answers.charAt(i)] * q.dir;
+  // Answers are one digit per question: the index of the chosen option.
+  function isValidPrefix(a) {
+    if (!/^[0-9]*$/.test(a) || a.length > TOTAL) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (+a.charAt(i) >= QUIZ.questions[i].scores.length) return false;
     }
-    return s;
-  }
-
-  function classify(s) {
-    if (Math.abs(s.econ) <= 2 && Math.abs(s.social) <= 2) return "centrist";
-    // Exactly neutral on one axis: use the everyday one-word label for the other axis.
-    if (s.econ === 0) return s.social < 0 ? "progressive" : "conservative";
-    if (s.social === 0) return s.econ < 0 ? "progressive" : "conservative";
-    if (s.econ < 0) return s.social > 0 ? "communitarian" : "progressive";
-    return s.social > 0 ? "conservative" : "libertarian";
+    return true;
   }
 
   function isCompleteAnswers(a) {
-    return new RegExp("^[0-4]{" + TOTAL + "}$").test(a || "");
+    return !!a && a.length === TOTAL && isValidPrefix(a);
+  }
+
+  // Each domain runs from -100 (left pole) to +100 (right pole).
+  // Overall = 50% economics + 50% the cultural dimension (mean of society, civil liberties, world),
+  // following the economic left-right + GAL-TAN model used in comparative politics.
+  function score(answers) {
+    var raw = { econ: 0, social: 0, civil: 0, world: 0 };
+    for (var i = 0; i < TOTAL; i++) {
+      var q = QUIZ.questions[i];
+      raw[q.domain] += q.scores[+answers.charAt(i)];
+    }
+    var s = {};
+    DOMAINS.forEach(function (d) { s[d] = Math.round((raw[d] / MAX[d]) * 100); });
+    s.overall = Math.round(0.5 * s.econ + 0.5 * ((s.social + s.civil + s.world) / 3));
+    return s;
+  }
+
+  // 5 bands per domain: ≤-60 · -59…-21 · -20…20 · 21…59 · ≥60
+  function bandIndex(v) {
+    return v <= -60 ? 0 : v < -20 ? 1 : v <= 20 ? 2 : v < 60 ? 3 : 4;
+  }
+
+  function overallIndex(v) {
+    var bands = QUIZ.overallBands;
+    for (var i = 0; i < bands.length - 1; i++) {
+      if (v <= bands[i].max) return i;
+    }
+    return bands.length - 1;
+  }
+
+  // Meter segments: [width %, colour step]. Widths follow the band boundaries, so the
+  // highlighted segment always matches the label shown next to the meter.
+  var DOMAIN_SEGS = [[20, "l2"], [20, "l1"], [20, "mid"], [20, "r1"], [20, "r2"]];
+  var OVERALL_SEGS = [[20, "l2"], [13.75, "lm"], [11, "l1"], [10.5, "mid"], [11, "r1"], [13.75, "rm"], [20, "r2"]];
+
+  // Ideologies sorted by distance between their typical position and the user's four scores.
+  function rankIdeologies(s) {
+    return QUIZ.ideologies.map(function (ideo) {
+      var d = 0;
+      DOMAINS.forEach(function (k, i) { d += Math.pow(s[k] - ideo.pos[i], 2); });
+      return { ideo: ideo, d: d };
+    }).sort(function (a, b) { return a.d - b.d; }).map(function (r) { return r.ideo; });
   }
 
   /* ---------- Pages ---------- */
@@ -207,7 +241,7 @@
     // State lives in the URL (?q=3&a=12): every question is a real page load, so each one
     // counts as a page view with fresh ads, and the browser Back button just works.
     var answers = params.get("a") || "";
-    if (!/^[0-4]*$/.test(answers)) answers = "";
+    if (!isValidPrefix(answers)) answers = "";
     if (answers.length >= TOTAL) {
       location.replace(url("result.html", { a: answers.slice(0, TOTAL) }));
       return false;
@@ -218,11 +252,16 @@
       return false;
     }
 
-    var question = QUIZ.questions[q - 1][lang];
+    var item = QUIZ.questions[q - 1];
+    var question = item[lang];
+    var domain = QUIZ.domains[item.domain];
     document.title = t("quizTitle", { n: q, total: TOTAL });
     document.getElementById("progress-text").textContent = t("progress", { n: q, total: TOTAL });
     document.getElementById("progress-fill").style.width = (q / TOTAL) * 100 + "%";
-    document.getElementById("progress-bar").setAttribute("aria-valuenow", q);
+    var bar = document.getElementById("progress-bar");
+    bar.setAttribute("aria-valuemax", TOTAL);
+    bar.setAttribute("aria-valuenow", q);
+    document.getElementById("question-domain").textContent = domain.icon + " " + domain[lang].name;
     document.getElementById("question-text").textContent = question.text;
     document.getElementById("why-text").textContent = question.why;
 
@@ -233,7 +272,7 @@
     }
 
     var list = document.getElementById("options");
-    t("options").forEach(function (label, i) {
+    question.options.forEach(function (label, i) {
       var next = answers + i;
       // Real links (not JS navigation) so AdSense vignette ads can show between questions.
       var a = document.createElement("a");
@@ -263,18 +302,30 @@
     }
     var friend = params.get("s") === "1";
     var s = score(answers);
-    var key = classify(s);
-    var result = QUIZ.results[key];
-    var text = result[lang];
+    var ranked = rankIdeologies(s);
+    var ideo = ranked[0];
+    var text = ideo[lang];
+    var overallBand = overallIndex(s.overall);
+    var overall = QUIZ.overallBands[overallBand][lang];
     var name = friend ? "" : load("pq_name");
 
     document.title = text.title + " — " + t("resultTitle");
-    document.getElementById("result-emoji").textContent = result.emoji;
+    document.getElementById("result-emoji").textContent = ideo.emoji;
     document.getElementById("result-lead").textContent = friend
       ? t("resultLeadFriend")
       : name ? t("resultLeadNamed", { name: name }) : t("resultLead");
     document.getElementById("result-title").textContent = text.title;
     document.getElementById("result-desc").textContent = text.desc;
+
+    var overallBox = document.getElementById("overall");
+    overallBox.appendChild(meterHead(t("overall"), overall));
+    overallBox.appendChild(meter(s.overall, t("left"), t("right"), overall, OVERALL_SEGS, overallBand));
+    document.getElementById("also-close").textContent = t("alsoClose", {
+      list: ranked.slice(1, 3).map(function (r) { return r.emoji + " " + r[lang].title; }).join(" · ")
+    });
+
+    document.getElementById("ideology-examples-heading").textContent = t("ideologyExamples", { ideology: text.title });
+    document.getElementById("ideology-examples").appendChild(examples(text.good, text.bad));
 
     if (friend) {
       var cta = document.getElementById("friend-cta");
@@ -287,11 +338,95 @@
       document.getElementById("retake-link").setAttribute("href", url("quiz.html", { q: 1 }));
     }
 
+    // Two domain cards, then the middle ad (static in the HTML), then the other two.
+    DOMAINS.forEach(function (d, i) {
+      document.getElementById(i < 2 ? "domains-a" : "domains-b").appendChild(domainCard(d, s[d]));
+    });
+
     renderCompass(s);
-    renderAxis("axis-econ", s.econ, MAX.econ, t("econAxis"), t("econLeft"), t("econRight"));
-    renderAxis("axis-social", s.social, MAX.social, t("socialAxis"), t("socialLib"), t("socialAuth"));
-    setupShare(answers, text.title, key);
-    track("view_result", { result: key, shared_view: friend });
+    setupShare(answers, text.title, overall, ideo.key);
+    track("view_result", { result: ideo.key, overall: s.overall, shared_view: friend });
+  }
+
+  /* ---------- Result building blocks ---------- */
+
+  function el(tag, className, text) {
+    var node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text !== undefined) node.textContent = text;
+    return node;
+  }
+
+  function meterHead(title, label) {
+    var head = el("div", "meter-head");
+    head.appendChild(el("span", "meter-head__title", title));
+    head.appendChild(el("span", "badge", label));
+    return head;
+  }
+
+  // A diverging meter: band segments (strong left … strong right) and a marker at the score.
+  function meter(value, leftName, rightName, label, segs, active) {
+    var leftPct = Math.round((100 - value) / 2);
+    var rightPct = 100 - leftPct;
+    var wrap = el("div", "meter");
+
+    var track = el("div", "meter__track");
+    track.setAttribute("role", "meter");
+    track.setAttribute("aria-valuemin", "-100");
+    track.setAttribute("aria-valuemax", "100");
+    track.setAttribute("aria-valuenow", String(value));
+    track.setAttribute("aria-valuetext",
+      t("meterValue", { left: leftPct, leftName: leftName, right: rightPct, rightName: rightName }) + " · " + label);
+    segs.forEach(function (seg, i) {
+      var part = el("span", "meter__seg meter__seg--" + seg[1] + (i === active ? " is-active" : ""));
+      part.style.flexBasis = seg[0] + "%";
+      track.appendChild(part);
+    });
+    var marker = el("span", "meter__marker");
+    marker.style.left = (value + 100) / 2 + "%";
+    track.appendChild(marker);
+    wrap.appendChild(track);
+
+    var ends = el("div", "meter__ends");
+    ends.setAttribute("aria-hidden", "true");
+    var l = el("span", "meter__end");
+    l.appendChild(el("strong", "", leftPct + "%"));
+    l.appendChild(document.createTextNode(" " + leftName));
+    var r = el("span", "meter__end");
+    r.appendChild(document.createTextNode(rightName + " "));
+    r.appendChild(el("strong", "", rightPct + "%"));
+    ends.appendChild(l);
+    ends.appendChild(r);
+    wrap.appendChild(ends);
+    return wrap;
+  }
+
+  function example(kind, ex) {
+    var box = el("article", "example example--" + kind);
+    box.appendChild(el("p", "example__tag", t(kind === "good" ? "goodTag" : "badTag")));
+    box.appendChild(el("h4", "example__name", ex.name));
+    box.appendChild(el("p", "example__when", ex.when));
+    box.appendChild(el("p", "example__text", ex.text));
+    return box;
+  }
+
+  function examples(good, bad) {
+    var grid = el("div", "examples");
+    grid.appendChild(example("good", good));
+    grid.appendChild(example("bad", bad));
+    return grid;
+  }
+
+  function domainCard(d, value) {
+    var dom = QUIZ.domains[d];
+    var names = dom[lang];
+    var band = QUIZ.bands[d][bandIndex(value)][lang];
+    var card = el("section", "card domain");
+    card.appendChild(meterHead(dom.icon + " " + names.name, band.label));
+    card.appendChild(meter(value, names.left, names.right, band.label, DOMAIN_SEGS, bandIndex(value)));
+    card.appendChild(el("p", "domain__desc", band.desc));
+    card.appendChild(examples(band.good, band.bad));
+    return card;
   }
 
   function shareUrl(answers, source) {
@@ -299,8 +434,8 @@
     return new URL(link, location.href).href;
   }
 
-  function setupShare(answers, title, key) {
-    var message = t("shareText", { result: title });
+  function setupShare(answers, title, overall, key) {
+    var message = t("shareText", { result: title, overall: overall });
 
     var wa = document.getElementById("share-whatsapp");
     wa.href = "https://wa.me/?text=" + encodeURIComponent(message + " " + shareUrl(answers, "whatsapp"));
@@ -343,9 +478,10 @@
   }
 
   function renderCompass(s) {
-    // 200x200 chart: x = economic (Left → Right), y = social (Order at top, Freedom at bottom).
-    var x = 100 + (s.econ / MAX.econ) * 84;
-    var y = 100 - (s.social / MAX.social) * 84;
+    // 200x200 chart: x = economic (Left → Right), y = civil (Authority at top, Liberty at bottom).
+    var civil = QUIZ.domains.civil[lang];
+    var x = 100 + (s.econ / 100) * 84;
+    var y = 100 - (s.civil / 100) * 84;
     var grid = "";
     for (var i = 16; i <= 184; i += 21) {
       grid += '<line x1="' + i + '" y1="16" x2="' + i + '" y2="184"/>' +
@@ -360,25 +496,14 @@
       '<g stroke="var(--grid)" stroke-width="0.5" opacity="0.6">' + grid + '</g>' +
       '<line x1="100" y1="16" x2="100" y2="184" stroke="var(--muted)" stroke-width="1"/>' +
       '<line x1="16" y1="100" x2="184" y2="100" stroke="var(--muted)" stroke-width="1"/>' +
-      '<text x="100" y="11" text-anchor="middle">' + esc(t("socialAuth")) + '</text>' +
-      '<text x="100" y="196" text-anchor="middle">' + esc(t("socialLib")) + '</text>' +
-      '<text x="11" y="100" text-anchor="middle" transform="rotate(-90 11 100)">' + esc(t("econLeft")) + '</text>' +
-      '<text x="189" y="100" text-anchor="middle" transform="rotate(90 189 100)">' + esc(t("econRight")) + '</text>' +
+      '<text x="100" y="11" text-anchor="middle">' + esc(civil.right) + '</text>' +
+      '<text x="100" y="196" text-anchor="middle">' + esc(civil.left) + '</text>' +
+      '<text x="11" y="100" text-anchor="middle" transform="rotate(-90 11 100)">' + esc(t("left")) + '</text>' +
+      '<text x="189" y="100" text-anchor="middle" transform="rotate(90 189 100)">' + esc(t("right")) + '</text>' +
       '<circle cx="' + x + '" cy="' + y + '" r="9" fill="var(--primary)" opacity="0.25"/>' +
       '<circle cx="' + x + '" cy="' + y + '" r="5.5" fill="var(--primary)" stroke="var(--surface)" stroke-width="2"/>' +
       '</svg>';
     document.getElementById("compass").innerHTML = svg;
-  }
-
-  function renderAxis(id, value, max, name, leftLabel, rightLabel) {
-    var pct = Math.round((Math.abs(value) / max) * 100);
-    var desc = pct === 0 ? t("centre") : pct + "% " + (value < 0 ? leftLabel : rightLabel);
-    var el = document.getElementById(id);
-    el.querySelector(".axis__name").textContent = name;
-    el.querySelector(".axis__value").textContent = desc;
-    el.querySelector(".axis__marker").style.left = ((value + max) / (2 * max)) * 100 + "%";
-    el.querySelector(".axis__left").textContent = leftLabel;
-    el.querySelector(".axis__right").textContent = rightLabel;
   }
 
   function esc(str) {
