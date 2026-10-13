@@ -529,7 +529,7 @@
 
     var exampleEl = document.getElementById("result-example-badge");
     if (exampleEl && text.examplePerson) {
-      exampleEl.textContent = (lang === "hi" ? "जानी-मानी मिसाल: " : "e.g. ") + text.examplePerson;
+      exampleEl.textContent = exampleLabel(text.examplePerson);
       exampleEl.hidden = false;
     }
 
@@ -598,7 +598,7 @@
     });
 
     renderCompass(s);
-    setupShare(answers, text.title, overall, ideo, s, ranked, name);
+    setupShare(answers, text.title, overall, ideo, s, name);
 
     // Atomic live quiz counter increment and live badge
     incrementQuizCounter(answers);
@@ -1068,16 +1068,24 @@
     );
   }
 
-  /* Template 3: Semi-Circular Radial Gauge (Speedometer) */
-  function renderRadialGauge(value, leftName, rightName, bandLabel, activeBand) {
+  // "55% Right" style summary of an overall score, as shown under the gauge.
+  function leanText(value, leftName, rightName) {
     var leftPct = Math.round((100 - value) / 2);
     var rightPct = 100 - leftPct;
-
-    var mainPctText = leftPct > rightPct
+    return leftPct > rightPct
       ? leftPct + "% " + leftName
       : rightPct > leftPct
       ? rightPct + "% " + rightName
       : "50% " + leftName + " / " + rightName;
+  }
+
+  function exampleLabel(person) {
+    return (lang === "hi" ? "जानी-मानी मिसाल: " : "e.g. ") + person;
+  }
+
+  /* Template 3: Semi-Circular Radial Gauge (Speedometer) */
+  function renderRadialGauge(value, leftName, rightName, bandLabel, activeBand) {
+    var mainPctText = leanText(value, leftName, rightName);
 
     var wrap = el("div", "gauge-widget");
 
@@ -1343,7 +1351,9 @@
     });
 
     // Build canvas asynchronously so the modal animation plays first
-    setTimeout(function () {
+    setTimeout(function () { loadStoryLogo(renderPreview); }, 60);
+
+    function renderPreview() {
       var canvas;
       try {
         canvas = buildStoryCardCanvas(cardData);
@@ -1393,7 +1403,7 @@
       }
 
       actions.hidden = false;
-    }, 60);
+    }
   }
 
   function showQuickShareToast(msg, type) {
@@ -1436,11 +1446,34 @@
     }, 1500);
   }
 
+  // The logo is drawn onto the story card, so it is loaded once up front.
+  var storyLogo = null;
+  function loadStoryLogo(done) {
+    if (!storyLogo) {
+      storyLogo = new Image();
+      storyLogo.src = "assets/img/icon-512.png";
+    }
+    if (storyLogo.complete) {
+      if (done) done();
+      return;
+    }
+    if (done) {
+      storyLogo.addEventListener("load", done, { once: true });
+      storyLogo.addEventListener("error", done, { once: true });
+    }
+  }
+
+  // Mirrors the result card on the page: brand, title, badges, gauge, description,
+  // then the website link as the call to action.
   function buildStoryCardCanvas(data) {
     var canvas = document.createElement("canvas");
     canvas.width = 1080;
     canvas.height = 1920;
     var ctx = canvas.getContext("2d");
+    var hi = data.lang === "hi";
+    var SANS = "'Instrument Sans', 'Kohinoor Devanagari', 'Noto Sans Devanagari', 'Nirmala UI', system-ui, -apple-system, sans-serif";
+    var SERIF = "'Instrument Serif', Georgia, serif";
+    var INK = "#0f172a", TEXT = "#334155", MUTED = "#64748b", BORDER = "#e2e8f0", BORDER_STRONG = "#cbd5e1";
 
     function drawRoundRect(x, y, w, h, r, fill, stroke, strokeWidth) {
       ctx.save();
@@ -1472,261 +1505,305 @@
       ctx.restore();
     }
 
-    function wrapText(text, x, y, maxWidth, lineHeight, maxLines) {
+    // Splits text into lines that fit maxWidth in the current font; the last allowed line ends in "...".
+    function wrapLines(text, maxWidth, maxLines) {
       var words = String(text || "").split(" ");
+      var lines = [];
       var line = "";
-      var linesRendered = 0;
-      var curY = y;
       for (var n = 0; n < words.length; n++) {
-        var testLine = line + (line ? " " : "") + words[n];
-        var metrics = ctx.measureText(testLine);
-        if (metrics.width > maxWidth && n > 0) {
-          ctx.fillText(line, x, curY);
+        var testLine = line ? line + " " + words[n] : words[n];
+        if (line && ctx.measureText(testLine).width > maxWidth) {
+          lines.push(line);
           line = words[n];
-          curY += lineHeight;
-          linesRendered++;
-          if (maxLines && linesRendered >= maxLines - 1) {
-            var remaining = words.slice(n).join(" ");
-            while (ctx.measureText(remaining + "...").width > maxWidth && remaining.length > 0) {
-              remaining = remaining.slice(0, -1);
-            }
-            ctx.fillText(remaining + "...", x, curY);
-            return curY + lineHeight;
-          }
         } else {
           line = testLine;
         }
       }
-      ctx.fillText(line, x, curY);
-      return curY + lineHeight;
+      if (line) lines.push(line);
+      if (maxLines && lines.length > maxLines) {
+        var last = lines.slice(maxLines - 1).join(" ");
+        while (last.length > 0 && ctx.measureText(last + "...").width > maxWidth) last = last.slice(0, -1);
+        lines = lines.slice(0, maxLines - 1).concat(last.replace(/\s+$/, "") + "...");
+      }
+      return lines;
     }
 
-    // 1. Canvas Background
-    ctx.fillStyle = "#fafaf8";
-    ctx.fillRect(0, 0, 1080, 1920);
+    // Sets the font, shrinking it until text fits maxWidth. Returns the size used.
+    function fitFont(text, weight, size, minSize, family, maxWidth) {
+      ctx.font = weight + " " + size + "px " + family;
+      while (size > minSize && ctx.measureText(text).width > maxWidth) {
+        size -= 2;
+        ctx.font = weight + " " + size + "px " + family;
+      }
+      return size;
+    }
 
-    // Soft top ambient radial glow
-    var topGlow = ctx.createRadialGradient(540, 260, 40, 540, 260, 550);
+    function divider(y) {
+      ctx.beginPath();
+      ctx.moveTo(contentX, y);
+      ctx.lineTo(contentX + contentW, y);
+      ctx.strokeStyle = BORDER;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    var cardX = 70;
+    var cardW = 940;
+    var contentX = cardX + 60;
+    var contentW = cardW - 120;
+
+    // The description is the only part whose height varies, so measure it first,
+    // then size the card to fit and centre it on the canvas.
+    var descFont = (hi ? "28px " : "30px ") + SANS;
+    var descLH = hi ? 52 : 48;
+    ctx.font = descFont;
+    var descLines = wrapLines(data.desc, contentW, 5);
+
+    // Offsets below are measured from the top of the card.
+    var gaugeScale = 2.4;
+    var gaugeCy = 590 + 145 * gaugeScale;
+    var descDivY = gaugeCy + 150;
+    var descTop = descDivY + 58;
+    var ctaTop = descTop + (descLines.length - 1) * descLH + 52;
+    var ctaH = 250;
+    var cardH = ctaTop + ctaH + 44;
+    var cardY = Math.max(60, Math.round((1920 - cardH) / 2));
+
+    // 1. Canvas background with a soft top glow
+    ctx.fillStyle = "#f8fafc";
+    ctx.fillRect(0, 0, 1080, 1920);
+    var topGlow = ctx.createRadialGradient(540, cardY + 120, 40, 540, cardY + 120, 620);
     topGlow.addColorStop(0, "rgba(79, 70, 229, 0.12)");
     topGlow.addColorStop(0.65, "rgba(238, 240, 255, 0.4)");
-    topGlow.addColorStop(1, "rgba(250, 250, 248, 0)");
+    topGlow.addColorStop(1, "rgba(248, 250, 252, 0)");
     ctx.fillStyle = topGlow;
-    ctx.fillRect(0, 0, 1080, 800);
+    ctx.fillRect(0, 0, 1080, 1100);
 
-    // 2. Main Card Container (safe zones for Story: top 140px, bottom 140px)
-    var cardX = 70;
-    var cardY = 140;
-    var cardW = 940;
-    var cardH = 1640;
-    var cardRadius = 36;
-
+    // 2. Card
     ctx.save();
     ctx.shadowColor = "rgba(15, 23, 42, 0.08)";
-    ctx.shadowBlur = 36;
+    ctx.shadowBlur = 40;
     ctx.shadowOffsetY = 14;
-    drawRoundRect(cardX, cardY, cardW, cardH, cardRadius, "#ffffff", "#ebe9e4", 2);
+    drawRoundRect(cardX, cardY, cardW, cardH, 44, "#ffffff", BORDER, 2);
     ctx.restore();
+    var cardGlow = ctx.createRadialGradient(540, cardY, 20, 540, cardY, 700);
+    cardGlow.addColorStop(0, "rgba(79, 70, 229, 0.05)");
+    cardGlow.addColorStop(1, "rgba(255, 255, 255, 0)");
+    drawRoundRect(cardX + 1, cardY + 1, cardW - 2, cardH - 2, 43, cardGlow, null);
 
-    // 3. Card Top Branding Pill
-    var brandText = "🧭 ideoMap · Political Ideology Quiz";
-    ctx.font = "600 22px 'Instrument Sans', system-ui, -apple-system, sans-serif";
-    var brandMetrics = ctx.measureText(brandText);
-    var pillW = brandMetrics.width + 44;
-    var pillH = 42;
-    var pillX = 540 - pillW / 2;
-    var pillY = cardY + 36;
-    drawRoundRect(pillX, pillY, pillW, pillH, 21, "#f4f3ef", "#dad7d0", 1.5);
-    ctx.fillStyle = "#4b5563";
     ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(brandText, 540, pillY + pillH / 2);
 
-    // 4. Emoji Icon in Circle Badge
-    var emojiCenterY = pillY + 115;
-    drawRoundRect(540 - 55, emojiCenterY - 55, 110, 110, 55, "#ffffff", "#ebe9e4", 2);
-    ctx.font = "58px 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(data.emoji || "🧭", 540, emojiCenterY + 4);
-
-    // 5. Lead text (User Name + lead)
-    var leadText = data.leadText;
-    ctx.font = "500 26px 'Instrument Sans', system-ui, -apple-system, sans-serif";
-    ctx.fillStyle = "#6b6a66";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "alphabetic";
-    ctx.fillText(leadText, 540, emojiCenterY + 105);
-
-    // 6. Ideology Title
-    var title = data.title;
-    var titleY = emojiCenterY + 180;
-    ctx.fillStyle = "#18181b";
-    var titleSize = title.length > 22 ? 52 : (title.length > 16 ? 60 : 68);
-    ctx.font = "bold " + titleSize + "px 'Instrument Serif', Georgia, serif";
-    ctx.fillText(title, 540, titleY);
-
-    // 7. Overall Band Badge Pill
-    var badgeText = (data.lang === "hi" ? "कुल स्थिति: " : "Overall: ") + data.overall;
-    ctx.font = "700 22px 'Instrument Sans', system-ui, -apple-system, sans-serif";
-    var badgeMetrics = ctx.measureText(badgeText);
-    var bPillW = badgeMetrics.width + 36;
-    var bPillH = 40;
-    var bPillY = titleY + 22;
-    drawRoundRect(540 - bPillW / 2, bPillY, bPillW, bPillH, 20, "#eef0ff", "#c7d2fe", 1.5);
-    ctx.fillStyle = "#4f46e5";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(badgeText, 540, bPillY + bPillH / 2);
-
-    // 8. Divider Line
-    var divY = bPillY + bPillH + 28;
-    ctx.beginPath();
-    ctx.moveTo(cardX + 44, divY);
-    ctx.lineTo(cardX + cardW - 44, divY);
-    ctx.strokeStyle = "#ebe9e4";
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
-
-    // 9. Ideology Description
-    var descY = divY + 42;
-    ctx.font = "24px 'Instrument Sans', system-ui, -apple-system, sans-serif";
-    ctx.fillStyle = "#374151";
-    ctx.textAlign = "left";
-    ctx.textBaseline = "alphabetic";
-    var descBottom = wrapText(data.desc, cardX + 44, descY, cardW - 88, 38, 4);
-
-    // 10. Left ↔ Right Spectrum Meter
-    var meterSectionY = Math.max(descBottom + 20, divY + 195);
-    var leftPct = Math.round((100 - data.overallScore) / 2);
-    var rightPct = 100 - leftPct;
-    var leftName = data.leftName || "Left";
-    var rightName = data.rightName || "Right";
-
-    // Spectrum Labels
-    ctx.font = "700 23px 'Instrument Sans', system-ui, -apple-system, sans-serif";
-    ctx.fillStyle = "#d9434d";
-    ctx.textAlign = "left";
-    ctx.fillText(leftPct + "% " + leftName, cardX + 44, meterSectionY + 24);
-
-    ctx.fillStyle = "#2a78d6";
-    ctx.textAlign = "right";
-    ctx.fillText(rightName + " " + rightPct + "%", cardX + cardW - 44, meterSectionY + 24);
-
-    // 7-Band Spectrum Bar
-    var barY = meterSectionY + 38;
-    var barW = cardW - 88;
-    var barH = 22;
-    var barX = cardX + 44;
-    var segColors = ["#d9434d", "#e57379", "#f0a3a6", "#d6d3cc", "#9cc0ee", "#639ce2", "#2a78d6"];
-    var segW = barW / 7;
-
-    for (var si = 0; si < 7; si++) {
-      ctx.fillStyle = segColors[si];
-      ctx.fillRect(barX + si * segW, barY, segW + 0.5, barH);
-    }
-    drawRoundRect(barX, barY, barW, barH, 11, null, "#ebe9e4", 1);
-
-    // Indicator Dot on bar
-    var markerX = barX + ((data.overallScore + 100) / 200) * barW;
-    markerX = Math.max(barX + 11, Math.min(barX + barW - 11, markerX));
-    var markerY = barY + barH / 2;
+    // 3. Brand: logo tile, name and tagline
+    var logoSize = 100;
+    var logoY = cardY + 54;
     ctx.save();
-    ctx.shadowColor = "rgba(0, 0, 0, 0.35)";
-    ctx.shadowBlur = 6;
+    ctx.shadowColor = "rgba(15, 23, 42, 0.10)";
+    ctx.shadowBlur = 18;
+    ctx.shadowOffsetY = 6;
+    drawRoundRect(540 - logoSize / 2, logoY, logoSize, logoSize, 24, "#ffffff", BORDER, 2);
+    ctx.restore();
+    if (storyLogo && storyLogo.complete && storyLogo.naturalWidth > 0) {
+      ctx.save();
+      ctx.beginPath();
+      if (typeof ctx.roundRect === "function") ctx.roundRect(540 - logoSize / 2 + 2, logoY + 2, logoSize - 4, logoSize - 4, 22);
+      else ctx.rect(540 - logoSize / 2 + 2, logoY + 2, logoSize - 4, logoSize - 4);
+      ctx.clip();
+      ctx.drawImage(storyLogo, 540 - logoSize / 2 + 2, logoY + 2, logoSize - 4, logoSize - 4);
+      ctx.restore();
+    } else {
+      ctx.font = "56px 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif";
+      ctx.textBaseline = "middle";
+      ctx.fillText("🏛️", 540, logoY + logoSize / 2 + 3);
+    }
+
+    ctx.textBaseline = "alphabetic";
+    ctx.font = "600 46px " + SERIF;
+    ctx.fillStyle = TEXT;
+    ctx.fillText(data.siteName, 540, cardY + 202);
+
+    fitFont(data.tagline, "500", 26, 18, SANS, contentW);
+    ctx.fillStyle = MUTED;
+    ctx.fillText(data.tagline, 540, cardY + 242);
+
+    divider(cardY + 278);
+
+    // 4. Lead, ideology title and badges
+    fitFont(data.leadText, "500", 32, 20, SANS, contentW);
+    ctx.fillStyle = MUTED;
+    ctx.fillText(data.leadText, 540, cardY + 340);
+
+    if (hi) fitFont(data.title, "700", 92, 52, SANS, contentW);
+    else fitFont(data.title, "400", 128, 64, SERIF, contentW);
+    ctx.fillStyle = INK;
+    ctx.fillText(data.title, 540, cardY + 466);
+
+    var badges = [{ text: data.overall, weight: "700" }];
+    if (data.example) badges.push({ text: data.example, weight: "600" });
+    var badgeSize = 28;
+    var badgeH = 60;
+    var badgeGap = 14;
+    function measureBadges() {
+      var rowW = (badges.length - 1) * badgeGap;
+      badges.forEach(function (b) {
+        ctx.font = b.weight + " " + badgeSize + "px " + SANS;
+        b.w = ctx.measureText(b.text).width + 56;
+        rowW += b.w;
+      });
+      return rowW;
+    }
+    var badgeRowW = measureBadges();
+    while (badgeRowW > contentW && badgeSize > 18) {
+      badgeSize -= 2;
+      badgeRowW = measureBadges();
+    }
+    var badgeX = 540 - badgeRowW / 2;
+    var badgeY = cardY + 500;
+    ctx.textBaseline = "middle";
+    badges.forEach(function (b) {
+      drawRoundRect(badgeX, badgeY, b.w, badgeH, badgeH / 2, "#f8fafc", BORDER_STRONG, 2);
+      ctx.font = b.weight + " " + badgeSize + "px " + SANS;
+      ctx.fillStyle = INK;
+      ctx.fillText(b.text, badgeX + b.w / 2, badgeY + badgeH / 2 + 1);
+      badgeX += b.w + badgeGap;
+    });
+
+    // 5. Semi-circular gauge — same geometry as renderRadialGauge, scaled up
+    var gs = gaugeScale;
+    var gcx = 540;
+    var gcy = cardY + gaugeCy;
+    var rOut = 124 * gs;
+    var rIn = 80 * gs;
+    var rad = Math.PI / 180;
+    var gaugeColors = ["#e57379", "#f09a9e", "#f4baa5", "#edebe5", "#b8cde8", "#8eb0db", "#557a95"];
+    var segWidths = [20, 13.75, 11, 10.5, 11, 13.75, 20];
+    var currentDeg = 180;
+    for (var gi = 0; gi < segWidths.length; gi++) {
+      var startDeg = currentDeg;
+      var endDeg = currentDeg - segWidths[gi] * 1.8;
+      currentDeg = endDeg;
+      var isActive = gi === data.overallBand;
+      ctx.save();
+      ctx.beginPath();
+      // Canvas angles run clockwise, so the SVG's angle θ is −θ here.
+      ctx.arc(gcx, gcy, rOut, -(startDeg - 0.6) * rad, -(endDeg + 0.6) * rad, false);
+      ctx.arc(gcx, gcy, rIn, -(endDeg + 0.6) * rad, -(startDeg - 0.6) * rad, true);
+      ctx.closePath();
+      ctx.globalAlpha = isActive ? 1 : 0.55;
+      if (isActive) {
+        ctx.shadowColor = "rgba(15, 23, 42, 0.16)";
+        ctx.shadowBlur = 6 * gs;
+        ctx.shadowOffsetY = 2 * gs;
+      }
+      ctx.fillStyle = gaugeColors[gi];
+      ctx.fill();
+      if (isActive) {
+        ctx.shadowColor = "transparent";
+        ctx.strokeStyle = INK;
+        ctx.lineWidth = 1.5 * gs;
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    var needleRad = (180 - ((data.overallScore + 100) / 200) * 180) * rad;
+    var tipX = gcx + 112 * gs * Math.cos(needleRad);
+    var tipY = gcy - 112 * gs * Math.sin(needleRad);
+    var tailX = gcx - 16 * gs * Math.cos(needleRad);
+    var tailY = gcy + 16 * gs * Math.sin(needleRad);
+    var perpRad = needleRad + Math.PI / 2;
+    var halfW = 5.5 * gs;
+    ctx.save();
+    ctx.shadowColor = "rgba(0, 0, 0, 0.28)";
+    ctx.shadowBlur = 7 * gs;
+    ctx.shadowOffsetY = 2.5 * gs;
+    var needleGrad = ctx.createLinearGradient(tailX, tailY, tipX, tipY);
+    needleGrad.addColorStop(0, "#4a709c");
+    needleGrad.addColorStop(0.6, "#7bb7e8");
+    needleGrad.addColorStop(1, "#eef6fc");
     ctx.beginPath();
-    ctx.arc(markerX, markerY, 13, 0, Math.PI * 2);
-    ctx.fillStyle = "#18181b";
+    ctx.moveTo(tipX, tipY);
+    ctx.lineTo(gcx + halfW * Math.cos(perpRad), gcy - halfW * Math.sin(perpRad));
+    ctx.lineTo(tailX, tailY);
+    ctx.lineTo(gcx - halfW * Math.cos(perpRad), gcy + halfW * Math.sin(perpRad));
+    ctx.closePath();
+    ctx.fillStyle = needleGrad;
     ctx.fill();
-    ctx.lineWidth = 3.5;
+    ctx.restore();
+
+    ctx.save();
+    ctx.globalAlpha = 0.85;
+    ctx.beginPath();
+    ctx.moveTo(gcx, gcy);
+    ctx.lineTo(tipX, tipY);
     ctx.strokeStyle = "#ffffff";
+    ctx.lineWidth = 1.2 * gs;
     ctx.stroke();
     ctx.restore();
 
-    // 11. Neighbouring Ideologies row
-    var closeY = barY + 54;
-    if (data.alsoClose && data.alsoClose.length > 0) {
-      var closeText = (data.lang === "hi" ? "क़रीबी विचारधाराएँ: " : "Also close: ") +
-        data.alsoClose.map(function (c) { return c.emoji + " " + c.title; }).join("   ");
-      ctx.font = "500 21px 'Instrument Sans', system-ui, -apple-system, sans-serif";
-      ctx.fillStyle = "#6b6a66";
-      ctx.textAlign = "center";
-      ctx.fillText(closeText, 540, closeY);
-    }
-
-    // 12. 4-Area Breakdown (2x2 Grid)
-    if (data.domains && data.domains.length === 4) {
-      var gridStartY = closeY + 34;
-      var dCardW = (cardW - 88 - 18) / 2;
-      var dCardH = 58;
-      for (var di = 0; di < 4; di++) {
-        var col = di % 2;
-        var row = Math.floor(di / 2);
-        var dx = cardX + 44 + col * (dCardW + 18);
-        var dy = gridStartY + row * (dCardH + 12);
-        var dItem = data.domains[di];
-
-        drawRoundRect(dx, dy, dCardW, dCardH, 14, "#f8fafc", "#e2e8f0", 1.5);
-        ctx.textAlign = "left";
-        ctx.textBaseline = "middle";
-        ctx.font = "600 20px 'Instrument Sans', system-ui, -apple-system, sans-serif";
-        ctx.fillStyle = "#1e293b";
-        ctx.fillText(dItem.icon + " " + dItem.name, dx + 18, dy + dCardH / 2);
-
-        ctx.textAlign = "right";
-        ctx.font = "700 20px 'Instrument Sans', system-ui, -apple-system, sans-serif";
-        ctx.fillStyle = "#4f46e5";
-        ctx.fillText(dItem.lean, dx + dCardW - 18, dy + dCardH / 2);
-      }
-    }
-
-    // 13. Bottom "TAKE THE TEST" Conversion Block — the website link is the call to action
-    var ctaBoxY = (data.domains && data.domains.length === 4)
-      ? gridStartY + 2 * (dCardH + 12) + 30
-      : closeY + 60;
-    var ctaBoxH = 390;
-    var ctaBoxW = cardW - 72;
-    var ctaBoxX = cardX + 36;
-
-    drawRoundRect(ctaBoxX, ctaBoxY, ctaBoxW, ctaBoxH, 26, "#f8fafc", "#cbd5e1", 2);
-
-    var ctaPillText = data.lang === "hi" ? "🧭 2 मिनट का मुफ़्त क्विज़" : "🧭 FREE 2-MINUTE QUIZ";
-    ctx.font = "700 18px 'Instrument Sans', system-ui, -apple-system, sans-serif";
-    var ctaPillMetrics = ctx.measureText(ctaPillText);
-    var cpW = ctaPillMetrics.width + 30;
-    var cpH = 34;
-    drawRoundRect(540 - cpW / 2, ctaBoxY + 32, cpW, cpH, 17, "#4f46e5", null);
+    ctx.save();
+    ctx.shadowColor = "rgba(0, 0, 0, 0.28)";
+    ctx.shadowBlur = 7 * gs;
+    ctx.shadowOffsetY = 2.5 * gs;
+    ctx.beginPath();
+    ctx.arc(gcx, gcy, 13 * gs, 0, Math.PI * 2);
     ctx.fillStyle = "#ffffff";
-    ctx.textAlign = "center";
+    ctx.fill();
+    ctx.restore();
+    ctx.beginPath();
+    ctx.arc(gcx, gcy, 13 * gs, 0, Math.PI * 2);
+    ctx.strokeStyle = BORDER_STRONG;
+    ctx.lineWidth = 2 * gs;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(gcx, gcy, 5.5 * gs, 0, Math.PI * 2);
+    ctx.fillStyle = INK;
+    ctx.fill();
+
+    // Gauge legend: FAR LEFT · 55% Right · FAR RIGHT
+    var legendY = gcy + 104;
+    var legendHalf = 160 * gs - 12 * gs;
     ctx.textBaseline = "middle";
-    ctx.fillText(ctaPillText, 540, ctaBoxY + 32 + cpH / 2);
+    ctx.font = "700 25px " + SANS;
+    ctx.fillStyle = MUTED;
+    if (!hi && "letterSpacing" in ctx) ctx.letterSpacing = "2.5px";
+    ctx.textAlign = "left";
+    ctx.fillText(hi ? data.farLeft : data.farLeft.toUpperCase(), gcx - legendHalf, legendY);
+    ctx.textAlign = "right";
+    ctx.fillText(hi ? data.farRight : data.farRight.toUpperCase(), gcx + legendHalf, legendY);
+    if ("letterSpacing" in ctx) ctx.letterSpacing = "0px";
+    ctx.textAlign = "center";
+    ctx.font = "700 58px " + SANS;
+    ctx.fillStyle = INK;
+    ctx.fillText(data.leanText, gcx, legendY);
 
-    var ctaTitle = data.lang === "hi" ? "आपकी विचारधारा क्या है?" : "Which ideology are you?";
-    ctx.font = "bold 40px 'Instrument Serif', Georgia, serif";
-    ctx.fillStyle = "#0f172a";
+    // 6. Description
+    divider(cardY + descDivY);
+    ctx.font = descFont;
+    ctx.fillStyle = TEXT;
+    ctx.textAlign = "left";
     ctx.textBaseline = "alphabetic";
-    ctx.fillText(ctaTitle, 540, ctaBoxY + 124);
+    descLines.forEach(function (line, i) {
+      ctx.fillText(line, contentX, cardY + descTop + i * descLH);
+    });
 
-    var ctaSub = data.lang === "hi"
-      ? "क्विज़ खेलें और देखें कि आप अपने दोस्त से कितने सहमत हैं!"
-      : "Take the quiz & compare your compass with me!";
-    ctx.font = "22px 'Instrument Sans', system-ui, -apple-system, sans-serif";
-    ctx.fillStyle = "#475569";
-    wrapText(ctaSub, 540, ctaBoxY + 166, ctaBoxW - 60, 30, 2);
+    // 7. Call to action: the website link, drawn as a button
+    var ctaX = cardX + 40;
+    var ctaW = cardW - 80;
+    var ctaY = cardY + ctaTop;
+    drawRoundRect(ctaX, ctaY, ctaW, ctaH, 30, "#f8fafc", BORDER_STRONG, 2);
 
-    // Website link, drawn as a button so it reads as the place to go
-    var host = location.hostname && location.hostname !== "localhost" && location.hostname !== "127.0.0.1"
-      ? location.hostname
-      : "ideomap.org";
-    var urlText = "👉 " + host;
-    var urlFontSize = 38;
-    ctx.font = "700 " + urlFontSize + "px 'Instrument Sans', system-ui, -apple-system, sans-serif";
-    while (ctx.measureText(urlText).width > ctaBoxW - 140 && urlFontSize > 24) {
-      urlFontSize -= 2;
-      ctx.font = "700 " + urlFontSize + "px 'Instrument Sans', system-ui, -apple-system, sans-serif";
-    }
-    var urlBtnW = Math.max(520, ctx.measureText(urlText).width + 80);
+    ctx.textAlign = "center";
+    var ctaTitle = hi ? "आपकी विचारधारा क्या है? 2 मिनट का मुफ़्त क्विज़" : "Which ideology are you? Take the free quiz";
+    if (hi) fitFont(ctaTitle, "700", 32, 22, SANS, ctaW - 60);
+    else fitFont(ctaTitle, "400", 40, 26, SERIF, ctaW - 60);
+    ctx.fillStyle = INK;
+    ctx.fillText(ctaTitle, 540, ctaY + 62);
+
+    var urlText = "👉 " + (CFG.DOMAIN || location.hostname);
+    fitFont(urlText, "700", 40, 24, SANS, ctaW - 140);
+    var urlBtnW = Math.max(520, ctx.measureText(urlText).width + 84);
     var urlBtnH = 88;
-    var urlBtnY = ctaBoxY + 206;
+    var urlBtnY = ctaY + 92;
     ctx.save();
     ctx.shadowColor = "rgba(79, 70, 229, 0.28)";
     ctx.shadowBlur = 18;
@@ -1737,99 +1814,89 @@
     ctx.textBaseline = "middle";
     ctx.fillText(urlText, 540, urlBtnY + urlBtnH / 2 + 2);
 
-    var linkTip = data.lang === "hi"
-      ? "🔗 टेस्ट देने के लिए लिंक पर टैप करें"
-      : "🔗 Tap the link to take the test";
-    ctx.font = "600 20px 'Instrument Sans', system-ui, -apple-system, sans-serif";
+    var linkTip = hi ? "🔗 टेस्ट देने के लिए लिंक पर टैप करें" : "🔗 Tap the link to take the test";
+    ctx.font = "600 22px " + SANS;
     ctx.fillStyle = "#15803d";
     ctx.textBaseline = "alphabetic";
-    ctx.fillText(linkTip, 540, urlBtnY + urlBtnH + 50);
+    ctx.fillText(linkTip, 540, urlBtnY + urlBtnH + 46);
 
     return canvas;
   }
 
-  function buildCardData(answers, title, overall, ideo, s, ranked, name, source) {
-    var link = shareUrl(answers, source);
+  function buildCardData(answers, title, overall, ideo, s, name, source) {
     var textData = ideo[lang] || ideo.en;
-    var leadText = name ? t("resultLeadNamed", { name: name }) : t("resultLead");
-    var domainList = DOMAINS.map(function (d) {
-      var dom = QUIZ.domains[d];
-      var val = s[d];
-      var leftP = Math.round((100 - val) / 2);
-      var rightP = 100 - leftP;
-      var lean = leftP >= rightP ? leftP + "% " + dom[lang].left : rightP + "% " + dom[lang].right;
-      return { icon: dom.icon, name: dom[lang].name, lean: lean };
-    });
     return {
-      name: name,
-      leadText: leadText,
+      siteName: t("siteName"),
+      tagline: t("brandTagline"),
+      leadText: name ? t("resultLeadNamed", { name: name }) : t("resultLead"),
       title: title,
-      desc: textData.desc,
-      emoji: ideo.emoji,
       overall: overall,
+      overallBand: overallIndex(s.overall),
       overallScore: s.overall,
-      leftName: t("left"),
-      rightName: t("right"),
-      alsoClose: (ranked || []).slice(1, 3).map(function (r) {
-        return { emoji: r.emoji, title: r[lang].title };
-      }),
-      domains: domainList,
-      shareUrl: link,
+      example: textData.examplePerson ? exampleLabel(textData.examplePerson) : "",
+      leanText: leanText(s.overall, t("left"), t("right")),
+      farLeft: t("farLeft"),
+      farRight: t("farRight"),
+      desc: textData.desc,
+      shareUrl: shareUrl(answers, source),
       lang: lang
     };
   }
 
-  function shareOrDownloadStoryCard(answers, title, overall, ideo, s, ranked, name, mode) {
+  function shareOrDownloadStoryCard(answers, title, overall, ideo, s, name, mode) {
     var source = mode === "instagram" ? "insta_story" : (mode === "download" ? "story_dl" : "share");
-    var cardData = buildCardData(answers, title, overall, ideo, s, ranked, name, source);
+    var cardData = buildCardData(answers, title, overall, ideo, s, name, source);
     var link = cardData.shareUrl;
     var message = t("shareText", { result: title, overall: overall });
 
     // Always copy link to clipboard first so it's ready to paste into Instagram Link Sticker!
     copyLinkWithFeedback(link);
 
-    var canvas = buildStoryCardCanvas(cardData);
+    loadStoryLogo(function () {
+      var canvas = buildStoryCardCanvas(cardData);
 
-    canvas.toBlob(function (blob) {
-      if (!blob) return;
-      var filename = "ideomap-" + ideo.key + "-story.png";
-      var file = new File([blob], filename, { type: "image/png" });
+      canvas.toBlob(function (blob) {
+        if (!blob) return;
+        var filename = "ideomap-" + ideo.key + "-story.png";
+        var file = new File([blob], filename, { type: "image/png" });
 
-      if (mode === "instagram" || mode === "native") {
-        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-          // The link goes inside the caption text: with a file attached, apps such as WhatsApp
-          // often drop a separate `url`, and the caption is what keeps the link tappable.
-          navigator.share({
-            files: [file],
-            title: t("siteName"),
-            text: message + " " + link
-          }).then(function () {
-            showQuickShareToast(t("storyCopiedHint"), "success");
-          }).catch(function (err) {
-            if (err.name !== "AbortError") {
-              downloadBlob(blob, filename);
-              showQuickShareToast(t("storySavedToast") + " " + t("storyCopiedHint"), "info");
-            }
-          });
-          return;
+        if (mode === "instagram" || mode === "native") {
+          if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+            // The link goes inside the caption text: with a file attached, apps such as WhatsApp
+            // often drop a separate `url`, and the caption is what keeps the link tappable.
+            navigator.share({
+              files: [file],
+              title: t("siteName"),
+              text: message + " " + link
+            }).then(function () {
+              showQuickShareToast(t("storyCopiedHint"), "success");
+            }).catch(function (err) {
+              if (err.name !== "AbortError") {
+                downloadBlob(blob, filename);
+                showQuickShareToast(t("storySavedToast") + " " + t("storyCopiedHint"), "info");
+              }
+            });
+            return;
+          }
         }
-      }
 
-      // Fallback or explicit download
-      downloadBlob(blob, filename);
-      if (mode === "instagram") {
-        showQuickShareToast(t("storySavedToast") + " " + t("storyCopiedHint"), "info");
-      } else {
-        showQuickShareToast(t("storySavedToast"), "success");
-      }
-    }, "image/png");
+        // Fallback or explicit download
+        downloadBlob(blob, filename);
+        if (mode === "instagram") {
+          showQuickShareToast(t("storySavedToast") + " " + t("storyCopiedHint"), "info");
+        } else {
+          showQuickShareToast(t("storySavedToast"), "success");
+        }
+      }, "image/png");
+    });
   }
 
 
-  function setupShare(answers, title, overall, ideo, s, ranked, name) {
+  function setupShare(answers, title, overall, ideo, s, name) {
     var key = ideo ? ideo.key : "";
     var message = t("shareText", { result: title, overall: overall });
     var friendLink = shareUrl(answers, "whatsapp");
+    loadStoryLogo();
 
     // 1. WhatsApp Button — show preview modal first
     var heroWa = document.getElementById("hero-share-wa");
@@ -1840,13 +1907,13 @@
         e.preventDefault();
         track("share", { method: "whatsapp_hero_preview", result: key });
         var waLink = "https://wa.me/?text=" + encodeURIComponent(message + " " + friendLink);
-        var cardData = buildCardData(answers, title, overall, ideo, s, ranked, name, "whatsapp");
+        var cardData = buildCardData(answers, title, overall, ideo, s, name, "whatsapp");
         openSharePreviewModal(
           "whatsapp",
           cardData,
           waLink,
           null,
-          function () { shareOrDownloadStoryCard(answers, title, overall, ideo, s, ranked, name, "download"); }
+          function () { shareOrDownloadStoryCard(answers, title, overall, ideo, s, name, "download"); }
         );
       });
     }
@@ -1856,15 +1923,15 @@
     if (heroInsta) {
       heroInsta.addEventListener("click", function () {
         track("share", { method: "instagram_story_preview", result: key });
-        var cardData = buildCardData(answers, title, overall, ideo, s, ranked, name, "insta_story");
+        var cardData = buildCardData(answers, title, overall, ideo, s, name, "insta_story");
         // Copy link to clipboard immediately so it's ready when the user opens Instagram
         copyLinkWithFeedback(cardData.shareUrl);
         openSharePreviewModal(
           "instagram",
           cardData,
           null,
-          function () { shareOrDownloadStoryCard(answers, title, overall, ideo, s, ranked, name, "instagram"); },
-          function () { shareOrDownloadStoryCard(answers, title, overall, ideo, s, ranked, name, "download"); }
+          function () { shareOrDownloadStoryCard(answers, title, overall, ideo, s, name, "instagram"); },
+          function () { shareOrDownloadStoryCard(answers, title, overall, ideo, s, name, "download"); }
         );
       });
     }
@@ -1874,13 +1941,13 @@
     if (heroDownload) {
       heroDownload.addEventListener("click", function () {
         track("share", { method: "download_story_preview", result: key });
-        var cardData = buildCardData(answers, title, overall, ideo, s, ranked, name, "story_dl");
+        var cardData = buildCardData(answers, title, overall, ideo, s, name, "story_dl");
         openSharePreviewModal(
           "download",
           cardData,
           null,
           null,
-          function () { shareOrDownloadStoryCard(answers, title, overall, ideo, s, ranked, name, "download"); }
+          function () { shareOrDownloadStoryCard(answers, title, overall, ideo, s, name, "download"); }
         );
       });
     }
@@ -1909,7 +1976,7 @@
       more.hidden = false;
       more.addEventListener("click", function () {
         track("share", { method: "native", result: key });
-        shareOrDownloadStoryCard(answers, title, overall, ideo, s, ranked, name, "native");
+        shareOrDownloadStoryCard(answers, title, overall, ideo, s, name, "native");
       });
     }
 
