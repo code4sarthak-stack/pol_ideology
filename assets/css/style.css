@@ -627,7 +627,7 @@ strong { color: var(--ink); font-weight: 600; }
   max-width: 640px;
   margin: 8px auto 16px;
 }
-.lang-pick h2 {
+.lang-pick > h2 {
   font-family: var(--font-sans);
   font-size: 0.76rem;
   font-weight: 700;
