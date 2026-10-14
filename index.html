@@ -8,6 +8,9 @@
   <meta name="google-adsense-account" content="ca-pub-XXXXXXXXXXXXXXXX">
   <meta name="theme-color" content="#fcfcfd">
   <link rel="canonical" href="https://ideomap.in/">
+  <link rel="alternate" hreflang="en" href="https://ideomap.in/">
+  <link rel="alternate" hreflang="hi" href="https://ideomap.in/start.html?lang=hi">
+  <link rel="alternate" hreflang="x-default" href="https://ideomap.in/">
   <link rel="icon" href="assets/img/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="assets/img/icon-192.png">
   <link rel="manifest" href="site.webmanifest">
@@ -24,6 +27,37 @@
   <link rel="preload" href="assets/fonts/instrument-serif.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/instrument-serif-italic.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/css/style.css">
+
+  <!-- Schema.org Quiz & WebSite Structured Data (0 runtime JS cost) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://ideomap.in/#website",
+        "url": "https://ideomap.in/",
+        "name": "ideoMap",
+        "description": "Free political ideology quiz in English and Hindi.",
+        "inLanguage": ["en", "hi"]
+      },
+      {
+        "@type": "Quiz",
+        "@id": "https://ideomap.in/#quiz",
+        "name": "ideoMap Political Ideology Quiz",
+        "description": "Answer 12 quick or 24 in-depth questions to discover your political ideology across economy, society, civil liberties, and world politics.",
+        "educationalLevel": "Beginner",
+        "inLanguage": ["en", "hi"],
+        "isAccessibleForFree": true,
+        "provider": {
+          "@type": "Organization",
+          "name": "ideoMap",
+          "url": "https://ideomap.in/"
+        }
+      }
+    ]
+  }
+  </script>
 </head>
 <body data-page="home">
   <header class="site-header">
@@ -63,27 +97,6 @@
           <span class="meta-pill__sep">·</span>
           <span>✨ 100% Free</span>
         </div>
-      </div>
-    </section>
-
-    <!-- Political Ideology Quiz FAQ Box -->
-    <section class="card ideo-guide-card">
-      <div class="ideo-guide-card__head">
-        <h2 class="ideo-guide-card__title">Quiz FAQ</h2>
-        <p class="ideo-guide-card__title-hi" lang="hi">राजनीतिक विचारधारा क्विज़ — अक्सर पूछे जाने वाले सवाल</p>
-      </div>
-      <p class="ideo-guide-card__desc">
-        Wondering how our 4-axis test calculates Left vs Right, ensures neutrality, or maps 16 ideologies? Read our quick answers.
-        <span class="ideo-guide-card__desc-hi" lang="hi">क्विज़ कैसे काम करता है, वाम और दक्षिण के पैमाने, और निष्पक्षता पर सामान्य सवालों के जवाब पढ़ें।</span>
-      </p>
-      <div class="ideo-guide-card__action">
-        <a href="faq.html" class="ideo-guide-btn" id="faq-guide-btn">
-          <span class="btn-text-stack">
-            <span class="btn-text-en">Read Quiz FAQ</span>
-            <span class="btn-text-hi" lang="hi">सवाल-जवाब पढ़ें</span>
-          </span>
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </a>
       </div>
     </section>
 
@@ -128,6 +141,27 @@
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </a>
         </div>
+      </div>
+    </section>
+
+    <!-- Political Ideology Quiz FAQ Box -->
+    <section class="card ideo-guide-card">
+      <div class="ideo-guide-card__head">
+        <h2 class="ideo-guide-card__title">Quiz FAQ</h2>
+        <p class="ideo-guide-card__title-hi" lang="hi">राजनीतिक विचारधारा क्विज़ — अक्सर पूछे जाने वाले सवाल</p>
+      </div>
+      <p class="ideo-guide-card__desc">
+        Wondering how our 4-axis test calculates Left vs Right, ensures neutrality, or maps 16 ideologies? Read our quick answers.
+        <span class="ideo-guide-card__desc-hi" lang="hi">क्विज़ कैसे काम करता है, वाम और दक्षिण के पैमाने, और निष्पक्षता पर सामान्य सवालों के जवाब पढ़ें।</span>
+      </p>
+      <div class="ideo-guide-card__action">
+        <a href="faq.html" class="ideo-guide-btn" id="faq-guide-btn">
+          <span class="btn-text-stack">
+            <span class="btn-text-en">Read Quiz FAQ</span>
+            <span class="btn-text-hi" lang="hi">सवाल-जवाब पढ़ें</span>
+          </span>
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
       </div>
     </section>
 
