@@ -1557,11 +1557,32 @@ strong { color: var(--ink); font-weight: 600; }
 }
 
 .share-preview-modal__hint {
-  font-size: 0.72rem;
-  color: var(--muted);
-  text-align: center;
-  padding: 6px 20px 0;
+  font-size: 0.76rem;
+  color: var(--text);
   background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin: 8px 20px 0;
+  text-align: left;
+  line-height: 1.45;
+}
+.share-preview-modal__hint strong {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.share-preview-step {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.74rem;
+  margin-top: 3px;
+}
+.share-preview-step b {
+  color: var(--ink);
 }
 
 .share-preview-modal__actions {
@@ -1588,6 +1609,27 @@ strong { color: var(--ink); font-weight: 600; }
   width: 100%;
 }
 .btn--wa-confirm:hover { background: #1ebe5c; transform: translateY(-1px); }
+
+.btn--wa-chat {
+  background: var(--surface-2);
+  color: #128c7e;
+  border: 1px solid rgba(18, 140, 126, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 0.88rem;
+  padding: 11px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+  width: 100%;
+}
+.btn--wa-chat:hover {
+  background: rgba(37, 211, 102, 0.08);
+  border-color: #25d366;
+}
 
 .btn--insta-confirm {
   background: linear-gradient(135deg, #833ab4 0%, #fd1d1d 50%, #fcb045 100%);

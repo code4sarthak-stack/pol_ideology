@@ -1482,40 +1482,49 @@
    * @param {function} onInsta    Callback that runs the Instagram native share/download flow
    * @param {function} onDownload Callback that runs the explicit download flow
    */
-  function openSharePreviewModal(platform, cardData, waHref, onInsta, onDownload) {
+  function openSharePreviewModal(platform, cardData, actions, onInsta, onDownload) {
     var modal       = document.getElementById("share-preview-modal");
     var loading     = document.getElementById("share-preview-loading");
     var imgWrap     = document.getElementById("share-preview-img-wrap");
     var hint        = document.getElementById("share-preview-hint");
-    var actions     = document.getElementById("share-preview-actions");
+    var actionsWrap = document.getElementById("share-preview-actions");
     var titleEl     = document.getElementById("share-preview-title");
     var subtitleEl  = document.getElementById("share-preview-subtitle");
     var waBtn       = document.getElementById("share-preview-wa-btn");
+    var waChatBtn   = document.getElementById("share-preview-wa-chat-btn");
     var instaBtn    = document.getElementById("share-preview-insta-btn");
     var dlBtn       = document.getElementById("share-preview-dl-btn");
     var closeBtn    = document.getElementById("share-preview-close");
     if (!modal) return;
 
+    var actionHandlers = (typeof actions === "object" && actions !== null) ? actions : {};
+    if (typeof actions === "string") {
+      actionHandlers.onWaChat = function () { window.open(actions, "_blank", "noopener,noreferrer"); };
+    }
+    if (typeof onInsta === "function") actionHandlers.onInsta = onInsta;
+    if (typeof onDownload === "function") actionHandlers.onDownload = onDownload;
+
     // Reset state
     loading.hidden   = false;
     imgWrap.hidden   = true;
     hint.hidden      = true;
-    actions.hidden   = true;
+    actionsWrap.hidden = true;
     imgWrap.innerHTML = "";
-    if (waBtn)    { waBtn.hidden = true;    waBtn.onclick = null; }
-    if (instaBtn) { instaBtn.hidden = true; instaBtn.onclick = null; }
-    if (dlBtn)    { dlBtn.onclick = null; }
+    if (waBtn)     { waBtn.hidden = true;     waBtn.onclick = null; }
+    if (waChatBtn) { waChatBtn.hidden = true; waChatBtn.onclick = null; }
+    if (instaBtn)  { instaBtn.hidden = true;  instaBtn.onclick = null; }
+    if (dlBtn)     { dlBtn.onclick = null; }
 
     // Platform-specific header text
     if (platform === "whatsapp") {
-      if (titleEl)    titleEl.textContent = "📤 Preview — WhatsApp Share";
-      if (subtitleEl) subtitleEl.textContent = "This story image + link will be sent on WhatsApp";
+      if (titleEl)    titleEl.textContent = t("sharePreviewWaTitle");
+      if (subtitleEl) subtitleEl.textContent = t("sharePreviewWaSubtitle");
     } else if (platform === "instagram") {
-      if (titleEl)    titleEl.textContent = "📸 Preview — Instagram Story";
-      if (subtitleEl) subtitleEl.textContent = "Save this card, then post it as your Instagram Story";
+      if (titleEl)    titleEl.textContent = t("sharePreviewInstaTitle");
+      if (subtitleEl) subtitleEl.textContent = t("sharePreviewInstaSubtitle");
     } else {
-      if (titleEl)    titleEl.textContent = "💾 Preview — Save Story Card";
-      if (subtitleEl) subtitleEl.textContent = "Your personalised story image is ready to download";
+      if (titleEl)    titleEl.textContent = t("sharePreviewDlTitle");
+      if (subtitleEl) subtitleEl.textContent = t("sharePreviewDlSubtitle");
     }
 
     // Open modal
@@ -1552,44 +1561,67 @@
         return;
       }
 
-      loading.hidden   = false; // keep spinner until canvas ready
+      loading.hidden   = false;
       imgWrap.innerHTML = "";
       imgWrap.appendChild(canvas);
       loading.hidden   = true;
       imgWrap.hidden   = false;
 
-      // Platform hint text
+      // Platform hint HTML
       if (platform === "instagram") {
-        hint.textContent = "🔗 Your link is already copied — paste it as an Instagram Link Sticker!";
+        hint.innerHTML = t("sharePreviewInstaHint");
         hint.hidden = false;
       } else if (platform === "whatsapp") {
-        hint.textContent = "The image + your result link will open in WhatsApp.";
+        hint.innerHTML = t("sharePreviewWaHint");
+        hint.hidden = false;
+      } else {
+        hint.innerHTML = t("sharePreviewDlHint");
         hint.hidden = false;
       }
 
       // Wire confirm buttons
-      if (platform === "whatsapp" && waBtn) {
-        waBtn.hidden = false;
-        waBtn.onclick = function () {
-          closeSharePreviewModal();
-          window.open(waHref, "_blank", "noopener,noreferrer");
-        };
+      if (platform === "whatsapp") {
+        if (waBtn) {
+          var waBtnText = document.getElementById("share-preview-wa-btn-text");
+          if (waBtnText) waBtnText.textContent = t("sharePreviewWaStatusBtn");
+          waBtn.hidden = false;
+          waBtn.onclick = function () {
+            closeSharePreviewModal();
+            if (typeof actionHandlers.onWaStatus === "function") actionHandlers.onWaStatus();
+            else if (typeof actionHandlers.onWa === "function") actionHandlers.onWa();
+          };
+        }
+        if (waChatBtn && typeof actionHandlers.onWaChat === "function") {
+          var waChatText = document.getElementById("share-preview-wa-chat-text");
+          if (waChatText) waChatText.textContent = t("sharePreviewWaChatBtn");
+          waChatBtn.hidden = false;
+          waChatBtn.onclick = function () {
+            closeSharePreviewModal();
+            actionHandlers.onWaChat();
+          };
+        }
       }
+
       if (platform === "instagram" && instaBtn) {
+        var instaBtnText = document.getElementById("share-preview-insta-btn-text");
+        if (instaBtnText) instaBtnText.textContent = t("sharePreviewInstaBtn");
         instaBtn.hidden = false;
         instaBtn.onclick = function () {
           closeSharePreviewModal();
-          if (typeof onInsta === "function") onInsta();
-        };
-      }
-      if (dlBtn) {
-        dlBtn.onclick = function () {
-          closeSharePreviewModal();
-          if (typeof onDownload === "function") onDownload();
+          if (typeof actionHandlers.onInsta === "function") actionHandlers.onInsta();
         };
       }
 
-      actions.hidden = false;
+      if (dlBtn) {
+        var dlBtnText = document.getElementById("share-preview-dl-btn-text");
+        if (dlBtnText) dlBtnText.textContent = t("downloadStoryCard");
+        dlBtn.onclick = function () {
+          closeSharePreviewModal();
+          if (typeof actionHandlers.onDownload === "function") actionHandlers.onDownload();
+        };
+      }
+
+      actionsWrap.hidden = false;
     }
   }
 
@@ -2031,7 +2063,9 @@
   }
 
   function shareOrDownloadStoryCard(answers, title, overall, ideo, s, name, mode) {
-    var source = mode === "instagram" ? "insta_story" : (mode === "download" ? "story_dl" : "share");
+    var source = (mode === "instagram" || mode === "insta_story") ? "insta_story" :
+                 (mode === "whatsapp" || mode === "whatsapp_status") ? "whatsapp_status" :
+                 (mode === "download" ? "story_dl" : "share");
     var cardData = buildCardData(answers, title, overall, ideo, s, name, source);
     var link = cardData.shareUrl;
     var message = t("shareText", { result: title, overall: overall });
@@ -2047,30 +2081,47 @@
         var filename = "ideomap-" + ideo.key + "-story.png";
         var file = new File([blob], filename, { type: "image/png" });
 
-        if (mode === "instagram" || mode === "native") {
-          if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-            // The link goes inside the caption text: with a file attached, apps such as WhatsApp
-            // often drop a separate `url`, and the caption is what keeps the link tappable.
-            navigator.share({
-              files: [file],
-              title: t("siteName"),
-              text: message + " " + link
-            }).then(function () {
+        var canShareFiles = false;
+        try {
+          canShareFiles = !!(navigator.share && navigator.canShare && navigator.canShare({ files: [file] }));
+        } catch (e) {
+          canShareFiles = false;
+        }
+
+        if (canShareFiles && (mode === "instagram" || mode === "whatsapp" || mode === "whatsapp_status" || mode === "native")) {
+          // The link goes inside the caption text: with a file attached, WhatsApp uses `text`
+          // as the status/chat caption, keeping the link directly tappable by viewers!
+          navigator.share({
+            files: [file],
+            title: t("siteName"),
+            text: message + " " + link
+          }).then(function () {
+            if (mode === "instagram") {
               showQuickShareToast(t("storyCopiedHint"), "success");
-            }).catch(function (err) {
-              if (err.name !== "AbortError") {
-                downloadBlob(blob, filename);
+            } else if (mode === "whatsapp" || mode === "whatsapp_status") {
+              showQuickShareToast(t("storyCopiedHint"), "success");
+            }
+          }).catch(function (err) {
+            if (err && err.name !== "AbortError") {
+              downloadBlob(blob, filename);
+              if (mode === "instagram") {
                 showQuickShareToast(t("storySavedToast") + " " + t("storyCopiedHint"), "info");
+              } else if (mode === "whatsapp" || mode === "whatsapp_status") {
+                showQuickShareToast(t("waStorySavedToast") || t("storySavedToast"), "info");
+              } else {
+                showQuickShareToast(t("storySavedToast"), "info");
               }
-            });
-            return;
-          }
+            }
+          });
+          return;
         }
 
         // Fallback or explicit download
         downloadBlob(blob, filename);
         if (mode === "instagram") {
           showQuickShareToast(t("storySavedToast") + " " + t("storyCopiedHint"), "info");
+        } else if (mode === "whatsapp" || mode === "whatsapp_status") {
+          showQuickShareToast(t("waStorySavedToast") || (t("storySavedToast") + " " + t("storyCopiedHint")), "info");
         } else {
           showQuickShareToast(t("storySavedToast"), "success");
         }
@@ -2093,14 +2144,25 @@
       heroWa.addEventListener("click", function (e) {
         e.preventDefault();
         track("share", { method: "whatsapp_hero_preview", result: key });
-        var waLink = "https://wa.me/?text=" + encodeURIComponent(message + " " + friendLink);
-        var cardData = buildCardData(answers, title, overall, ideo, s, name, "whatsapp");
+        var waChatLink = "https://wa.me/?text=" + encodeURIComponent(message + " " + friendLink);
+        var cardData = buildCardData(answers, title, overall, ideo, s, name, "whatsapp_status");
+        // Pre-copy link so it's ready on clipboard as well
+        copyLinkWithFeedback(cardData.shareUrl);
         openSharePreviewModal(
           "whatsapp",
           cardData,
-          waLink,
-          null,
-          function () { shareOrDownloadStoryCard(answers, title, overall, ideo, s, name, "download"); }
+          {
+            onWaStatus: function () {
+              shareOrDownloadStoryCard(answers, title, overall, ideo, s, name, "whatsapp_status");
+            },
+            onWaChat: function () {
+              track("share", { method: "whatsapp_chat_direct", result: key });
+              window.open(waChatLink, "_blank", "noopener,noreferrer");
+            },
+            onDownload: function () {
+              shareOrDownloadStoryCard(answers, title, overall, ideo, s, name, "download");
+            }
+          }
         );
       });
     }
@@ -2111,14 +2173,19 @@
       heroInsta.addEventListener("click", function () {
         track("share", { method: "instagram_story_preview", result: key });
         var cardData = buildCardData(answers, title, overall, ideo, s, name, "insta_story");
-        // Copy link to clipboard immediately so it's ready when the user opens Instagram
+        // Pre-copy link to clipboard immediately so it's ready when the user opens Instagram
         copyLinkWithFeedback(cardData.shareUrl);
         openSharePreviewModal(
           "instagram",
           cardData,
-          null,
-          function () { shareOrDownloadStoryCard(answers, title, overall, ideo, s, name, "instagram"); },
-          function () { shareOrDownloadStoryCard(answers, title, overall, ideo, s, name, "download"); }
+          {
+            onInsta: function () {
+              shareOrDownloadStoryCard(answers, title, overall, ideo, s, name, "instagram");
+            },
+            onDownload: function () {
+              shareOrDownloadStoryCard(answers, title, overall, ideo, s, name, "download");
+            }
+          }
         );
       });
     }
@@ -2132,9 +2199,11 @@
         openSharePreviewModal(
           "download",
           cardData,
-          null,
-          null,
-          function () { shareOrDownloadStoryCard(answers, title, overall, ideo, s, name, "download"); }
+          {
+            onDownload: function () {
+              shareOrDownloadStoryCard(answers, title, overall, ideo, s, name, "download");
+            }
+          }
         );
       });
     }
