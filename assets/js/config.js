@@ -14,9 +14,9 @@
 window.SITE_CONFIG = {
   DOMAIN: "ideomap.in",
 
-  ADSENSE_CLIENT: "ca-pub-XXXXXXXXXXXXXXXX",
+  ADSENSE_CLIENT: "ca-pub-3906080146441425",
   AD_SLOTS: {
-    top: "1111111111",    // fixed 320x100 banner at the top of pages
+    top: "1111111111",    // fixed 320x100 banner at the top of pages (replace once ad unit is created in AdSense)
     middle: "2222222222", // responsive unit in the middle of content
     bottom: "3333333333"  // responsive unit near the end of the page
   },

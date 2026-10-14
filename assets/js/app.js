@@ -131,7 +131,7 @@
     }
 
     var customAds = CFG.CUSTOM_ADS;
-    var customEnabled = !adsEnabled && customAds && customAds.enabled && Array.isArray(customAds.campaigns) && customAds.campaigns.length > 0;
+    var customEnabled = customAds && customAds.enabled && Array.isArray(customAds.campaigns) && customAds.campaigns.length > 0;
     var slotCounter = 0;
 
     slots.forEach(function (el) {
@@ -143,23 +143,6 @@
       box.className = "ad__box";
       el.appendChild(label);
       el.appendChild(box);
-
-      if (adsEnabled) {
-        var ins = document.createElement("ins");
-        ins.className = "adsbygoogle";
-        ins.setAttribute("data-ad-client", CFG.ADSENSE_CLIENT);
-        ins.setAttribute("data-ad-slot", (CFG.AD_SLOTS || {})[kind] || "");
-        if (kind === "top") {
-          ins.style.display = "inline-block"; // fixed size set in CSS: 320x100, or 320x50 on short screens
-        } else {
-          ins.style.display = "block";
-          ins.setAttribute("data-ad-format", "auto");
-          ins.setAttribute("data-full-width-responsive", "true");
-        }
-        box.appendChild(ins);
-        try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) { /* ignore */ }
-        return;
-      }
 
       if (customEnabled) {
         var matching = customAds.campaigns.filter(function (c) {
@@ -297,6 +280,27 @@
             box.appendChild(a);
             return;
           }
+        }
+      }
+
+      if (adsEnabled) {
+        var slotId = (CFG.AD_SLOTS || {})[kind] || "";
+        var isRealSlot = /^\d{10,}$/.test(slotId) && !/^([0-9])\1+$/.test(slotId);
+        if (isRealSlot) {
+          var ins = document.createElement("ins");
+          ins.className = "adsbygoogle";
+          ins.setAttribute("data-ad-client", CFG.ADSENSE_CLIENT);
+          ins.setAttribute("data-ad-slot", slotId);
+          if (kind === "top") {
+            ins.style.display = "inline-block";
+          } else {
+            ins.style.display = "block";
+            ins.setAttribute("data-ad-format", "auto");
+            ins.setAttribute("data-full-width-responsive", "true");
+          }
+          box.appendChild(ins);
+          try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) { /* ignore */ }
+          return;
         }
       }
 
