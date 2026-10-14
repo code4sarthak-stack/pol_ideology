@@ -505,7 +505,7 @@ LANGS.forEach((lang) => {
 });
 
 // stats.html is left out on purpose: it is marked noindex.
-const STATIC_PAGES = ["", "about.html", "privacy.html", "terms.html", "contact.html"];
+const STATIC_PAGES = ["", "about.html", "faq.html", "privacy.html", "terms.html", "contact.html"];
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${STATIC_PAGES.concat(written).map((p) => `  <url><loc>${SITE}${p}</loc></url>`).join("\n")}
