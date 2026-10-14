@@ -61,9 +61,9 @@ window.QUIZ.bands = {
           "text": "Gave land directly to poor tenant farmers; public clinics and schools brought India's highest literacy rate."
         },
         "bad": {
-          "name": "India's Licence Raj",
-          "when": "India · 1950s–1991",
-          "text": "To open a factory or make more products, you needed dozens of permits, which killed growth and bred bribes."
+          "name": "China's commune farms",
+          "when": "China · 1958–1978",
+          "text": "All land was pooled and everyone got the same share, so no one had a reason to work harder; food stayed scarce until families were allowed to farm their own plots."
         }
       },
       "hi": {
@@ -75,9 +75,9 @@ window.QUIZ.bands = {
           "text": "काश्तकार किसानों को सीधे ज़मीन दी; सरकारी स्कूलों और अस्पतालों ने मिलकर केरल को भारत में सबसे ऊँची साक्षरता दर तक पहुँचाया।"
         },
         "bad": {
-          "name": "भारत का लाइसेंस राज",
-          "when": "भारत · 1950 का दशक–1991",
-          "text": "कारख़ाना खोलने या उत्पादन बढ़ाने के लिए दर्जनों सरकारी परमिट चाहिए थे, जिससे विकास रुका और रिश्वतखोरी बढ़ी।"
+          "name": "चीन के सामूहिक खेत (कम्यून)",
+          "when": "चीन · 1958–1978",
+          "text": "सारी ज़मीन साझा कर दी गई और सबको बराबर हिस्सा मिलता था, इसलिए किसी के पास ज़्यादा मेहनत करने की वजह नहीं थी; परिवारों को अपने खेत जोतने की छूट मिलने तक अनाज की कमी बनी रही।"
         }
       }
     },
@@ -123,7 +123,7 @@ window.QUIZ.bands = {
         "bad": {
           "name": "Pakistan's fuel subsidy crisis",
           "when": "Pakistan · 2022–2024",
-          "text": "Selling petrol and electricity below real cost to win votes created massive unpaid debts and emergency loan begging."
+          "text": "Selling petrol and electricity below real cost to win votes created massive unpaid debts and a string of emergency IMF bailouts."
         }
       },
       "hi": {
@@ -137,7 +137,7 @@ window.QUIZ.bands = {
         "bad": {
           "name": "पाकिस्तान का सब्सिडी संकट",
           "when": "पाकिस्तान · 2022–2024",
-          "text": "वोट पाने के लिए पेट्रोल और बिजली को लागत से बहुत सस्ते में बेचने से भारी क़र्ज़ चढ़ा और विदेशी कर्ज़ों के लिए हाथ फैलाने पड़े।"
+          "text": "वोट पाने के लिए पेट्रोल और बिजली को लागत से बहुत सस्ते में बेचने से भारी क़र्ज़ चढ़ा और बार-बार IMF से आपात क़र्ज़ लेना पड़ा।"
         }
       }
     },
@@ -181,9 +181,9 @@ window.QUIZ.bands = {
           "text": "Zero import duties, low taxes, and free trade turned a crowded refugee port into one of Earth's richest cities."
         },
         "bad": {
-          "name": "The British East India Company",
-          "when": "India · 1757–1858",
-          "text": "A private profit-driven company with its own private army looted Bengal, forced farmers to grow cash crops, and caused massive famines."
+          "name": "The Triangle factory fire",
+          "when": "USA · 1911",
+          "text": "With almost no safety rules, owners kept a New York garment factory's exit doors locked; when fire broke out, 146 workers, mostly young immigrant women, died."
         }
       },
       "hi": {
@@ -195,9 +195,9 @@ window.QUIZ.bands = {
           "text": "शून्य आयात शुल्क, कम टैक्स और मुक्त व्यापार ने शरणार्थियों से भरे एक बंदरगाह को दुनिया के सबसे अमीर शहरों में बदल दिया।"
         },
         "bad": {
-          "name": "ईस्ट इंडिया कंपनी की लूट",
-          "when": "भारत · 1757–1858",
-          "text": "अपनी निजी फ़ौज वाली इस मुनाफ़ाख़ोर निजी कंपनी ने बंगाल को लूटा, किसानों से जबरन नील-अफ़ीम उगवाई और भीषण अकाल पैदा किए।"
+          "name": "ट्रायंगल फ़ैक्ट्री की आग",
+          "when": "अमेरिका · 1911",
+          "text": "सुरक्षा के लगभग कोई नियम न होने से मालिक न्यूयॉर्क की एक कपड़ा फ़ैक्ट्री के निकास दरवाज़े बंद रखते थे; आग लगी तो 146 मज़दूर मारे गए, जिनमें ज़्यादातर युवा प्रवासी महिलाएँ थीं।"
         }
       }
     }
@@ -243,9 +243,9 @@ window.QUIZ.bands = {
           "text": "Opened India's first schools for girls in Pune and fought for the rights of lower castes and widows."
         },
         "bad": {
-          "name": "Forced sterilisation in Emergency",
-          "when": "India · 1975–1977",
-          "text": "Blindly chasing population control targets, officials forced thousands of poor, helpless men into vasectomies without consent."
+          "name": "Iran's forced unveiling",
+          "when": "Iran · 1936–1941",
+          "text": "To 'modernise' the country overnight, Reza Shah banned the veil and police pulled scarves off women in the street; many women stopped leaving home, and the bitterness lasted for decades."
         }
       },
       "hi": {
@@ -257,9 +257,9 @@ window.QUIZ.bands = {
           "text": "पुणे में लड़कियों के लिए शुरुआती स्कूल खोले और जातिगत भेदभाव व विधवाओं के साथ होने वाले अन्याय के ख़िलाफ़ लड़े।"
         },
         "bad": {
-          "name": "आपातकाल में जबरन नसबंदी",
-          "when": "भारत · 1975–1977",
-          "text": "जनसंख्या नियंत्रण के अंधाधुंध लक्ष्यों के फेर में अधिकारियों ने हज़ारों ग़रीब और बेबस पुरुषों की जबरन नसबंदी कर दी।"
+          "name": "ईरान में ज़बरन पर्दा हटवाना",
+          "when": "ईरान · 1936–1941",
+          "text": "देश को रातों-रात 'आधुनिक' बनाने के लिए रज़ा शाह ने पर्दे पर पाबंदी लगा दी और पुलिस सड़कों पर महिलाओं के सिर से दुपट्टे खींचने लगी; कई महिलाओं ने घर से निकलना ही छोड़ दिया और यह कड़वाहट दशकों तक रही।"
         }
       }
     },
@@ -273,9 +273,9 @@ window.QUIZ.bands = {
           "text": "After the bloody Kalinga war, he promoted peace, kindness to all religions, and public hospitals without forcing one faith."
         },
         "bad": {
-          "name": "Rushed Partition of India",
-          "when": "British India · 1947",
-          "text": "Leaders rushed a hurried boundary deal without proper police or military planning, leading to brutal riots and millions of refugees."
+          "name": "America's slavery compromises",
+          "when": "USA · 1820–1860",
+          "text": "Leaders kept splitting the difference on slavery to keep the peace, even making free states return escaped slaves in 1850; the problem only grew until civil war broke out."
         }
       },
       "hi": {
@@ -287,9 +287,9 @@ window.QUIZ.bands = {
           "text": "कलिंग युद्ध के बाद उन्होंने सहिष्णुता, जन-कल्याण और सभी धर्मों के आदर को बढ़ावा दिया, बिना कोई धर्म थोपे।"
         },
         "bad": {
-          "name": "विभाजन की हड़बड़ी और नरसंहार",
-          "when": "भारत · 1947",
-          "text": "सुरक्षा और पुलिस की ठोस तैयारी के बिना जल्दबाज़ी में सीमाएँ बाँटी गईं, जिससे भीषण दंगे भड़के और लाखों लोग शरणार्थी बने।"
+          "name": "अमेरिका में ग़ुलामी पर समझौते",
+          "when": "अमेरिका · 1820–1860",
+          "text": "शांति बनाए रखने के लिए नेता ग़ुलामी के मुद्दे पर बीच का रास्ता निकालते रहे, यहाँ तक कि 1850 में आज़ाद राज्यों को भागे हुए ग़ुलाम लौटाने पर मजबूर किया; समस्या बढ़ती गई और आख़िर गृहयुद्ध छिड़ गया।"
         }
       }
     },
@@ -303,9 +303,9 @@ window.QUIZ.bands = {
           "text": "Proudly shared India's spiritual heritage with the world while boldly condemning caste bigotry and blind superstition."
         },
         "bad": {
-          "name": "Defending Sati & child marriage",
-          "when": "India · 19th Century",
-          "text": "Orthodox leaders fiercely opposed reformers like Raja Ram Mohan Roy, claiming that burning living widows was sacred tradition that must not stop."
+          "name": "Saudi Arabia's ban on women driving",
+          "when": "Saudi Arabia · until 2018",
+          "text": "In the name of tradition, women could not drive for decades; women who campaigned against the ban were jailed, some just weeks before it was lifted."
         }
       },
       "hi": {
@@ -317,9 +317,9 @@ window.QUIZ.bands = {
           "text": "भारत की आध्यात्मिक विरासत को गर्व से दुनिया के मंच तक ले गए, और साथ ही जातिवाद व अंधविश्वास की कड़ी निंदा की।"
         },
         "bad": {
-          "name": "सती प्रथा और बाल विवाह का बचाव",
-          "when": "भारत · 19वीं सदी",
-          "text": "रूढ़िवादियों ने राजा राममोहन राय जैसे सुधारकों का कड़ा विरोध किया और कहा कि ज़िंदा विधवाओं को जलाना एक पवित्र परंपरा है जिसे बंद नहीं किया जाना चाहिए।"
+          "name": "सऊदी अरब में महिलाओं के गाड़ी चलाने पर रोक",
+          "when": "सऊदी अरब · 2018 तक",
+          "text": "परंपरा के नाम पर दशकों तक महिलाएँ गाड़ी नहीं चला सकती थीं; इस रोक के ख़िलाफ़ आवाज़ उठाने वाली महिलाओं को जेल भेजा गया, कुछ को तो पाबंदी हटने से कुछ ही हफ़्ते पहले।"
         }
       }
     },
@@ -365,9 +365,9 @@ window.QUIZ.bands = {
           "text": "Led peaceful boycotts against racist laws, proving that citizens have a moral duty to disobey unjust rules."
         },
         "bad": {
-          "name": "Naxalite violence in tribal belts",
-          "when": "India · 1990s–2010s",
-          "text": "Rejecting the Indian state and police, rebels bombed rural schools, blew up ambulances, and killed villagers accused of being 'informers'."
+          "name": "Seattle's 'police-free zone'",
+          "when": "USA · 2020",
+          "text": "Protesters declared six city blocks free of police and government; within weeks there were several shootings, two teenagers were killed, and the city cleared the area."
         }
       },
       "hi": {
@@ -379,9 +379,9 @@ window.QUIZ.bands = {
           "text": "नस्लभेदी क़ानूनों के ख़िलाफ़ अहिंसक आंदोलन चलाया और सिखाया कि अन्यायपूर्ण क़ानूनों को न मानना एक नैतिक कर्तव्य है।"
         },
         "bad": {
-          "name": "नक्सली हिंसा और बर्बादी",
-          "when": "भारत · 1990–2010 का दशक",
-          "text": "संविधान और पुलिस को नकारते हुए उग्रवादियों ने ग्रामीण स्कूलों और एम्बुलेंसों को बम से उड़ाया और निर्दोष ग्रामीणों की हत्या की।"
+          "name": "सिएटल का 'पुलिस-मुक्त ज़ोन'",
+          "when": "अमेरिका · 2020",
+          "text": "प्रदर्शनकारियों ने शहर के छह ब्लॉकों को पुलिस और सरकार से मुक्त घोषित कर दिया; कुछ ही हफ़्तों में कई बार गोलियाँ चलीं, दो किशोर मारे गए और प्रशासन को इलाक़ा ख़ाली कराना पड़ा।"
         }
       }
     },
@@ -455,9 +455,9 @@ window.QUIZ.bands = {
           "text": "Zero tolerance for crime, tough anti-corruption rules, and clean streets made it one of the safest and richest countries on Earth."
         },
         "bad": {
-          "name": "The Emergency in India",
-          "when": "India · 1975–1977",
-          "text": "Under the excuse of 'bringing discipline and punctuality', basic court rights were cancelled, journalists were silenced, and politicians were jailed."
+          "name": "Pakistan's 2007 emergency",
+          "when": "Pakistan · 2007",
+          "text": "Claiming to fight extremism, the military ruler suspended the constitution, sacked the Chief Justice and dozens of judges, took TV channels off air and arrested thousands of lawyers."
         }
       },
       "hi": {
@@ -469,9 +469,9 @@ window.QUIZ.bands = {
           "text": "अपराध पर ज़ीरो टॉलरेंस, भ्रष्टाचार पर कड़ी चोट और साफ़-सुथरी व्यवस्था ने इसे दुनिया के सबसे सुरक्षित और समृद्ध देशों में ला खड़ा किया।"
         },
         "bad": {
-          "name": "भारत में आपातकाल (इमरजेंसी)",
-          "when": "भारत · 1975–1977",
-          "text": "'अनुशासन और व्यवस्था' के नाम पर नागरिकों के अदालती अधिकार छीने गए, प्रेस पर सेंसर लगा और विपक्षी नेताओं को जेल में ठूंस दिया गया।"
+          "name": "पाकिस्तान की 2007 की इमरजेंसी",
+          "when": "पाकिस्तान · 2007",
+          "text": "चरमपंथ से लड़ने के नाम पर सैन्य शासक ने संविधान निलंबित किया, मुख्य न्यायाधीश समेत दर्जनों जजों को हटाया, टीवी चैनल बंद कराए और हज़ारों वकीलों को गिरफ़्तार किया।"
         }
       }
     },
@@ -547,9 +547,9 @@ window.QUIZ.bands = {
           "text": "US gave massive aid money to help rebuild ruined European countries, turning former enemies into close friends and trade partners."
         },
         "bad": {
-          "name": "1962 China War betrayal",
-          "when": "India & China · 1954–1962",
-          "text": "India trusted the friendly slogan 'Hindi-Chini Bhai-Bhai' and ignored border military preparation, leaving the country unprepared when China attacked."
+          "name": "The League of Nations and Ethiopia",
+          "when": "Ethiopia · 1935–1936",
+          "text": "Countries trusted the new world body to keep the peace, but its sanctions left out oil; Italy conquered Ethiopia anyway, and the League never recovered."
         }
       },
       "hi": {
@@ -561,9 +561,9 @@ window.QUIZ.bands = {
           "text": "अमेरिका ने युद्ध में बर्बाद यूरोप को फिर से खड़ा करने के लिए भारी आर्थिक मदद दी, जिससे पुराने दुश्मन पक्के दोस्त और व्यापारिक साझेदार बन गए।"
         },
         "bad": {
-          "name": "1962 के युद्ध में चीन का धोखा",
-          "when": "भारत और चीन · 1954–1962",
-          "text": "भारत ने 'हिंदी-चीनी भाई-भाई' के नारे पर भरोसा किया और सीमा पर रक्षा तैयारी पर ध्यान नहीं दिया, जिसका फ़ायदा उठाकर चीन ने 1962 में अचानक हमला कर दिया।"
+          "name": "राष्ट्र संघ और इथियोपिया",
+          "when": "इथियोपिया · 1935–1936",
+          "text": "देशों ने शांति के लिए नई विश्व संस्था पर भरोसा किया, लेकिन उसकी पाबंदियों में तेल शामिल ही नहीं था; इटली ने फिर भी इथियोपिया पर क़ब्ज़ा कर लिया और राष्ट्र संघ की साख कभी नहीं लौटी।"
         }
       }
     },
@@ -733,9 +733,9 @@ window.QUIZ.ideologies = [
         "text": "Huge companies owned directly by their workers, where employees vote for their bosses and share the profits (~70,000 workers)."
       },
       "bad": {
-        "name": "Naxalite violence & disruption",
-        "when": "India · 1970s–2000s",
-        "text": "Armed groups claiming to fight for poor villagers ended up blowing up local schools, trains, and running violent kangaroo courts."
+        "name": "Yugoslavia's worker-run economy",
+        "when": "Yugoslavia · 1950s–1980s",
+        "text": "Workers' councils ran the factories, but they kept raising wages and borrowing instead of investing; by 1989 foreign debt was huge and inflation passed 1,000% a year."
       },
       "layman": "A vision of equality without corporate bosses or authoritarian politicians. Workers run their own workplaces collectively as cooperatives, and local communities manage their own affairs through direct democratic meetings. It rejects corporate monopolies while fiercely guarding personal freedoms from government control.",
       "pillars": [
@@ -755,9 +755,9 @@ window.QUIZ.ideologies = [
         "text": "मज़दूरों के मालिकाना हक़ वाली बड़ी कंपनियाँ जहाँ कर्मचारी ख़ुद अपने मैनेजर चुनते हैं और मुनाफ़ा आपस में बाँटते हैं (70,000+ कर्मचारी)।"
       },
       "bad": {
-        "name": "नक्सली हिंसा और बर्बादी",
-        "when": "भारत · 1970–2000 का दशक",
-        "text": "ग़रीबों की भलाई के नाम पर हथियार उठाने वाले गुटों ने ग्रामीण स्कूलों, रेल पटरियों को बम से उड़ाया और क्रूर कंगारू अदालतें चलाईं।"
+        "name": "यूगोस्लाविया की मज़दूर-संचालित अर्थव्यवस्था",
+        "when": "यूगोस्लाविया · 1950–1980 का दशक",
+        "text": "कारख़ाने मज़दूर परिषदें चलाती थीं, लेकिन वे निवेश की जगह तनख़्वाहें बढ़ाती और क़र्ज़ लेती रहीं; 1989 तक देश भारी विदेशी क़र्ज़ में डूब गया और महँगाई 1,000% सालाना से ऊपर चली गई।"
       },
       "layman": "बिना किसी बड़े मालिक या तानाशाही नेता के सामाजिक बराबरी की सोच। इसमें कामगार मिलकर अपनी कंपनियाँ और फ़ैक्ट्रियाँ चलाते हैं (सहकारी समितियाँ) और स्थानीय लोग सीधे मोहल्ले की बैठकों में फ़ैसले लेते हैं। यह निजी कंपनियों के लालच और सख़्त सरकारी हुक्म दोनों के ख़िलाफ़ है।",
       "pillars": [
@@ -841,9 +841,9 @@ window.QUIZ.ideologies = [
         "text": "Allowed private business to thrive while taxes funded top-quality free schools, colleges, and healthcare for all."
       },
       "bad": {
-        "name": "Sri Lanka's freebie bankruptcy",
-        "when": "Sri Lanka · 2019–2022",
-        "text": "Promised endless freebies, tax cuts, and cheap goods without money to pay for them, leading to no petrol, power cuts, and bankruptcy."
+        "name": "Greece's debt crisis",
+        "when": "Greece · 2009–2018",
+        "text": "Years of generous pensions and public jobs paid for with borrowed money ended in three international bailouts; the economy shrank by about a quarter and over half of young people were jobless."
       },
       "layman": "The popular Nordic model (like Sweden, Norway, and Denmark). It encourages private businesses and entrepreneurs to build wealth, but uses taxes and strong laws to provide free healthcare, world-class schools, paid leave, and strong pensions so that no one falls into extreme poverty.",
       "pillars": [
@@ -851,7 +851,7 @@ window.QUIZ.ideologies = [
         "🛡️ Ironclad safety net: Universal free healthcare, free schooling, and generous pensions.",
         "🤝 Strong worker rights: Fair labor laws and unions protect employees from exploitation."
       ],
-      "examplePerson": "Arvind Kejriwal",
+      "examplePerson": "Manmohan Singh",
       "simpleTitle": "Welfare Capitalism"
     },
     "hi": {
@@ -863,9 +863,9 @@ window.QUIZ.ideologies = [
         "text": "निजी उद्यम को फलने-फूलने दिया और टैक्स की कमाई से हर नागरिक को मुफ़्त व बेहतरीन स्कूल, कॉलेज और इलाज उपलब्ध कराया।"
       },
       "bad": {
-        "name": "श्रीलंका का दिवालियापन",
-        "when": "श्रीलंका · 2019–2022",
-        "text": "ख़ज़ाने में पैसा न होने पर भी मुफ़्त बिजली, सस्ता राशन और भारी छूट बाँटते रहे; नतीजा यह हुआ कि देश दिवालिया हो गया और पेट्रोल तक ख़त्म हो गया।"
+        "name": "ग्रीस का क़र्ज़ संकट",
+        "when": "ग्रीस · 2009–2018",
+        "text": "बरसों तक उधार के पैसे से भारी पेंशन और सरकारी नौकरियाँ बाँटी गईं; नतीजा तीन अंतरराष्ट्रीय बेलआउट, अर्थव्यवस्था लगभग एक-चौथाई सिकुड़ गई और आधे से ज़्यादा युवा बेरोज़गार हो गए।"
       },
       "layman": "यह नॉर्डिक देशों (जैसे स्वीडन, नॉर्वे और डेनमार्क) का मॉडल है। यहाँ निजी कारोबार और कंपनियों को पूरी छूट होती है ताकि देश दौलतमंद बने, लेकिन अमीरों पर टैक्स लगाकर सबको मुफ़्त इलाज, बेहतरीन स्कूल, पेंशन और सुरक्षा घेरा दिया जाता है ताकि कोई लाचार न रहे।",
       "pillars": [
@@ -873,7 +873,7 @@ window.QUIZ.ideologies = [
         "🛡️ अटूट सुरक्षा घेरा: मुफ़्त इलाज, मुफ़्त शिक्षा और बुढ़ापे में पेंशन की गारंटी।",
         "🤝 कामगारों के अधिकार: मज़बूत यूनियनें और कड़े नियम कामगारों के हितों की रक्षा करते हैं।"
       ],
-      "examplePerson": "अरविंद केजरीवाल",
+      "examplePerson": "मनमोहन सिंह",
       "simpleTitle": "कमाई प्राइवेट, सुविधाएँ मुफ़्त"
     }
   },
@@ -895,9 +895,9 @@ window.QUIZ.ideologies = [
         "text": "Helped write the world's first global agreement stating that every human being is born free and equal."
       },
       "bad": {
-        "name": "Extreme 'cancel culture' & intolerance",
-        "when": "USA · 2015 onwards",
-        "text": "Good intentions went too far, with students shouting down speakers, getting people fired for differing views, and creating toxic division."
+        "name": "California's Proposition 47",
+        "when": "USA · 2014–2024",
+        "text": "To cut prison crowding, thefts under $950 were made minor offences; shops complained of repeat shoplifting, and in 2024 voters brought back tougher penalties."
       },
       "layman": "A forward-looking philosophy focused on expanding human rights, modernizing social norms, and protecting the climate. Believes that society should move beyond outdated prejudices, protect minority rights, and regulate big corporations so they do not abuse workers or pollute the planet.",
       "pillars": [
@@ -917,9 +917,9 @@ window.QUIZ.ideologies = [
         "text": "उस ऐतिहासिक दस्तावेज़ को तैयार कराया जिसने पहली बार दुनिया को बताया कि हर इंसान बराबर और आज़ाद पैदा हुआ है।"
       },
       "bad": {
-        "name": "कट्टर 'कैंसिल कल्चर' और असहिष्णुता",
-        "when": "अमेरिका · 2015 से",
-        "text": "सामाजिक सुधार की अच्छी नीयत इतनी कट्टर हो गई कि अलग विचार रखने वालों की बोलती बंद की जाने लगी और समाज में नफ़रत बढ़ गई।"
+        "name": "कैलिफ़ोर्निया का प्रस्ताव 47",
+        "when": "अमेरिका · 2014–2024",
+        "text": "जेलों की भीड़ घटाने के लिए 950 डॉलर से कम की चोरी को मामूली अपराध बना दिया गया; दुकानदारों ने बार-बार चोरी की शिकायत की और 2024 में मतदाताओं ने सख़्त सज़ाएँ वापस ला दीं।"
       },
       "layman": "समान अधिकारों, आधुनिक सामाजिक सोच और पर्यावरण संरक्षण पर ज़ोर। यह पुरानी रूढ़ियों को तोड़कर हर व्यक्ति की आज़ादी, अल्पसंख्यकों और महिलाओं के समान अधिकार और पर्यावरण की रक्षा चाहता है। इसका मानना है कि कंपनियों की मनमानी रोकने के लिए निष्पक्ष नियम ज़रूरी हैं।",
       "pillars": [
@@ -949,9 +949,9 @@ window.QUIZ.ideologies = [
         "text": "United millions through non-violent protest to win independence, inspiring equality movements worldwide."
       },
       "bad": {
-        "name": "The Bhoodan movement's flaws",
-        "when": "India · 1951–1970s",
-        "text": "Vinoba Bhave asked landlords to gift land to the poor, but much of what was donated was rocky, barren, tied up in court, or never handed over."
+        "name": "Tanzania's Ujamaa villages",
+        "when": "Tanzania · 1967–1985",
+        "text": "A dream of self-reliant village communities turned into forcing millions of farmers to move into new villages; harvests fell and the country had to import food."
       },
       "layman": "Mahatma Gandhi’s philosophy of Sarvodaya (universal well-being and upliftment of all). It envisions self-reliant local villages, eco-friendly handicrafts, decentralised local governance (Gram Swaraj), non-violence (Ahimsa), and the moral idea that the rich should act as caretakers (trustees) of their wealth for the poor.",
       "pillars": [
@@ -971,9 +971,9 @@ window.QUIZ.ideologies = [
         "text": "अहिंसा के दम पर करोड़ों लोगों को एकजुट कर आज़ादी दिलाई और दुनिया भर में नागरिक अधिकारों की लड़ाई को प्रेरित किया।"
       },
       "bad": {
-        "name": "भूदान आंदोलन की विफलता",
-        "when": "भारत · 1951–1970 का दशक",
-        "text": "विनोबा भावे ने ज़मींदारों से ग़रीबों के लिए ज़मीन दान माँगी, लेकिन बड़ा हिस्सा बंजर या विवादित निकला और असल में ग़रीबों को बहुत कम मिला।"
+        "name": "तंज़ानिया के उजामा गाँव",
+        "when": "तंज़ानिया · 1967–1985",
+        "text": "आत्मनिर्भर ग्राम-समुदायों का सपना लाखों किसानों को ज़बरदस्ती नए गाँवों में बसाने में बदल गया; पैदावार घटी और देश को अनाज बाहर से मँगाना पड़ा।"
       },
       "layman": "महात्मा गांधी का सर्वोदय दर्शन, जिसका अर्थ है सबका कल्याण और सबका उत्थान। यह आत्मनिर्भर गाँवों, खादी और कुटीर उद्योग, ग्राम स्वराज (स्थानीय स्वशासन), अहिंसा और इस सोच पर आधारित है कि अमीर लोग अपनी संपत्ति को जनता की अमानत (ट्रस्टीशिप) समझें।",
       "pillars": [
@@ -1003,9 +1003,9 @@ window.QUIZ.ideologies = [
         "text": "Pragmatic leaders put politics aside to end runaway inflation that had passed 2,000% a year, bringing price stability to poor families."
       },
       "bad": {
-        "name": "India's coalition 'policy paralysis'",
-        "when": "India · 2011–2014",
-        "text": "Trying to please too many coalition partners meant nobody took tough decisions, stalling roads and projects, and frustrating the public."
+        "name": "Israel's election deadlock",
+        "when": "Israel · 2019–2022",
+        "text": "No side could build a stable majority, so coalitions kept collapsing; the country held five general elections in under four years and went over two years without a new budget."
       },
       "layman": "The pragmatic common-sense middle ground. Centrists do not blindly follow rigid left-wing or right-wing doctrines. Instead, they ask: What practical policy actually works best in real life? They prefer sensible compromises, steady reform, and balancing economic growth with social safety.",
       "pillars": [
@@ -1025,9 +1025,9 @@ window.QUIZ.ideologies = [
         "text": "राजनीति छोड़कर व्यावहारिक नीतियों पर ध्यान दिया और 2,000% सालाना वाली भयंकर महँगाई को ख़त्म कर ग़रीबों को राहत दी।"
       },
       "bad": {
-        "name": "गठबंधन की नीतिगत पंगुता (पॉलिसी पैरालिसिस)",
-        "when": "भारत · 2011–2014",
-        "text": "गठबंधन के सभी दलों को ख़ुश रखने के चक्कर में बड़े फ़ैसले टलते रहे, विकास परियोजनाएँ अटक गईं और शासन ठप पड़ गया।"
+        "name": "इज़राइल का चुनावी गतिरोध",
+        "when": "इज़राइल · 2019–2022",
+        "text": "कोई भी पक्ष स्थिर बहुमत नहीं जुटा सका, इसलिए गठबंधन बार-बार गिरते रहे; चार साल से कम समय में पाँच आम चुनाव हुए और दो साल से ज़्यादा समय तक नया बजट पास नहीं हो सका।"
       },
       "layman": "व्यावहारिक और संतुलित बीच का रास्ता। मध्यमार्गी किसी भी कट्टर विचारधारा के पीछे नहीं भागते। वे ज़मीनी हक़ीक़त देखकर पूछते हैं: असल ज़िंदगी में कौन सा उपाय सबसे बेहतर काम करेगा? वे हंगामे और उथल-पुथल के बजाय समझदारी, समझौते और स्थिर सुधारों पर भरोसा करते हैं।",
       "pillars": [
@@ -1057,9 +1057,9 @@ window.QUIZ.ideologies = [
         "text": "Rajaji warned early that excessive government permits and red tape would choke business, demanding open enterprise decades before the 1991 reforms."
       },
       "bad": {
-        "name": "The Bengal Famine of 1943",
-        "when": "British India · 1943",
-        "text": "British rulers refused to stop food hoarding or regulate grain markets during wartime, leading to nearly 3 million Indians starving to death."
+        "name": "The Irish Famine",
+        "when": "Ireland · 1845–1852",
+        "text": "When the potato crop failed, the British government largely refused to interfere with free markets; food kept being shipped out of Ireland while about a million people died."
       },
       "layman": "The traditional philosophy of personal liberty that inspired modern democracies. It holds that the government exists only to protect your life, property, and freedom from violence or theft. Beyond that, individuals should be completely free to trade, innovate, and live their lives without state interference.",
       "pillars": [
@@ -1079,9 +1079,9 @@ window.QUIZ.ideologies = [
         "text": "राजाजी ने दशकों पहले चेताया था कि परमिट-लाइसेंस राज से धंधे चौपट होंगे; उन्होंने खुली अर्थव्यवस्था की वकालत की जो भारत ने 1991 में अपनाई।"
       },
       "bad": {
-        "name": "1943 का बंगाल अकाल",
-        "when": "ब्रिटिश भारत · 1943",
-        "text": "अंग्रेजी हुकूमत ने बाज़ार में जमाख़ोरी रोकने या अनाज बाँटने से इनकार कर दिया, जिसके चलते लगभग 30 लाख निर्दोष भारतीय भूख से तड़पकर मर गए।"
+        "name": "आयरलैंड का महा-अकाल",
+        "when": "आयरलैंड · 1845–1852",
+        "text": "आलू की फ़सल बर्बाद होने पर ब्रिटिश सरकार ने 'खुले बाज़ार' में दख़ल देने से ज़्यादातर इनकार किया; आयरलैंड से अनाज बाहर भेजा जाता रहा और क़रीब दस लाख लोग मर गए।"
       },
       "layman": "व्यक्तिगत स्वतंत्रता का मूल दर्शन जिसने आधुनिक लोकतंत्रों की नींव रखी। इसका मानना है कि सरकार का काम केवल नागरिकों की जान-माल और आज़ादी की रक्षा करना है। इसके अलावा लोगों को अपनी मर्ज़ी से कमाने, व्यापार करने और बिना सरकारी अड़चनों के जीने की पूरी छूट होनी चाहिए।",
       "pillars": [
@@ -1165,9 +1165,9 @@ window.QUIZ.ideologies = [
         "text": "Helped rebuild war-torn Germany with free enterprise and stable, traditional family values, turning it into a peaceful democracy."
       },
       "bad": {
-        "name": "Pakistan's feudal elite rule",
-        "when": "Pakistan · 1950s onwards",
-        "text": "Rich landed families protected their status without building basic village schools or helping poor farmers escape poverty."
+        "name": "Britain's 2022 'mini-budget'",
+        "when": "UK · 2022",
+        "text": "The biggest tax cuts in 50 years were announced with no plan to pay for them; the pound crashed, mortgage rates jumped, and the prime minister was gone within 49 days."
       },
       "layman": "A mix of pro-business economics and cultural stability. It strongly supports free enterprise, lower taxes, and private wealth creation, while placing deep value on family traditions, constitutional order, and the rule of law to keep society stable and peaceful.",
       "pillars": [
@@ -1187,9 +1187,9 @@ window.QUIZ.ideologies = [
         "text": "युद्ध से तबाह जर्मनी को निजी बाज़ार और पारिवारिक मूल्यों के दम पर एक स्थिर, समृद्ध और शांत लोकतंत्र बनाया।"
       },
       "bad": {
-        "name": "पाकिस्तान के ज़मींदार परिवारों का राज",
-        "when": "पाकिस्तान · 1950 से अब तक",
-        "text": "ताक़तवर ज़मींदार घरानों ने सत्ता पर कब्ज़ा रखा लेकिन न गाँव में स्कूल खोले और न किसानों को ग़रीबी के जाल से निकलने दिया।"
+        "name": "ब्रिटेन का 2022 का 'मिनी-बजट'",
+        "when": "ब्रिटेन · 2022",
+        "text": "50 साल की सबसे बड़ी टैक्स कटौती बिना किसी भरपाई योजना के घोषित हुई; पाउंड गिर गया, होम-लोन की ब्याज दरें उछल गईं और प्रधानमंत्री को 49 दिन में कुर्सी छोड़नी पड़ी।"
       },
       "layman": "कारोबारी आज़ादी और सांस्कृतिक स्थिरता का मेल। यह मानता है कि खुला बाज़ार और कम टैक्स देश में दौलत और रोज़गार लाते हैं, लेकिन समाज को सुरक्षित और अनुशासित रखने के लिए पारिवारिक संस्कार, सामाजिक मर्यादाएँ और क़ानून का राज बेहद ज़रूरी है।",
       "pillars": [
@@ -1219,9 +1219,9 @@ window.QUIZ.ideologies = [
         "text": "Rebuilt broken societies by putting family values, community care, and worker safety ahead of pure profit."
       },
       "bad": {
-        "name": "Khap Panchayats & honour killings",
-        "when": "India · 1980s onwards",
-        "text": "Village caste councils put 'community honour' above individual freedom, punishing inter-caste marriages and even ordering murders."
+        "name": "Pakistan's jirga 'honour' rulings",
+        "when": "Pakistan · present day",
+        "text": "Unofficial village councils put 'community honour' above the law and punish couples who marry by choice; around 1,000 'honour killings' are reported in Pakistan each year."
       },
       "layman": "Believes people are social beings whose well-being depends on strong families, supportive neighborhoods, and shared ethical values—not just isolated individuals chasing money. It emphasizes that with every civil right comes a personal duty to help your local community, and that businesses must serve the common good.",
       "pillars": [
@@ -1241,9 +1241,9 @@ window.QUIZ.ideologies = [
         "text": "सिर्फ़ मुनाफ़े की जगह परिवार, सामाजिक भाईचारे और मज़दूरों की भलाई को आगे रखकर युद्ध में टूटे यूरोप को फिर से जोड़ा।"
       },
       "bad": {
-        "name": "खाप पंचायतें और ऑनर किलिंग",
-        "when": "भारत · 1980 के दशक से",
-        "text": "जाति पंचायतों ने 'समाज की इज़्ज़त' के नाम पर युवाओं की आज़ादी छीनी, अपनी पसंद से शादी करने वालों का हुक़्क़ा-पानी बंद किया और हत्याएँ कराईं।"
+        "name": "पाकिस्तान की जिरगा के 'इज़्ज़त' वाले फ़ैसले",
+        "when": "पाकिस्तान · आज भी",
+        "text": "गाँवों की अनौपचारिक पंचायतें (जिरगा) 'समाज की इज़्ज़त' को क़ानून से ऊपर रखती हैं और अपनी पसंद से शादी करने वाले जोड़ों को सज़ा देती हैं; पाकिस्तान में हर साल लगभग 1,000 'ऑनर किलिंग' दर्ज होती हैं।"
       },
       "layman": "यह सोच मानती है कि इंसान केवल अकेला व्यक्ति नहीं है; उसकी ख़ुशी मज़बूत परिवार, पड़ोस और नैतिक मूल्यों पर टिकी है। केवल अपने हक़ माँगने के बजाय समाज और पड़ोसियों के प्रति अपनी ज़िम्मेदारी निभाना भी उतना ही ज़रूरी है, और व्यापार को भी सबकी भलाई के लिए काम करना चाहिए।",
       "pillars": [
@@ -1283,7 +1283,7 @@ window.QUIZ.ideologies = [
         "🛡️ Law, order, and stability: Respect for established authority, family structures, and moral order.",
         "⏳ Skeptical of rapid change: Changes should be slow and cautious to prevent unintended damage."
       ],
-      "examplePerson": "Yogi Adityanath",
+      "examplePerson": "Madan Mohan Malaviya",
       "simpleTitle": "Preserving Religious Heritage"
     },
     "hi": {
@@ -1305,7 +1305,7 @@ window.QUIZ.ideologies = [
         "🛡️ अनुशासन और व्यवस्था: क़ानून का सख़्त पालन और सामाजिक मर्यादाएँ।",
         "⏳ जल्दबाज़ी से परहेज़: अचानक लाए जाने वाले क्रांतिकारी बदलावों पर गहरा अविश्वास।"
       ],
-      "examplePerson": "योगी आदित्यनाथ",
+      "examplePerson": "मदन मोहन मालवीय",
       "simpleTitle": "धर्म और संस्कृति की रक्षा"
     }
   },
@@ -1327,9 +1327,9 @@ window.QUIZ.ideologies = [
         "text": "Took back the Suez Canal from foreign control, broke up big landlord estates, and gave free education to poor kids."
       },
       "bad": {
-        "name": "The Emergency in India",
-        "when": "India · 1975–1977",
-        "text": "In the name of the nation and poor, the government locked up opposition leaders, silenced the media, and forced men into mass sterilisation camps."
+        "name": "Bhutto's nationalisations",
+        "when": "Pakistan · 1972–1977",
+        "text": "In the name of the nation and the poor, the government took over banks, heavy industry and even flour and rice mills; private investment collapsed and growth slowed."
       },
       "layman": "A patriotic movement that fights for working-class citizens against global monopolies and foreign economic dominance. It combines national sovereignty and pride with state-run infrastructure, domestic manufacturing, and generous public welfare so the nation’s wealth stays with its own people.",
       "pillars": [
@@ -1349,9 +1349,9 @@ window.QUIZ.ideologies = [
         "text": "स्वेज़ नहर को विदेशी कब्ज़े से आज़ाद कराया, बड़ी जागीरें ग़रीबों में बाँटीं और हर बच्चे के लिए मुफ़्त शिक्षा शुरू की।"
       },
       "bad": {
-        "name": "भारत में 1975 का आपातकाल",
-        "when": "भारत · 1975–1977",
-        "text": "देश और ग़रीबों के नाम पर विपक्ष को जेलों में ठूँसा गया, अख़बारों की आवाज़ दबाई गई और ग़रीबों की जबरन नसबंदी कराई गई।"
+        "name": "भुट्टो का राष्ट्रीयकरण",
+        "when": "पाकिस्तान · 1972–1977",
+        "text": "देश और ग़रीबों के नाम पर सरकार ने बैंक, बड़े उद्योग और यहाँ तक कि आटा और चावल मिलें भी अपने क़ब्ज़े में ले लीं; निजी निवेश ठप हो गया और विकास धीमा पड़ गया।"
       },
       "layman": "एक देशभक्त सोच जो आम कामगारों और देश के संसाधनों को विदेशी कंपनियों और बड़े पूंजीपतियों के शोषण से बचाती है। यह राष्ट्रीय स्वावलंबन (आत्मनिर्भरता), सरकारी नौकरियों और मुफ़्त जन-कल्याण को अपने देश के स्वाभिमान के साथ जोड़ती है।",
       "pillars": [
@@ -1391,7 +1391,7 @@ window.QUIZ.ideologies = [
         "🏛️ Pride in national identity: Cherishing national history, language, and traditional culture.",
         "💼 Economy for the nation: Protecting domestic factories and prioritizing local jobs over outsourcing."
       ],
-      "examplePerson": "Narendra Modi",
+      "examplePerson": "Sardar Vallabhbhai Patel",
       "simpleTitle": "Nation First"
     },
     "hi": {
@@ -1413,7 +1413,7 @@ window.QUIZ.ideologies = [
         "🏛️ राष्ट्रीय अस्मिता: देश के इतिहास, संस्कृति और भाषा को गर्व से संजोना।",
         "💼 देशहित में अर्थव्यवस्था: घरेलू उद्योगों और स्थानीय कामगारों को प्राथमिकता।"
       ],
-      "examplePerson": "नरेंद्र मोदी",
+      "examplePerson": "सरदार वल्लभभाई पटेल",
       "simpleTitle": "राष्ट्र प्रथम, मज़बूत सीमाएँ"
     }
   },
@@ -1435,9 +1435,9 @@ window.QUIZ.ideologies = [
         "text": "A strict leader pushed businesses into electronics and cars, pulling a poor country into first-world wealth in a single generation."
       },
       "bad": {
-        "name": "China's digital police state",
-        "when": "China · 2012 onwards",
-        "text": "While big businesses make billions, the government uses cameras and apps to track citizens, locks down cities, and silences outspoken billionaires."
+        "name": "China's surveillance state",
+        "when": "China · 2014 onwards",
+        "text": "Businesses are free to make billions, but citizens are tracked by cameras and phone apps, and in Xinjiang an estimated million or more Uyghurs and other Muslims have been held in camps."
       },
       "layman": "A system where a strong, strict, and disciplined government teams up with private businesses to drive fast-track economic modernization. It offers rapid infrastructure growth, order, and business profits, but enforces tight limits on strikes, protests, and political opposition to avoid delays.",
       "pillars": [
@@ -1445,7 +1445,7 @@ window.QUIZ.ideologies = [
         "👮 Strict public discipline: Low tolerance for protests, political disorder, or labor disruption.",
         "💼 State-guided markets: Leaders set national economic goals while private companies build them."
       ],
-      "examplePerson": "N. Chandrababu Naidu",
+      "examplePerson": "Lee Kuan Yew",
       "simpleTitle": "Strict Rule + Fast-Track Growth"
     },
     "hi": {
@@ -1457,9 +1457,9 @@ window.QUIZ.ideologies = [
         "text": "सख्त अनुशासन से निजी कंपनियों को आगे बढ़ाया और एक ही पीढ़ी में एक बेहद ग़रीब देश को अमीर औद्योगिक ताक़त बना दिया।"
       },
       "bad": {
-        "name": "चीन का डिजिटल निगरानी राज",
-        "when": "चीन · 2012 से अब तक",
-        "text": "कंपनियाँ तो खूब कमाती हैं, लेकिन सरकार कैमरों और फ़ोन से हर नागरिक पर नज़र रखती है और आवाज़ उठाने वाले उद्योगपतियों को ग़ायब कर देती है।"
+        "name": "चीन का निगरानी राज",
+        "when": "चीन · 2014 से",
+        "text": "कंपनियों को अरबों कमाने की छूट है, लेकिन नागरिकों पर कैमरों और फ़ोन ऐप से नज़र रखी जाती है, और शिनजियांग में अनुमानित दस लाख से ज़्यादा उइगर और अन्य मुसलमानों को कैंपों में रखा गया है।"
       },
       "layman": "एक बेहद सख़्त और अनुशासनप्रिय सरकार जो निजी कारोबारियों और उद्योगों के साथ मिलकर देश को तेज़ी से आधुनिक और अमीर बनाती है। यहाँ सड़कें, बंदरगाह और कंपनियाँ तेज़ी से विकसित होती हैं, लेकिन क़ानून-व्यवस्था बनाए रखने के लिए विरोध-प्रदर्शनों और राजनीतिक विरोध पर कड़ा पहरा रहता है।",
       "pillars": [
@@ -1467,7 +1467,7 @@ window.QUIZ.ideologies = [
         "👮 सख़्त क़ानून-व्यवस्था: अशांति, हड़तालों या अपराध के ख़िलाफ़ कठोर कार्रवाई।",
         "💼 निर्देशित पूँजीवाद: सरकार योजना बनाती है और निजी कंपनियाँ उसे धरातल पर उतारती हैं।"
       ],
-      "examplePerson": "एन. चंद्रबाबू नायडू",
+      "examplePerson": "ली कुआन यू",
       "simpleTitle": "तेज़ विकास, सख़्त शासन"
     }
   },
@@ -1499,7 +1499,7 @@ window.QUIZ.ideologies = [
         "🚩 Fierce loyalty & discipline: Individual freedoms are subordinate to national unity and order.",
         "🛡️ Formidable military: Maximum defense spending and readiness against all perceived threats."
       ],
-      "examplePerson": "Indira Gandhi (1975)",
+      "examplePerson": "Napoleon Bonaparte",
       "simpleTitle": "Total State Supremacy"
     },
     "hi": {
@@ -1521,7 +1521,7 @@ window.QUIZ.ideologies = [
         "🚩 अटूट निष्ठा और अनुशासन: एकता बनाए रखने के लिए कड़े नियम और अनुशासन।",
         "🛡️ प्रचंड सैन्य बल: देश की अखंडता और सीमाओं की रक्षा के लिए असीम ताक़त।"
       ],
-      "examplePerson": "इंदिरा गांधी (1975)",
+      "examplePerson": "नेपोलियन बोनापार्ट",
       "simpleTitle": "एक देश, एक अनुशासन"
     }
   }
