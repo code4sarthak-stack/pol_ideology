@@ -24,7 +24,9 @@
   /* ---------- Language ---------- */
 
   function resolveLang() {
-    var l = params.get("lang");
+    // Pages written in a single language (the ideology guides) fix it with <html data-lang>.
+    var l = document.documentElement.getAttribute("data-lang");
+    if (LANGS.indexOf(l) === -1) l = params.get("lang");
     if (LANGS.indexOf(l) === -1) l = load("pq_lang");
     if (LANGS.indexOf(l) === -1) l = /^hi\b/i.test(navigator.language || "") ? "hi" : "en";
     return l;

@@ -109,7 +109,8 @@
 body { --page-width: var(--column); }
 body[data-page="about"],
 body[data-page="privacy"],
-body[data-page="contact"] { --page-width: var(--column-prose); }
+body[data-page="contact"],
+body[data-page="ideology"] { --page-width: var(--column-prose); }
 @media (min-width: 960px) {
   body[data-page="home"],
   body[data-page="result"],
@@ -3134,6 +3135,217 @@ body.modal-open {
   border: 1px solid var(--border);
 }
 .prose .btn { margin-top: 28px; }
+
+/* ---------- Ideology Guide Pages (ideology/*.html, hi/ideology/*.html) ---------- */
+
+.ideo-hero { text-align: center; }
+.ideo-hero__eyebrow {
+  margin: 0 0 10px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.ideo-hero__emoji {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 2.4rem;
+  line-height: 1;
+}
+.ideo-hero__title {
+  margin: 0 0 14px;
+  font-family: var(--font-display);
+  font-size: 2.6rem;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.ideo-hero__badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.ideo-hero__lead {
+  max-width: 34em;
+  margin: 0 auto 20px;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--text);
+  text-wrap: pretty;
+}
+.ideo-hero__ask {
+  margin: 0 0 10px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.ideo-section h2 {
+  margin: 0 0 14px;
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  line-height: 1.2;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.ideo-section p,
+.ideo-section li {
+  font-size: 0.98rem;
+  line-height: 1.65;
+  color: var(--text);
+  text-wrap: pretty;
+}
+.ideo-section p { margin: 0 0 12px; }
+.ideo-section p:last-child { margin-bottom: 0; }
+.ideo-section__sub {
+  margin: 20px 0 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.ideo-beliefs {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ideo-beliefs li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+}
+.ideo-beliefs__icon {
+  flex: none;
+  font-size: 1.3rem;
+  line-height: 1.3;
+}
+.ideo-beliefs strong { color: var(--ink); }
+
+.ideo-map {
+  display: grid;
+  gap: 20px;
+  margin-top: 16px;
+}
+.ideo-map__row + .ideo-map__row { margin-top: 18px; }
+.ideo-map .compass { max-width: 260px; margin: 0 auto; }
+@media (min-width: 640px) {
+  .ideo-map {
+    grid-template-columns: minmax(0, 1fr) 230px;
+    align-items: center;
+  }
+}
+
+/* One example per row: three or two cards never leave an odd gap. */
+.examples--list { grid-template-columns: minmax(0, 1fr); }
+
+.ideo-voices ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ideo-voices li {
+  position: relative;
+  margin-bottom: 12px;
+  padding-left: 22px;
+}
+.ideo-voices li:last-child { margin-bottom: 0; }
+.ideo-voices li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 0.62em;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.ideo-voices--for li::before { background: var(--good); }
+.ideo-voices--against li::before { background: var(--warn); }
+
+.ideo-people {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ideo-people li {
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+.ideo-people li:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+.ideo-people p { margin: 0; }
+.ideo-people .ideo-people__name {
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+.ideo-people .ideo-people__when {
+  margin-bottom: 4px;
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.ideo-faq h3 {
+  margin: 20px 0 6px;
+  font-size: 1.02rem;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--ink);
+}
+.ideo-faq h2 + h3 { margin-top: 0; }
+
+a.neighbour-chip { text-decoration: none; }
+/* An ideology whose guide page is not written yet: shown, but not a link. */
+.neighbour-chip--static { cursor: default; }
+@media (hover: hover) {
+  .neighbour-chip--static:hover {
+    background: var(--surface-2);
+    border-color: var(--border-strong);
+    color: var(--ink);
+    box-shadow: var(--shadow-xs);
+    transform: none;
+  }
+}
+
+.ideo-cta {
+  text-align: center;
+  background: var(--accent-soft);
+  border-color: #c7d2fe;
+}
+.ideo-cta h2 {
+  margin: 0 0 8px;
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  line-height: 1.2;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.ideo-cta p {
+  margin: 0 0 18px;
+  color: var(--text);
+}
+.ideo-note {
+  margin: 4px 8px 0;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  text-align: center;
+  color: var(--muted);
+}
 
 /* ---------- Motion & Animations ---------- */
 
