@@ -375,86 +375,9 @@
       });
     });
 
-    // Ideology selector modal logic
-    var modal = document.getElementById("ideo-selector-modal");
-    var openBtn = document.getElementById("open-ideo-selector");
-    var headerLink = document.getElementById("header-ideo-link");
-    var closeBtn = document.getElementById("ideo-modal-close");
-    var backdrop = document.getElementById("ideo-modal-backdrop");
-    var select = document.getElementById("modal-ideology-select");
-    var langBtns = document.querySelectorAll(".ideo-modal__lang-btn");
-    var hubLink = document.getElementById("modal-hub-link");
-    var currentModalLang = lang === "hi" ? "hi" : "en";
-
-    function updateModalLang(newLang) {
-      currentModalLang = newLang;
-      langBtns.forEach(function (btn) {
-        if (btn.getAttribute("data-lang") === newLang) {
-          btn.classList.add("is-active");
-        } else {
-          btn.classList.remove("is-active");
-        }
-      });
-      document.querySelectorAll(".ideo-modal__chip").forEach(function (chip) {
-        var slug = chip.getAttribute("data-slug");
-        if (slug) {
-          chip.setAttribute("href", newLang === "hi" ? "hi/ideology/" + slug + ".html" : "ideology/" + slug + ".html");
-        }
-      });
-      if (hubLink) {
-        hubLink.setAttribute("href", newLang === "hi" ? "hi/ideology/index.html" : "ideology/index.html");
-      }
-    }
-
-    // Set initial modal language based on resolved lang
-    updateModalLang(currentModalLang);
-
-    function openModal() {
-      if (!modal) return;
-      modal.classList.add("is-open");
-      modal.setAttribute("aria-hidden", "false");
-      document.body.style.overflow = "hidden";
-      if (select) {
-        select.value = "";
-        select.focus();
-      }
-    }
-
-    function closeModal() {
-      if (!modal) return;
-      modal.classList.remove("is-open");
-      modal.setAttribute("aria-hidden", "true");
-      document.body.style.overflow = "";
-    }
-
-    if (openBtn) openBtn.addEventListener("click", openModal);
-    if (headerLink) {
-      headerLink.addEventListener("click", function (e) {
-        e.preventDefault();
-        openModal();
-      });
-    }
-    if (closeBtn) closeBtn.addEventListener("click", closeModal);
-    if (backdrop) backdrop.addEventListener("click", closeModal);
-    document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape" && modal && modal.classList.contains("is-open")) {
-        closeModal();
-      }
-    });
-
-    langBtns.forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        updateModalLang(btn.getAttribute("data-lang"));
-      });
-    });
-
-    if (select) {
-      select.addEventListener("change", function () {
-        var slug = select.value;
-        if (!slug) return;
-        var dest = currentModalLang === "hi" ? "hi/ideology/" + slug + ".html" : "ideology/" + slug + ".html";
-        window.location.href = dest;
-      });
+    var ideoBtn = document.getElementById("ideology-guide-btn");
+    if (ideoBtn && lang === "hi") {
+      ideoBtn.setAttribute("href", "hi/ideology/index.html");
     }
   }
 
