@@ -1459,6 +1459,10 @@
 
   function shareUrl(answers, source, ideoSlug) {
     var domain = (window.SITE_CONFIG && window.SITE_CONFIG.DOMAIN) || "ideomap.in";
+    // For story card image sharing (WhatsApp Status, Instagram), link MUST be ideomap.in only
+    if (source === "whatsapp_status" || source === "insta_story" || source === "story_dl") {
+      return "https://" + domain;
+    }
     var langPrefix = (lang === "hi") ? "/hi" : "";
     if (ideoSlug) {
       return "https://" + domain + langPrefix + "/ideology/" + ideoSlug + ".html";
@@ -2036,43 +2040,25 @@
     ctx.fillText(ctaTitle, 540, ctaY + 62);
 
     var isInsta = (data.source === "insta_story" || data.source === "instagram");
-    if (isInsta) {
-      // Instagram: dashed slot for the user's real Link Sticker!
-      var slotW = Math.min(ctaW - 60, 580);
-      var slotH = 92;
-      var slotX = 540 - slotW / 2;
-      var slotY = ctaY + 90;
+    var urlText = isInsta
+      ? (hi ? "ideomap.in पर टेस्ट करें" : "Test on ideomap.in")
+      : ("👉 " + (CFG.DOMAIN || location.hostname));
 
-      drawRoundRect(slotX, slotY, slotW, slotH, 24, "rgba(99, 102, 241, 0.08)", "#6366f1", 3, [12, 8]);
+    fitFont(urlText, "700", 38, 24, SANS, ctaW - 120);
+    var urlBtnW = Math.max(520, ctx.measureText(urlText).width + 88);
+    var urlBtnH = 88;
+    var urlBtnY = ctaY + (isInsta ? 104 : 92);
+    ctx.save();
+    ctx.shadowColor = "rgba(79, 70, 229, 0.28)";
+    ctx.shadowBlur = 18;
+    ctx.shadowOffsetY = 6;
+    drawRoundRect(540 - urlBtnW / 2, urlBtnY, urlBtnW, urlBtnH, urlBtnH / 2, "#4f46e5", null);
+    ctx.restore();
+    ctx.fillStyle = "#ffffff";
+    ctx.textBaseline = "middle";
+    ctx.fillText(urlText, 540, urlBtnY + urlBtnH / 2 + 2);
 
-      var slotText = t("storyCardInstaSlot");
-      fitFont(slotText, "700", 28, 20, SANS, slotW - 40);
-      ctx.fillStyle = "#4f46e5";
-      ctx.textBaseline = "middle";
-      ctx.fillText(slotText, 540, slotY + slotH / 2 + 1);
-
-      var linkTip = t("storyCardInstaTip");
-      fitFont(linkTip, "600", 22, 16, SANS, ctaW - 40);
-      ctx.fillStyle = "#64748b";
-      ctx.textBaseline = "alphabetic";
-      ctx.fillText(linkTip, 540, slotY + slotH + 42);
-    } else {
-      // WhatsApp: solid brand button + arrow pointing to the clickable caption below!
-      var urlText = "👉 " + (CFG.DOMAIN || location.hostname);
-      fitFont(urlText, "700", 40, 24, SANS, ctaW - 140);
-      var urlBtnW = Math.max(520, ctx.measureText(urlText).width + 84);
-      var urlBtnH = 88;
-      var urlBtnY = ctaY + 92;
-      ctx.save();
-      ctx.shadowColor = "rgba(79, 70, 229, 0.28)";
-      ctx.shadowBlur = 18;
-      ctx.shadowOffsetY = 6;
-      drawRoundRect(540 - urlBtnW / 2, urlBtnY, urlBtnW, urlBtnH, urlBtnH / 2, "#4f46e5", null);
-      ctx.restore();
-      ctx.fillStyle = "#ffffff";
-      ctx.textBaseline = "middle";
-      ctx.fillText(urlText, 540, urlBtnY + urlBtnH / 2 + 2);
-
+    if (!isInsta) {
       var linkTip = t("storyCardWaTip");
       fitFont(linkTip, "600", 24, 17, SANS, ctaW - 40);
       ctx.fillStyle = "#166534";
@@ -2137,7 +2123,8 @@
         // For WhatsApp Status, caption is clean "👉 https://ideomap.in"
         // For Instagram, omitting text prevents iOS from dropping Instagram or corrupting share sheet!
         if (isWa || mode === "native") {
-          sharePayload.text = "👉 " + link;
+          var cleanDomain = (window.SITE_CONFIG && window.SITE_CONFIG.DOMAIN) || "ideomap.in";
+          sharePayload.text = "👉 https://" + cleanDomain;
         }
 
         navigator.share(sharePayload).then(function () {
