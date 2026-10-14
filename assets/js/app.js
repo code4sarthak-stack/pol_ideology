@@ -393,6 +393,46 @@
     }
   }
 
+  /* ---------- Bfcache (Back-Forward Cache) & Lifecycle Management ---------- */
+  // Disconnect Firebase Realtime Database WebSocket cleanly when page enters bfcache or freezes,
+  // and reconnect when restored, preventing:
+  // "WebSocket connection to 'wss://...' failed: Page entered Back-Forward Cache"
+  window.addEventListener("pagehide", function () {
+    if (window.firebase && window.firebase.apps && window.firebase.apps.length) {
+      try {
+        window.firebase.database().goOffline();
+      } catch (e) {}
+    }
+  });
+
+  window.addEventListener("pageshow", function (event) {
+    if (event.persisted) {
+      if (window.firebase && window.firebase.apps && window.firebase.apps.length) {
+        try {
+          window.firebase.database().goOnline();
+        } catch (e) {}
+      }
+    }
+  });
+
+  if ("onfreeze" in document) {
+    document.addEventListener("freeze", function () {
+      if (window.firebase && window.firebase.apps && window.firebase.apps.length) {
+        try {
+          window.firebase.database().goOffline();
+        } catch (e) {}
+      }
+    });
+
+    document.addEventListener("resume", function () {
+      if (window.firebase && window.firebase.apps && window.firebase.apps.length) {
+        try {
+          window.firebase.database().goOnline();
+        } catch (e) {}
+      }
+    });
+  }
+
   function bindLiveCounter(elementId, wrapId) {
     var wrap = document.getElementById(wrapId || "live-counter-wrap");
     var numEl = document.getElementById("live-counter-num");
@@ -438,22 +478,33 @@
       return;
     }
 
-    // 1. Instant REST fetch: provides immediate real-time count in ~50ms
-    if (CFG.FIREBASE && CFG.FIREBASE.databaseURL) {
-      var restUrl = CFG.FIREBASE.databaseURL.replace(/\/+$/, "") + "/quiz_count.json";
-      fetch(restUrl)
-        .then(function (r) { return r.json(); })
-        .then(function (val) {
-          if (typeof val === "number" && val >= 0) {
-            renderCount(val);
-          } else if (val === null) {
-            renderCount(0);
-          }
-        })
-        .catch(function (e) {
-          console.warn("Live counter REST fetch notice:", e);
-        });
+    function fetchRestCount() {
+      // 1. Instant REST fetch: provides immediate real-time count in ~50ms
+      if (CFG.FIREBASE && CFG.FIREBASE.databaseURL) {
+        var restUrl = CFG.FIREBASE.databaseURL.replace(/\/+$/, "") + "/quiz_count.json";
+        fetch(restUrl)
+          .then(function (r) { return r.json(); })
+          .then(function (val) {
+            if (typeof val === "number" && val >= 0) {
+              renderCount(val);
+            } else if (val === null) {
+              renderCount(0);
+            }
+          })
+          .catch(function (e) {
+            console.warn("Live counter REST fetch notice:", e);
+          });
+      }
     }
+
+    fetchRestCount();
+
+    // Re-fetch REST on bfcache restore to immediately ensure fresh count
+    window.addEventListener("pageshow", function (e) {
+      if (e.persisted) {
+        fetchRestCount();
+      }
+    });
 
     // 2. Real-time Firebase listener: synchronizes live count updates across users
     var db = getFirebaseDb();
