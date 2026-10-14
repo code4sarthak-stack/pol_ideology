@@ -25,6 +25,8 @@ start.html        Page 2: name + start
 quiz.html         One question per page (?q=1…24&total=12|24), plus the checkpoint after question 12 of the Quick quiz
 result.html       Last page: ideology, meters per area, comparison with all users, compass
 stats.html        Community Dashboard: overall ideology distribution, spectrum breakdown & averages
+ideology/*.html   Ideology guide pages in English (generated, see below)
+hi/ideology/*.html  The same guides in Hindi (generated)
 about.html, privacy.html, contact.html   Needed for AdSense approval
 ads.txt           AdSense seller declaration (needs your pub ID)
 robots.txt, sitemap.xml, site.webmanifest
@@ -38,7 +40,20 @@ assets/js/app.js        Page logic: scoring, navigation, ads, sharing
 assets/css/style.css    Styles (light theme)
 assets/fonts/           Self-hosted web fonts (Instrument Sans/Serif, Tiro Devanagari Hindi) + licence
 assets/img/             Icon and the WhatsApp/Facebook preview image
+tools/ideology-pages/   content.js (guide page text) and build.js (writes the guide pages + sitemap.xml)
 ```
+
+## Ideology guide pages
+
+Each ideology can have a plain-HTML guide page that search engines and AdSense reviewers can read without JavaScript: a simple explanation, core beliefs, its place on the four scales, 3 examples of it working, 2 of it going wrong, supporters' and critics' views, famous figures and FAQs.
+
+The text lives in `tools/ideology-pages/content.js`; the title, core beliefs and scores come from `assets/js/results.js`. After editing either, rebuild and commit the output:
+
+```bash
+node tools/ideology-pages/build.js
+```
+
+This rewrites `ideology/`, `hi/ideology/` and `sitemap.xml`. Only ideologies with an entry in `content.js` get a page.
 
 ## Preview on your computer
 
