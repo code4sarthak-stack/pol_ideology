@@ -2,6 +2,7 @@
 window.STRINGS = {
   en: {
     siteName: "ideoMap",
+    brandSub: "Left or Right",
     adLabel: "Advertisement",
     langSwitch: "हिन्दी",
 
@@ -159,6 +160,7 @@ window.STRINGS = {
 
   hi: {
     siteName: "ideoMap",
+    brandSub: "Left or Right",
     adLabel: "विज्ञापन",
     langSwitch: "English",
 

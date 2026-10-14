@@ -245,7 +245,14 @@ strong { color: var(--ink); font-weight: 600; }
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(79, 70, 229, 0.22);
 }
-.brand span {
+.brand__text {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+.brand span,
+.brand__title {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -256,8 +263,25 @@ strong { color: var(--ink); font-weight: 600; }
   letter-spacing: -0.015em;
   transition: color 0.15s ease;
 }
+.brand__sub {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 0.95rem;
+  color: var(--muted);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  opacity: 0.85;
+}
+.brand__sub::before {
+  content: "—";
+  margin-right: 8px;
+  opacity: 0.45;
+  font-style: normal;
+}
 @media (hover: hover) {
-  .brand:hover span {
+  .brand:hover span,
+  .brand:hover .brand__title {
     color: var(--accent);
   }
 }
