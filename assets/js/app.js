@@ -1457,8 +1457,12 @@
     return card;
   }
 
-  function shareUrl(answers, source) {
+  function shareUrl(answers, source, ideoSlug) {
     var domain = (window.SITE_CONFIG && window.SITE_CONFIG.DOMAIN) || "ideomap.in";
+    var langPrefix = (lang === "hi") ? "/hi" : "";
+    if (ideoSlug) {
+      return "https://" + domain + langPrefix + "/ideology/" + ideoSlug + ".html";
+    }
     return "https://" + domain;
   }
 
@@ -2095,7 +2099,7 @@
       farLeft: t("farLeft"),
       farRight: t("farRight"),
       desc: textData.desc,
-      shareUrl: shareUrl(answers, source),
+      shareUrl: shareUrl(answers, source, ideo ? ideo.slug : null),
       source: source || "",
       lang: lang
     };
@@ -2130,10 +2134,10 @@
           files: [file],
           title: t("siteName")
         };
-        // For WhatsApp, caption is essential for the link.
+        // For WhatsApp Status, caption is clean "👉 https://ideomap.in"
         // For Instagram, omitting text prevents iOS from dropping Instagram or corrupting share sheet!
         if (isWa || mode === "native") {
-          sharePayload.text = message + " " + link;
+          sharePayload.text = "👉 " + link;
         }
 
         navigator.share(sharePayload).then(function () {
@@ -2187,7 +2191,7 @@
   function setupShare(answers, title, overall, ideo, s, name) {
     var key = ideo ? ideo.key : "";
     var message = t("shareText", { result: title, overall: overall });
-    var friendLink = shareUrl(answers, "whatsapp");
+    var friendLink = shareUrl(answers, "whatsapp", ideo ? ideo.slug : null);
     loadStoryLogo();
 
     // 1. WhatsApp Button — show preview modal first
@@ -2198,7 +2202,7 @@
       heroWa.addEventListener("click", function (e) {
         e.preventDefault();
         track("share", { method: "whatsapp_hero_preview", result: key });
-        var waChatLink = "https://wa.me/?text=" + encodeURIComponent(message + " " + friendLink);
+        var waChatLink = "https://wa.me/?text=" + encodeURIComponent("👉 " + friendLink);
         var cardData = buildCardData(answers, title, overall, ideo, s, name, "whatsapp_status");
         // Pre-copy link so it's ready on clipboard as well
         copyLinkWithFeedback(cardData.shareUrl);
@@ -2266,7 +2270,7 @@
     var heroCopy = document.getElementById("hero-share-copy");
     if (heroCopy) {
       heroCopy.addEventListener("click", function () {
-        var link = shareUrl(answers, "copy");
+        var link = shareUrl(answers, "copy", ideo ? ideo.slug : null);
         track("share", { method: "copy_hero", result: key });
         copyLinkWithFeedback(link, function () {
           showQuickShareToast("✓ " + t("copied"), "success");
@@ -2277,7 +2281,7 @@
     // Synchronize bottom Challenge section share buttons:
     var wa = document.getElementById("share-whatsapp");
     if (wa) {
-      wa.href = "https://wa.me/?text=" + encodeURIComponent(message + " " + shareUrl(answers, "whatsapp"));
+      wa.href = "https://wa.me/?text=" + encodeURIComponent(message + " " + shareUrl(answers, "whatsapp", ideo ? ideo.slug : null));
       wa.addEventListener("click", function () { track("share", { method: "whatsapp", result: key }); });
     }
 
@@ -2294,7 +2298,7 @@
     var status = document.getElementById("copy-status");
     if (copy) {
       copy.addEventListener("click", function () {
-        var link = shareUrl(answers, "copy");
+        var link = shareUrl(answers, "copy", ideo ? ideo.slug : null);
         track("share", { method: "copy", result: key });
         copyLinkWithFeedback(link, function () {
           if (status) {

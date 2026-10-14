@@ -225,6 +225,9 @@ function page(ideo, lang) {
 
   const list = (items) => items.map((s) => `<li>${esc(s)}</li>`).join("");
 
+  const slug = getSlug(ideo.key);
+  const ogImg = (lang === "hi") ? `${SITE}assets/img/og/${slug}-hi.png` : `${SITE}assets/img/og/${slug}.png`;
+
   return `<!doctype html>
 <html lang="${lang}" data-lang="${lang}">
 <head>
@@ -244,10 +247,11 @@ function page(ideo, lang) {
   <meta property="og:title" content="${esc(d.title + ": " + d.simpleTitle)}">
   <meta property="og:description" content="${esc(c.metaDescription)}">
   <meta property="og:url" content="${self}">
-  <meta property="og:image" content="${SITE}assets/img/og-image.jpg">
+  <meta property="og:image" content="${ogImg}">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="${ogImg}">
   <link rel="preload" href="${root}assets/fonts/instrument-sans.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="${root}assets/fonts/instrument-serif.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="${root}assets/css/style.css">
