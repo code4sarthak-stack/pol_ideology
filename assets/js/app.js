@@ -1458,8 +1458,8 @@
   }
 
   function shareUrl(answers, source) {
-    var link = url("result.html", { a: answers, s: 1, utm_source: source, utm_medium: "social", utm_campaign: "result_share" });
-    return new URL(link, location.href).href;
+    var domain = (window.SITE_CONFIG && window.SITE_CONFIG.DOMAIN) || "ideomap.in";
+    return "https://" + domain;
   }
 
   /* ── Share Preview Modal helpers ──────────────────────────── */
@@ -1567,6 +1567,16 @@
       loading.hidden   = true;
       imgWrap.hidden   = false;
 
+      // Pre-encode canvas to blob/file so navigator.share runs synchronously on click (fixes Safari blocking)
+      var prebuiltBlob = null;
+      var prebuiltFile = null;
+      var filename = "ideomap-" + (cardData.key || "quiz") + "-story.png";
+      canvas.toBlob(function (blob) {
+        if (!blob) return;
+        prebuiltBlob = blob;
+        prebuiltFile = new File([blob], filename, { type: "image/png" });
+      }, "image/png");
+
       // Platform hint HTML
       if (platform === "instagram") {
         hint.innerHTML = t("sharePreviewInstaHint");
@@ -1587,8 +1597,8 @@
           waBtn.hidden = false;
           waBtn.onclick = function () {
             closeSharePreviewModal();
-            if (typeof actionHandlers.onWaStatus === "function") actionHandlers.onWaStatus();
-            else if (typeof actionHandlers.onWa === "function") actionHandlers.onWa();
+            if (typeof actionHandlers.onWaStatus === "function") actionHandlers.onWaStatus(prebuiltFile, prebuiltBlob);
+            else if (typeof actionHandlers.onWa === "function") actionHandlers.onWa(prebuiltFile, prebuiltBlob);
           };
         }
         if (waChatBtn && typeof actionHandlers.onWaChat === "function") {
@@ -1608,7 +1618,7 @@
         instaBtn.hidden = false;
         instaBtn.onclick = function () {
           closeSharePreviewModal();
-          if (typeof actionHandlers.onInsta === "function") actionHandlers.onInsta();
+          if (typeof actionHandlers.onInsta === "function") actionHandlers.onInsta(prebuiltFile, prebuiltBlob);
         };
       }
 
@@ -1617,7 +1627,7 @@
         if (dlBtnText) dlBtnText.textContent = t("downloadStoryCard");
         dlBtn.onclick = function () {
           closeSharePreviewModal();
-          if (typeof actionHandlers.onDownload === "function") actionHandlers.onDownload();
+          if (typeof actionHandlers.onDownload === "function") actionHandlers.onDownload(prebuiltFile, prebuiltBlob);
         };
       }
 
@@ -1694,7 +1704,7 @@
     var SERIF = "'Instrument Serif', Georgia, serif";
     var INK = "#0f172a", TEXT = "#334155", MUTED = "#64748b", BORDER = "#e2e8f0", BORDER_STRONG = "#cbd5e1";
 
-    function drawRoundRect(x, y, w, h, r, fill, stroke, strokeWidth) {
+    function drawRoundRect(x, y, w, h, r, fill, stroke, strokeWidth, dash) {
       ctx.save();
       ctx.beginPath();
       if (typeof ctx.roundRect === "function") {
@@ -1717,6 +1727,9 @@
         ctx.fill();
       }
       if (stroke) {
+        if (dash && typeof ctx.setLineDash === "function") {
+          ctx.setLineDash(dash);
+        }
         ctx.strokeStyle = stroke;
         ctx.lineWidth = strokeWidth || 1;
         ctx.stroke();
@@ -2018,28 +2031,50 @@
     ctx.fillStyle = INK;
     ctx.fillText(ctaTitle, 540, ctaY + 62);
 
-    var urlText = "👉 " + (CFG.DOMAIN || location.hostname);
-    fitFont(urlText, "700", 40, 24, SANS, ctaW - 140);
-    var urlBtnW = Math.max(520, ctx.measureText(urlText).width + 84);
-    var urlBtnH = 88;
-    var urlBtnY = ctaY + 92;
-    ctx.save();
-    ctx.shadowColor = "rgba(79, 70, 229, 0.28)";
-    ctx.shadowBlur = 18;
-    ctx.shadowOffsetY = 6;
-    drawRoundRect(540 - urlBtnW / 2, urlBtnY, urlBtnW, urlBtnH, urlBtnH / 2, "#4f46e5", null);
-    ctx.restore();
-    ctx.fillStyle = "#ffffff";
-    ctx.textBaseline = "middle";
-    ctx.fillText(urlText, 540, urlBtnY + urlBtnH / 2 + 2);
+    var isInsta = (data.source === "insta_story" || data.source === "instagram");
+    if (isInsta) {
+      // Instagram: dashed slot for the user's real Link Sticker!
+      var slotW = Math.min(ctaW - 60, 580);
+      var slotH = 92;
+      var slotX = 540 - slotW / 2;
+      var slotY = ctaY + 90;
 
-    var linkTip = (data.source === "insta_story" || data.source === "instagram")
-      ? t("storyCardInstaTip")
-      : t("storyCardWaTip");
-    fitFont(linkTip, "600", 24, 17, SANS, ctaW - 40);
-    ctx.fillStyle = "#166534";
-    ctx.textBaseline = "alphabetic";
-    ctx.fillText(linkTip, 540, urlBtnY + urlBtnH + 46);
+      drawRoundRect(slotX, slotY, slotW, slotH, 24, "rgba(99, 102, 241, 0.08)", "#6366f1", 3, [12, 8]);
+
+      var slotText = t("storyCardInstaSlot");
+      fitFont(slotText, "700", 28, 20, SANS, slotW - 40);
+      ctx.fillStyle = "#4f46e5";
+      ctx.textBaseline = "middle";
+      ctx.fillText(slotText, 540, slotY + slotH / 2 + 1);
+
+      var linkTip = t("storyCardInstaTip");
+      fitFont(linkTip, "600", 22, 16, SANS, ctaW - 40);
+      ctx.fillStyle = "#64748b";
+      ctx.textBaseline = "alphabetic";
+      ctx.fillText(linkTip, 540, slotY + slotH + 42);
+    } else {
+      // WhatsApp: solid brand button + arrow pointing to the clickable caption below!
+      var urlText = "👉 " + (CFG.DOMAIN || location.hostname);
+      fitFont(urlText, "700", 40, 24, SANS, ctaW - 140);
+      var urlBtnW = Math.max(520, ctx.measureText(urlText).width + 84);
+      var urlBtnH = 88;
+      var urlBtnY = ctaY + 92;
+      ctx.save();
+      ctx.shadowColor = "rgba(79, 70, 229, 0.28)";
+      ctx.shadowBlur = 18;
+      ctx.shadowOffsetY = 6;
+      drawRoundRect(540 - urlBtnW / 2, urlBtnY, urlBtnW, urlBtnH, urlBtnH / 2, "#4f46e5", null);
+      ctx.restore();
+      ctx.fillStyle = "#ffffff";
+      ctx.textBaseline = "middle";
+      ctx.fillText(urlText, 540, urlBtnY + urlBtnH / 2 + 2);
+
+      var linkTip = t("storyCardWaTip");
+      fitFont(linkTip, "600", 24, 17, SANS, ctaW - 40);
+      ctx.fillStyle = "#166534";
+      ctx.textBaseline = "alphabetic";
+      ctx.fillText(linkTip, 540, urlBtnY + urlBtnH + 46);
+    }
 
     return canvas;
   }
@@ -2054,6 +2089,7 @@
       overall: overall,
       overallBand: overallIndex(s.overall),
       overallScore: s.overall,
+      key: ideo ? ideo.key : "quiz",
       example: textData.examplePerson ? exampleLabel(textData.examplePerson) : "",
       leanText: leanText(s.overall, t("left"), t("right")),
       farLeft: t("farLeft"),
@@ -2065,7 +2101,7 @@
     };
   }
 
-  function shareOrDownloadStoryCard(answers, title, overall, ideo, s, name, mode) {
+  function shareOrDownloadStoryCard(answers, title, overall, ideo, s, name, mode, prebuiltFile, prebuiltBlob) {
     var source = (mode === "instagram" || mode === "insta_story") ? "insta_story" :
                  (mode === "whatsapp" || mode === "whatsapp_status") ? "whatsapp_status" :
                  (mode === "download" ? "story_dl" : "share");
@@ -2073,61 +2109,76 @@
     var link = cardData.shareUrl;
     var message = t("shareText", { result: title, overall: overall });
 
-    // Always copy link to clipboard first so it's ready to paste into Instagram Link Sticker!
+    // Always copy clean link to clipboard first so it's ready to paste into Instagram Link Sticker!
     copyLinkWithFeedback(link);
+
+    var filename = "ideomap-" + ideo.key + "-story.png";
+
+    function doShare(file, blob) {
+      var canShareFiles = false;
+      try {
+        canShareFiles = !!(navigator.share && navigator.canShare && navigator.canShare({ files: [file] }));
+      } catch (e) {
+        canShareFiles = false;
+      }
+
+      var isInsta = (mode === "instagram" || mode === "insta_story");
+      var isWa = (mode === "whatsapp" || mode === "whatsapp_status");
+
+      if (canShareFiles && (isInsta || isWa || mode === "native")) {
+        var sharePayload = {
+          files: [file],
+          title: t("siteName")
+        };
+        // For WhatsApp, caption is essential for the link.
+        // For Instagram, omitting text prevents iOS from dropping Instagram or corrupting share sheet!
+        if (isWa || mode === "native") {
+          sharePayload.text = message + " " + link;
+        }
+
+        navigator.share(sharePayload).then(function () {
+          if (isInsta) {
+            showQuickShareToast(t("storyCopiedHint"), "success");
+          } else {
+            showQuickShareToast(t("storyCopiedHint"), "success");
+          }
+        }).catch(function (err) {
+          if (err && err.name !== "AbortError") {
+            downloadBlob(blob, filename);
+            if (isInsta) {
+              showQuickShareToast(t("storySavedToast") + " " + t("storyCopiedHint"), "info");
+            } else if (isWa) {
+              showQuickShareToast(t("waStorySavedToast") || t("storySavedToast"), "info");
+            } else {
+              showQuickShareToast(t("storySavedToast"), "info");
+            }
+          }
+        });
+        return;
+      }
+
+      // Fallback or explicit download
+      downloadBlob(blob, filename);
+      if (isInsta) {
+        showQuickShareToast(t("storySavedToast") + " " + t("storyCopiedHint"), "info");
+      } else if (isWa) {
+        showQuickShareToast(t("waStorySavedToast") || (t("storySavedToast") + " " + t("storyCopiedHint")), "info");
+      } else {
+        showQuickShareToast(t("storySavedToast"), "success");
+      }
+    }
+
+    if (prebuiltFile && prebuiltBlob) {
+      doShare(prebuiltFile, prebuiltBlob);
+      return;
+    }
 
     loadStoryLogo(function () {
       var canvas = buildStoryCardCanvas(cardData);
-
       canvas.toBlob(function (blob) {
         if (!blob) return;
-        var filename = "ideomap-" + ideo.key + "-story.png";
         var file = new File([blob], filename, { type: "image/png" });
-
-        var canShareFiles = false;
-        try {
-          canShareFiles = !!(navigator.share && navigator.canShare && navigator.canShare({ files: [file] }));
-        } catch (e) {
-          canShareFiles = false;
-        }
-
-        if (canShareFiles && (mode === "instagram" || mode === "whatsapp" || mode === "whatsapp_status" || mode === "native")) {
-          // The link goes inside the caption text: with a file attached, WhatsApp uses `text`
-          // as the status/chat caption, keeping the link directly tappable by viewers!
-          navigator.share({
-            files: [file],
-            title: t("siteName"),
-            text: message + " " + link
-          }).then(function () {
-            if (mode === "instagram") {
-              showQuickShareToast(t("storyCopiedHint"), "success");
-            } else if (mode === "whatsapp" || mode === "whatsapp_status") {
-              showQuickShareToast(t("storyCopiedHint"), "success");
-            }
-          }).catch(function (err) {
-            if (err && err.name !== "AbortError") {
-              downloadBlob(blob, filename);
-              if (mode === "instagram") {
-                showQuickShareToast(t("storySavedToast") + " " + t("storyCopiedHint"), "info");
-              } else if (mode === "whatsapp" || mode === "whatsapp_status") {
-                showQuickShareToast(t("waStorySavedToast") || t("storySavedToast"), "info");
-              } else {
-                showQuickShareToast(t("storySavedToast"), "info");
-              }
-            }
-          });
-          return;
-        }
-
-        // Fallback or explicit download
-        downloadBlob(blob, filename);
-        if (mode === "instagram") {
-          showQuickShareToast(t("storySavedToast") + " " + t("storyCopiedHint"), "info");
-        } else if (mode === "whatsapp" || mode === "whatsapp_status") {
-          showQuickShareToast(t("waStorySavedToast") || (t("storySavedToast") + " " + t("storyCopiedHint")), "info");
-        } else {
-          showQuickShareToast(t("storySavedToast"), "success");
-        }
+        doShare(file, blob);
       }, "image/png");
     });
   }
@@ -2155,15 +2206,15 @@
           "whatsapp",
           cardData,
           {
-            onWaStatus: function () {
-              shareOrDownloadStoryCard(answers, title, overall, ideo, s, name, "whatsapp_status");
+            onWaStatus: function (file, blob) {
+              shareOrDownloadStoryCard(answers, title, overall, ideo, s, name, "whatsapp_status", file, blob);
             },
             onWaChat: function () {
               track("share", { method: "whatsapp_chat_direct", result: key });
               window.open(waChatLink, "_blank", "noopener,noreferrer");
             },
-            onDownload: function () {
-              shareOrDownloadStoryCard(answers, title, overall, ideo, s, name, "download");
+            onDownload: function (file, blob) {
+              shareOrDownloadStoryCard(answers, title, overall, ideo, s, name, "download", file, blob);
             }
           }
         );
@@ -2182,11 +2233,11 @@
           "instagram",
           cardData,
           {
-            onInsta: function () {
-              shareOrDownloadStoryCard(answers, title, overall, ideo, s, name, "instagram");
+            onInsta: function (file, blob) {
+              shareOrDownloadStoryCard(answers, title, overall, ideo, s, name, "instagram", file, blob);
             },
-            onDownload: function () {
-              shareOrDownloadStoryCard(answers, title, overall, ideo, s, name, "download");
+            onDownload: function (file, blob) {
+              shareOrDownloadStoryCard(answers, title, overall, ideo, s, name, "download", file, blob);
             }
           }
         );
@@ -2203,8 +2254,8 @@
           "download",
           cardData,
           {
-            onDownload: function () {
-              shareOrDownloadStoryCard(answers, title, overall, ideo, s, name, "download");
+            onDownload: function (file, blob) {
+              shareOrDownloadStoryCard(answers, title, overall, ideo, s, name, "download", file, blob);
             }
           }
         );
