@@ -2033,9 +2033,11 @@
     ctx.textBaseline = "middle";
     ctx.fillText(urlText, 540, urlBtnY + urlBtnH / 2 + 2);
 
-    var linkTip = hi ? "🔗 टेस्ट देने के लिए लिंक पर टैप करें" : "🔗 Tap the link to take the test";
-    ctx.font = "600 22px " + SANS;
-    ctx.fillStyle = "#15803d";
+    var linkTip = (data.source === "insta_story" || data.source === "instagram")
+      ? t("storyCardInstaTip")
+      : t("storyCardWaTip");
+    fitFont(linkTip, "600", 24, 17, SANS, ctaW - 40);
+    ctx.fillStyle = "#166534";
     ctx.textBaseline = "alphabetic";
     ctx.fillText(linkTip, 540, urlBtnY + urlBtnH + 46);
 
@@ -2058,6 +2060,7 @@
       farRight: t("farRight"),
       desc: textData.desc,
       shareUrl: shareUrl(answers, source),
+      source: source || "",
       lang: lang
     };
   }
