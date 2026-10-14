@@ -355,7 +355,7 @@ function page(ideo, lang) {
       <a href="${root}stats.html">${esc(ui.footer.stats)}</a>
       <a href="index.html" class="footer-ideo-link">${esc(ui.footer.ideologies)}</a>
     </nav>
-    <p>© ideoMap</p>
+    <p>© ideoMap · Powered by <a href="https://examlytix.com" target="_blank" rel="noopener">Examlytix</a></p>
   </footer>
 
   <script src="${root}assets/js/config.js"></script>
@@ -464,7 +464,7 @@ function hubPage(lang) {
       <a href="${root}stats.html">${esc(ui.footer.stats)}</a>
       <a href="index.html" class="footer-ideo-link">${esc(ui.footer.ideologies)}</a>
     </nav>
-    <p>© ideoMap</p>
+    <p>© ideoMap · Powered by <a href="https://examlytix.com" target="_blank" rel="noopener">Examlytix</a></p>
   </footer>
 
   <script src="${root}assets/js/config.js"></script>

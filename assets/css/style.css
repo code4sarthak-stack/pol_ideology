@@ -393,6 +393,16 @@ strong { color: var(--ink); font-weight: 600; }
   }
 }
 .site-footer p { margin: 0; font-size: 0.8rem; }
+.site-footer p a {
+  color: var(--muted);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+@media (hover: hover) {
+  .site-footer p a:hover {
+    color: var(--ink);
+  }
+}
 
 /* ---------- Buttons & Action Pills ---------- */
 
@@ -3122,6 +3132,254 @@ body.modal-open {
 }
 .ad[data-ad="middle"] .ad__box--placeholder,
 .ad[data-ad="bottom"] .ad__box--placeholder { height: 250px; }
+
+/* ---------- Custom Direct Ads & Banners ---------- */
+
+.ad__box--custom {
+  min-height: auto;
+  overflow: visible;
+}
+
+.ad-banner-link {
+  display: block;
+  text-decoration: none;
+  border-radius: var(--radius-md, 12px);
+  overflow: hidden;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  color: inherit;
+}
+.ad-banner-link:hover {
+  transform: translateY(-2px);
+}
+
+/* Image Card Banner (Middle / Bottom) */
+.ad-banner-link--image {
+  max-width: 480px;
+  width: 100%;
+  margin: 0 auto;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--border);
+  background: var(--surface-1);
+}
+.ad-banner-link--image.ad-banner-link--rect {
+  max-width: 320px;
+}
+.ad-banner-link--image.ad-banner-link--card {
+  max-width: 540px;
+}
+.ad-banner-link--image:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+}
+.ad-banner-link--image img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: inherit;
+}
+
+/* Top Horizontal Banner Image (320x100 / 320x50) */
+.ad-banner-link--top-image {
+  width: 320px;
+  height: 100px;
+  margin: 0 auto;
+  border-radius: var(--radius-sm, 8px);
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  display: block;
+  background: #0d0b1d;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+}
+.ad-banner-link--top-image:hover {
+  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.28);
+  border-color: rgba(139, 92, 246, 0.55);
+}
+.ad-banner-link--top-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: inherit;
+}
+@media (max-height: 700px) {
+  .ad-banner-link--top-image {
+    height: 50px;
+  }
+}
+
+
+/* Top Horizontal Banner Card (320x100 / 320x50) */
+.ad-banner-link--top {
+  width: 320px;
+  height: 100px;
+  margin: 0 auto;
+  background: linear-gradient(135deg, #0d0b1d 0%, #1c1538 100%);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  box-sizing: border-box;
+}
+.ad-banner-link--top:hover {
+  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.28);
+  border-color: rgba(139, 92, 246, 0.55);
+}
+.ad-top-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  min-width: 0;
+}
+.ad-top-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #fff;
+  font-size: 1.15rem;
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.4);
+}
+.ad-top-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+.ad-top-desc {
+  font-size: 0.7rem;
+  color: #c4b5fd;
+  line-height: 1.25;
+  margin-top: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 170px;
+}
+.ad-top-cta {
+  background: #7c3aed;
+  color: #ffffff;
+  padding: 6px 11px;
+  border-radius: 6px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.15s ease;
+  margin-left: 8px;
+}
+.ad-banner-link--top:hover .ad-top-cta {
+  background: #905cf6;
+}
+
+@media (max-height: 700px) {
+  .ad-banner-link--top {
+    height: 50px;
+    padding: 6px 10px;
+  }
+  .ad-top-logo {
+    width: 26px;
+    height: 26px;
+    font-size: 0.85rem;
+    border-radius: 6px;
+  }
+  .ad-top-title {
+    font-size: 0.8rem;
+  }
+  .ad-top-desc {
+    display: none;
+  }
+  .ad-top-cta {
+    padding: 3px 8px;
+    font-size: 0.68rem;
+  }
+}
+
+/* YouTube Video Banner Card */
+.ad-banner-link--video {
+  max-width: 380px;
+  width: 100%;
+  margin: 0 auto;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+.ad-banner-link--video:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+}
+.ad-video-thumb-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #000;
+}
+.ad-video-thumb-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.ad-video-play-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 48px;
+  height: 34px;
+  background: rgba(255, 0, 0, 0.9);
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+.ad-banner-link--video:hover .ad-video-play-btn {
+  transform: translate(-50%, -50%) scale(1.1);
+  background: #ff0000;
+}
+.ad-video-play-btn svg {
+  width: 16px;
+  height: 16px;
+  fill: #fff;
+  margin-left: 2px;
+}
+.ad-video-info {
+  padding: 11px 14px 13px;
+  text-align: left;
+}
+.ad-video-title {
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--ink);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.ad-video-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 0.72rem;
+  color: var(--faint);
+}
+.ad-video-badge {
+  color: #dc2626;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
 
 /* ---------- Static Prose Pages ---------- */
 

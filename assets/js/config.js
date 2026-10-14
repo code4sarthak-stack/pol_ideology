@@ -22,6 +22,66 @@ window.SITE_CONFIG = {
   },
   GA_MEASUREMENT_ID: "G-JN6Q0JYG29",
 
+  // Custom direct ads & sponsor banners (displayed while waiting for AdSense approval or as direct campaigns)
+  // Impression share: 60% ExamLytix, 20% Fast Calculation Tricks, 20% Physics & Chemistry Calculations
+  CUSTOM_ADS: {
+    enabled: true,
+    campaigns: [
+      // 1. ExamLytix (60% weight)
+      {
+        id: "examlytix",
+        weight: 60,
+        title: "ExamLytix — Preparing for UPSC? Prepare smartly.",
+        url: "https://www.examlytix.com/",
+        creatives: {
+          top: "assets/img/ads/examlytix-top-320x100.png",
+          middle: [
+            "assets/img/ads/examlytix-card-560x280.png",
+            "assets/img/ads/examlytix-rect-300x250.png"
+          ],
+          bottom: [
+            "assets/img/ads/examlytix-upsc-hero-1024x682.jpg",
+            "assets/img/ads/examlytix-study-companion-1024x853.jpg"
+          ]
+        }
+      },
+      // 2. Fast Calculation Tricks (20% weight)
+      {
+        id: "fast_calculation",
+        weight: 20,
+        title: "Fast Calculation Tricks — Physics & Chemistry (Watch on YouTube)",
+        url: "https://www.youtube.com/watch?v=En7ffcPPqlU",
+        creatives: {
+          top: "assets/img/ads/yt-fast-calc-wide.png",
+          middle: [
+            "assets/img/ads/yt-fast-calc-thumb.jpg",
+            "assets/img/ads/yt-fast-calc-wide.png"
+          ],
+          bottom: [
+            "assets/img/ads/yt-fast-calc-thumb.jpg"
+          ]
+        }
+      },
+      // 3. Physics & Chemistry Calculations (20% weight)
+      {
+        id: "physics_chemistry",
+        weight: 20,
+        title: "Physics & Chemistry Calculations — Shortcuts & Tricks (Watch on YouTube)",
+        url: "https://www.youtube.com/watch?v=6UlYYpibM4M",
+        creatives: {
+          top: "assets/img/ads/yt-upsc-youtube-banner.png",
+          middle: [
+            "assets/img/ads/yt-physics-chem-card.jpg",
+            "assets/img/ads/yt-physics-chem-thumb.jpg"
+          ],
+          bottom: [
+            "assets/img/ads/yt-physics-chem-card.jpg"
+          ]
+        }
+      }
+    ]
+  },
+
   // Firebase Realtime Database for live concurrent quiz counter
   FIREBASE: {
     apiKey: "AIzaSyAWCYWqF-ePAzdgi4WvDgPXWSLUTrK9DVc",

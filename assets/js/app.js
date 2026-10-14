@@ -105,6 +105,20 @@
 
   var adsEnabled = /^ca-pub-\d{10,}$/.test(CFG.ADSENSE_CLIENT || "");
 
+  function resolveAssetPath(p) {
+    if (!p || /^https?:\/\//.test(p) || p.charAt(0) === "/") return p;
+    var scripts = document.querySelectorAll("script[src*='app.js']");
+    var prefix = "";
+    if (scripts.length > 0) {
+      var src = scripts[0].getAttribute("src") || "";
+      var idx = src.indexOf("assets/");
+      if (idx !== -1) {
+        prefix = src.substring(0, idx);
+      }
+    }
+    return prefix + p;
+  }
+
   function renderAds() {
     var slots = document.querySelectorAll("[data-ad]");
     if (adsEnabled) {
@@ -115,6 +129,11 @@
       s.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=" + CFG.ADSENSE_CLIENT;
       document.head.appendChild(s);
     }
+
+    var customAds = CFG.CUSTOM_ADS;
+    var customEnabled = !adsEnabled && customAds && customAds.enabled && Array.isArray(customAds.campaigns) && customAds.campaigns.length > 0;
+    var slotCounter = 0;
+
     slots.forEach(function (el) {
       var kind = el.getAttribute("data-ad");
       var label = document.createElement("div");
@@ -125,24 +144,164 @@
       el.appendChild(label);
       el.appendChild(box);
 
-      if (!adsEnabled) {
-        box.classList.add("ad__box--placeholder");
-        box.textContent = kind === "top" ? "Ad · 320×100 / 320×50" : "Ad · 300×250 / responsive";
+      if (adsEnabled) {
+        var ins = document.createElement("ins");
+        ins.className = "adsbygoogle";
+        ins.setAttribute("data-ad-client", CFG.ADSENSE_CLIENT);
+        ins.setAttribute("data-ad-slot", (CFG.AD_SLOTS || {})[kind] || "");
+        if (kind === "top") {
+          ins.style.display = "inline-block"; // fixed size set in CSS: 320x100, or 320x50 on short screens
+        } else {
+          ins.style.display = "block";
+          ins.setAttribute("data-ad-format", "auto");
+          ins.setAttribute("data-full-width-responsive", "true");
+        }
+        box.appendChild(ins);
+        try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) { /* ignore */ }
         return;
       }
-      var ins = document.createElement("ins");
-      ins.className = "adsbygoogle";
-      ins.setAttribute("data-ad-client", CFG.ADSENSE_CLIENT);
-      ins.setAttribute("data-ad-slot", (CFG.AD_SLOTS || {})[kind] || "");
-      if (kind === "top") {
-        ins.style.display = "inline-block"; // fixed size set in CSS: 320x100, or 320x50 on short screens
-      } else {
-        ins.style.display = "block";
-        ins.setAttribute("data-ad-format", "auto");
-        ins.setAttribute("data-full-width-responsive", "true");
+
+      if (customEnabled) {
+        var matching = customAds.campaigns.filter(function (c) {
+          if (c.creatives) return !!c.creatives[kind];
+          return !c.slots || c.slots.indexOf(kind) !== -1;
+        });
+
+        if (matching.length > 0) {
+          // Weighted random distribution (e.g. 60% ExamLytix, 20% Fast Calc, 20% Physics Chem)
+          var totalWeight = 0;
+          matching.forEach(function (c) {
+            totalWeight += (typeof c.weight === "number" ? c.weight : 10);
+          });
+          var rand = Math.random() * totalWeight;
+          var cum = 0;
+          var campaign = matching[0];
+          for (var ci = 0; ci < matching.length; ci++) {
+            cum += (typeof matching[ci].weight === "number" ? matching[ci].weight : 10);
+            if (rand < cum) {
+              campaign = matching[ci];
+              break;
+            }
+          }
+
+          var imageSrc = "";
+          if (campaign.creatives && campaign.creatives[kind]) {
+            var cr = campaign.creatives[kind];
+            if (Array.isArray(cr)) {
+              imageSrc = cr[slotCounter % cr.length];
+            } else {
+              imageSrc = cr;
+            }
+          } else {
+            imageSrc = campaign.image || "";
+          }
+          slotCounter++;
+
+          var a = document.createElement("a");
+          a.href = campaign.url || "#";
+          a.target = "_blank";
+          a.rel = "noopener noreferrer";
+          a.setAttribute("aria-label", campaign.title || "Advertisement");
+          a.addEventListener("click", function () {
+            track("custom_ad_click", { ad_id: campaign.id, slot: kind, target_url: campaign.url });
+          });
+
+          // Top slot image vs middle/bottom slot images
+          if (kind === "top") {
+            a.className = "ad-banner-link ad-banner-link--top-image";
+          } else {
+            var extraClass = "";
+            if (campaign.layout === "rect" || (imageSrc && imageSrc.indexOf("300x250") !== -1)) {
+              extraClass = " ad-banner-link--rect";
+            } else if (campaign.layout === "card" || (imageSrc && (imageSrc.indexOf("560x280") !== -1 || imageSrc.indexOf("1024x") !== -1 || imageSrc.indexOf("thumb") !== -1 || imageSrc.indexOf("card") !== -1 || imageSrc.indexOf("hero") !== -1))) {
+              extraClass = " ad-banner-link--card";
+            }
+            a.className = "ad-banner-link ad-banner-link--image" + extraClass;
+          }
+
+          if (imageSrc) {
+            var img = document.createElement("img");
+            img.src = resolveAssetPath(imageSrc);
+            img.alt = campaign.alt || campaign.title || "Advertisement";
+            img.loading = "lazy";
+            a.appendChild(img);
+            box.classList.add("ad__box--custom");
+            box.appendChild(a);
+            return;
+          }
+
+          if (campaign.type === "top_card") {
+            a.className = "ad-banner-link ad-banner-link--top";
+            var brand = document.createElement("div");
+            brand.className = "ad-top-brand";
+            var logo = document.createElement("div");
+            logo.className = "ad-top-logo";
+            logo.textContent = "📊";
+            var textWrap = document.createElement("div");
+            var title = document.createElement("div");
+            title.className = "ad-top-title";
+            title.textContent = campaign.title || "";
+            textWrap.appendChild(title);
+            if (campaign.tagline) {
+              var desc = document.createElement("div");
+              desc.className = "ad-top-desc";
+              desc.textContent = campaign.tagline;
+              textWrap.appendChild(desc);
+            }
+            brand.appendChild(logo);
+            brand.appendChild(textWrap);
+            var cta = document.createElement("div");
+            cta.className = "ad-top-cta";
+            cta.textContent = campaign.cta || "Explore →";
+            a.appendChild(brand);
+            a.appendChild(cta);
+            box.classList.add("ad__box--custom");
+            box.appendChild(a);
+            return;
+          }
+
+          if (campaign.type === "youtube") {
+            a.className = "ad-banner-link ad-banner-link--video";
+            var thumbWrap = document.createElement("div");
+            thumbWrap.className = "ad-video-thumb-wrap";
+            var vid = campaign.videoId;
+            if (!vid && campaign.url) {
+              var match = campaign.url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|shorts\/|embed\/))([a-zA-Z0-9_-]{11})/);
+              if (match) vid = match[1];
+            }
+            var thumbImg = document.createElement("img");
+            thumbImg.src = campaign.thumbnail || (vid ? "https://img.youtube.com/vi/" + vid + "/hqdefault.jpg" : "");
+            thumbImg.alt = campaign.title || "YouTube video";
+            thumbImg.loading = "lazy";
+            thumbWrap.appendChild(thumbImg);
+
+            var playBtn = document.createElement("div");
+            playBtn.className = "ad-video-play-btn";
+            playBtn.innerHTML = '<svg viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"></polygon></svg>';
+            thumbWrap.appendChild(playBtn);
+
+            var info = document.createElement("div");
+            info.className = "ad-video-info";
+            var vTitle = document.createElement("div");
+            vTitle.className = "ad-video-title";
+            vTitle.textContent = campaign.title || "Watch on YouTube";
+            var meta = document.createElement("div");
+            meta.className = "ad-video-meta";
+            meta.innerHTML = '<span class="ad-video-badge">▶ YouTube</span><span>Watch Now →</span>';
+            info.appendChild(vTitle);
+            info.appendChild(meta);
+
+            a.appendChild(thumbWrap);
+            a.appendChild(info);
+            box.classList.add("ad__box--custom");
+            box.appendChild(a);
+            return;
+          }
+        }
       }
-      box.appendChild(ins);
-      try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) { /* ignore */ }
+
+      box.classList.add("ad__box--placeholder");
+      box.textContent = kind === "top" ? "Ad · 320×100 / 320×50" : "Ad · 300×250 / responsive";
     });
   }
 
