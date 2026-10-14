@@ -663,6 +663,7 @@ window.QUIZ.bands = {
 window.QUIZ.ideologies = [
   {
     "key": "communism",
+    "slug": "communism",
     "emoji": "🚩",
     "pos": [
       -95,
@@ -717,6 +718,7 @@ window.QUIZ.ideologies = [
   },
   {
     "key": "libsoc",
+    "slug": "libertarian-socialism",
     "emoji": "✊",
     "pos": [
       -85,
@@ -771,6 +773,7 @@ window.QUIZ.ideologies = [
   },
   {
     "key": "demsoc",
+    "slug": "democratic-socialism",
     "emoji": "🌹",
     "pos": [
       -75,
@@ -825,6 +828,7 @@ window.QUIZ.ideologies = [
   },
   {
     "key": "socdem",
+    "slug": "social-democracy",
     "emoji": "🤝",
     "pos": [
       -45,
@@ -879,6 +883,7 @@ window.QUIZ.ideologies = [
   },
   {
     "key": "progressive",
+    "slug": "progressive-liberalism",
     "emoji": "🌱",
     "pos": [
       -25,
@@ -933,6 +938,7 @@ window.QUIZ.ideologies = [
   },
   {
     "key": "gandhian",
+    "slug": "gandhian-sarvodaya",
     "emoji": "🕊️",
     "pos": [
       -35,
@@ -987,6 +993,7 @@ window.QUIZ.ideologies = [
   },
   {
     "key": "centrist",
+    "slug": "centrism",
     "emoji": "⚖️",
     "pos": [
       0,
@@ -1041,6 +1048,7 @@ window.QUIZ.ideologies = [
   },
   {
     "key": "classical",
+    "slug": "classical-liberalism",
     "emoji": "📜",
     "pos": [
       55,
@@ -1095,6 +1103,7 @@ window.QUIZ.ideologies = [
   },
   {
     "key": "libertarian",
+    "slug": "libertarianism",
     "emoji": "🗽",
     "pos": [
       80,
@@ -1149,6 +1158,7 @@ window.QUIZ.ideologies = [
   },
   {
     "key": "libcon",
+    "slug": "liberal-conservatism",
     "emoji": "🏛️",
     "pos": [
       45,
@@ -1203,6 +1213,7 @@ window.QUIZ.ideologies = [
   },
   {
     "key": "communitarian",
+    "slug": "communitarianism",
     "emoji": "🏘️",
     "pos": [
       -25,
@@ -1257,6 +1268,7 @@ window.QUIZ.ideologies = [
   },
   {
     "key": "conservative",
+    "slug": "traditional-conservatism",
     "emoji": "🏰",
     "pos": [
       30,
@@ -1311,6 +1323,7 @@ window.QUIZ.ideologies = [
   },
   {
     "key": "leftnat",
+    "slug": "left-wing-nationalism",
     "emoji": "📣",
     "pos": [
       -55,
@@ -1365,6 +1378,7 @@ window.QUIZ.ideologies = [
   },
   {
     "key": "natcon",
+    "slug": "national-conservatism",
     "emoji": "🦅",
     "pos": [
       25,
@@ -1419,6 +1433,7 @@ window.QUIZ.ideologies = [
   },
   {
     "key": "authcap",
+    "slug": "authoritarian-capitalism",
     "emoji": "🏗️",
     "pos": [
       55,
@@ -1473,6 +1488,7 @@ window.QUIZ.ideologies = [
   },
   {
     "key": "authnat",
+    "slug": "authoritarian-nationalism",
     "emoji": "⚔️",
     "pos": [
       15,

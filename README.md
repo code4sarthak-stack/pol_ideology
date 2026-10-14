@@ -25,8 +25,8 @@ start.html        Page 2: name + start
 quiz.html         One question per page (?q=1…24&total=12|24), plus the checkpoint after question 12 of the Quick quiz
 result.html       Last page: ideology, meters per area, comparison with all users, compass
 stats.html        Community Dashboard: overall ideology distribution, spectrum breakdown & averages
-ideology/*.html   Ideology guide pages in English (generated, see below)
-hi/ideology/*.html  The same guides in Hindi (generated)
+ideology/          Hub page (index.html) and 16 ideology guide pages in English (generated, see below)
+hi/ideology/       Hub page (index.html) and 16 ideology guide pages in Hindi (generated)
 about.html, privacy.html, contact.html   Needed for AdSense approval
 ads.txt           AdSense seller declaration (needs your pub ID)
 robots.txt, sitemap.xml, site.webmanifest
@@ -34,26 +34,26 @@ assets/js/config.js     ← AdSense + Analytics + Firebase settings
 assets/js/db.js         ← Firebase Realtime DB tracking client + sample data fallback
 assets/js/stats.js      ← Statistics dashboard controller & charts
 assets/js/questions.js  ← the 4 areas and 24 questions (1–12 Quick set, 13–24 In-depth set), in both languages
-assets/js/results.js    ← labels, descriptions and examples for every result, in both languages (result page only)
+assets/js/results.js    ← labels, slugs, descriptions and examples for every result, in both languages (result page only)
 assets/js/strings.js    ← all button and label text, in both languages
 assets/js/app.js        Page logic: scoring, navigation, ads, sharing
 assets/css/style.css    Styles (light theme)
 assets/fonts/           Self-hosted web fonts (Instrument Sans/Serif, Tiro Devanagari Hindi) + licence
 assets/img/             Icon and the WhatsApp/Facebook preview image
-tools/ideology-pages/   content.js (guide page text) and build.js (writes the guide pages + sitemap.xml)
+tools/ideology-pages/   content.js, content/ (guide page text) and build.js (writes the guide pages, hub pages + sitemap.xml)
 ```
 
 ## Ideology guide pages
 
-Each ideology can have a plain-HTML guide page that search engines and AdSense reviewers can read without JavaScript: a simple explanation, core beliefs, its place on the four scales, 3 examples of it working, 2 of it going wrong, supporters' and critics' views, famous figures and FAQs.
+Each of the 16 ideologies has a plain-HTML guide page that search engines and AdSense reviewers can read without JavaScript: a simple explanation, core beliefs, its place on the four scales, 3 examples of it working, 2 of it going wrong, supporters' and critics' views, famous figures and FAQs. There are also hub pages listing all 16 ideologies (`ideology/index.html` and `hi/ideology/index.html`).
 
-The text lives in `tools/ideology-pages/content.js`; the title, core beliefs and scores come from `assets/js/results.js`. After editing either, rebuild and commit the output:
+The long-form text lives in `tools/ideology-pages/content.js` (and individual ideology files in `tools/ideology-pages/content/`). The titles, core beliefs, 4-scale positions and URL `slug` fields live in `assets/js/results.js`. After editing either, rebuild and commit the output:
 
 ```bash
 node tools/ideology-pages/build.js
 ```
 
-This rewrites `ideology/`, `hi/ideology/` and `sitemap.xml`. Only ideologies with an entry in `content.js` get a page.
+This rewrites `ideology/`, `hi/ideology/` and `sitemap.xml`. It writes 32 guide pages (16 English + 16 Hindi) plus 2 hub pages, and includes them in the sitemap.
 
 ## Preview on your computer
 

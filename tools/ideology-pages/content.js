@@ -10,9 +10,26 @@
  * - Criticise governments and policies, never the people of a country.
  * - people: historical figures only, no living politicians, no current parties.
  */
-module.exports = {
+const path = require("path");
+const CONTENT_DIR = path.join(__dirname, "content");
+
+const IDEOLOGY_KEYS = [
+  "communism", "libsoc", "demsoc", "progressive", "gandhian", "centrist",
+  "classical", "libertarian", "libcon", "communitarian", "conservative",
+  "leftnat", "natcon", "authcap", "authnat"
+];
+
+const entries = {};
+IDEOLOGY_KEYS.forEach((key) => {
+  try {
+    entries[key] = require(path.join(CONTENT_DIR, key + ".js"));
+  } catch (e) {
+    // not yet written — skip
+  }
+});
+
+module.exports = Object.assign({}, entries, {
   socdem: {
-    slug: "social-democracy",
     en: {
       metaTitle: "Social Democracy Explained Simply: Meaning, Examples, Pros & Cons",
       metaDescription: "What is social democracy? A simple explanation with real examples from India and the world, the times it went wrong, and what supporters and critics say.",
@@ -176,4 +193,4 @@ module.exports = {
       ]
     }
   }
-};
+});

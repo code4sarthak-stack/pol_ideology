@@ -3371,6 +3371,90 @@ a.neighbour-chip { text-decoration: none; }
   color: var(--muted);
 }
 
+/* Result page link to ideology guide */
+.result-guide-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+.result-guide-link:hover {
+  text-decoration: underline;
+  transform: translateX(2px);
+}
+
+/* Hub page grid & cards */
+.ideo-hub-grid {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+@media (min-width: 640px) {
+  .ideo-hub-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+}
+.ideo-hub-card {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.ideo-hub-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+  box-shadow: var(--shadow-sm);
+}
+.ideo-hub-card__top {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+.ideo-hub-card__emoji {
+  flex: none;
+  font-size: 2.2rem;
+  line-height: 1;
+}
+.ideo-hub-card__titles {
+  flex: 1;
+  min-width: 0;
+}
+.ideo-hub-card__title {
+  margin: 0 0 6px;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  line-height: 1.2;
+  color: var(--ink);
+}
+.ideo-hub-card__lead {
+  flex: 1;
+  margin: 0 0 16px;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--text);
+}
+.ideo-hub-card__link {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--accent);
+  margin-top: auto;
+}
+.ideo-hub-card:hover .ideo-hub-card__link {
+  text-decoration: underline;
+}
+
+
 /* ---------- Motion & Animations ---------- */
 
 @keyframes rise {

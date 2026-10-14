@@ -65,7 +65,12 @@
       el.setAttribute("placeholder", t(el.getAttribute("data-i18n-placeholder")));
     });
     document.querySelectorAll("[data-link]").forEach(function (el) {
-      el.setAttribute("href", url(el.getAttribute("data-link")));
+      var target = el.getAttribute("data-link");
+      if (target === "ideology/index.html" && lang === "hi") {
+        el.setAttribute("href", "hi/ideology/index.html");
+      } else {
+        el.setAttribute("href", url(target));
+      }
     });
     var sw = document.querySelector("[data-lang-switch]");
     if (sw) {
@@ -525,6 +530,13 @@
       : name ? t("resultLeadNamed", { name: name }) : t("resultLead");
     document.getElementById("result-title").textContent = text.title;
     document.getElementById("result-desc").textContent = text.desc;
+
+    var guideLinkEl = document.getElementById("result-guide-link");
+    if (guideLinkEl && ideo.slug) {
+      guideLinkEl.href = (lang === "hi" ? "hi/" : "") + "ideology/" + ideo.slug + ".html";
+      guideLinkEl.textContent = t("readFullGuide");
+      guideLinkEl.hidden = false;
+    }
 
     var badgeEl = document.getElementById("result-badge");
     if (badgeEl) badgeEl.textContent = overall;

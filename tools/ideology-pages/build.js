@@ -58,7 +58,11 @@ const UI = {
     ctaTitle: "Which of the 16 ideologies are you?",
     ctaText: "Answer 12 quick questions in about 2 minutes. Free, no sign-up.",
     note: "Examples are simplified to help you think. They are not meant to praise or blame any country, party or people.",
-    footer: { about: "About", privacy: "Privacy Policy", terms: "Terms of Service", contact: "Contact", stats: "Community Stats" }
+    hubTitle: "All 16 political ideologies, explained simply",
+    hubDesc: "Explore all 16 political ideologies from the ideoMap quiz. Simple, plain-language guides with real-world examples from India and the world, pros, cons and key figures.",
+    hubIntro: "Every person sees the world through a set of political lenses, whether they realize it or not. Should governments own essential utilities or leave them to competitive markets? Do traditions protect our communities, or do they hold people back? Does national sovereignty matter more than international cooperation? Across modern history, thinkers and everyday citizens have answered these questions in fundamentally different ways, creating 16 distinct political ideologies. Each worldview offers its own vision of fairness, prosperity and human freedom, along with real-world successes and cautionary failures. Below, you will find simple, plain-language guides to all 16 ideologies featured in the ideoMap quiz, with concrete examples from India and around the globe.",
+    hubReadMore: "Read full guide →",
+    footer: { about: "About", privacy: "Privacy Policy", terms: "Terms of Service", contact: "Contact", stats: "Community Stats", ideologies: "All ideologies" }
   },
   hi: {
     eyebrow: "राजनीतिक विचारधारा गाइड",
@@ -78,7 +82,11 @@ const UI = {
     ctaTitle: "आप 16 में से कौन-सी विचारधारा हैं?",
     ctaText: "क़रीब 2 मिनट में 12 आसान सवालों के जवाब दीजिए। मुफ़्त, बिना साइन-अप।",
     note: "ये उदाहरण सोचने में मदद के लिए आसान बनाकर लिखे गए हैं। इनका मक़सद किसी देश, पार्टी या लोगों की तारीफ़ या बुराई करना नहीं है।",
-    footer: { about: "हमारे बारे में", privacy: "प्राइवेसी पॉलिसी", terms: "नियम और शर्तें", contact: "संपर्क", stats: "कम्युनिटी आँकड़े" }
+    hubTitle: "16 राजनीतिक विचारधाराएँ, आसान भाषा में",
+    hubDesc: "ideoMap क्विज़ की सभी 16 राजनीतिक विचारधाराओं को आसान भाषा में समझें। भारत और दुनिया के उदाहरण, फ़ायदे, कमियाँ और प्रमुख हस्तियाँ।",
+    hubIntro: "हर इंसान समाज और राजनीति को किसी न किसी नज़रिए से देखता है, चाहे वह इसे कोई नाम दे या न दे। क्या सरकार को अस्पताल और स्कूल चलाने चाहिए या इन्हें खुले बाज़ार के भरोसे छोड़ देना चाहिए? क्या पुरानी परंपराएँ हमें जोड़े रखती हैं या वे व्यक्तिगत आज़ादी में रुकावट बनती हैं? क्या राष्ट्रीय संप्रभुता अंतरराष्ट्रीय सहयोग से ज़्यादा अहम है? आधुनिक इतिहास में विचारकों और आम नागरिकों ने इन बुनियादी सवालों के अलग-अलग जवाब दिए हैं, जिनसे 16 प्रमुख राजनीतिक विचारधाराएँ जन्मी हैं। हर सोच की अपनी खूबियाँ, ऐतिहासिक कामयाबियाँ और चेतावनियाँ हैं। यहाँ ideoMap क्विज़ की सभी 16 विचारधाराओं को आसान भाषा में समझाया गया है, भारत और दुनिया के ठोस उदाहरणों के साथ।",
+    hubReadMore: "पूरी गाइड पढ़ें →",
+    footer: { about: "हमारे बारे में", privacy: "प्राइवेसी पॉलिसी", terms: "नियम और शर्तें", contact: "संपर्क", stats: "कम्युनिटी आँकड़े", ideologies: "सभी विचारधाराएँ" }
   }
 };
 
@@ -112,14 +120,19 @@ function distance(a, b) {
   return a.pos.reduce((sum, v, i) => sum + Math.pow(v - b.pos[i], 2), 0);
 }
 
+function getSlug(key) {
+  const ideo = QUIZ.ideologies.find((o) => o.key === key);
+  if (!ideo || !ideo.slug) throw new Error(`Missing slug in results.js for ideology: ${key}`);
+  return ideo.slug;
+}
+
 function pagePath(key, lang) {
-  const slug = CONTENT[key].slug;
-  return (lang === "hi" ? "hi/" : "") + "ideology/" + slug + ".html";
+  return (lang === "hi" ? "hi/" : "") + "ideology/" + getSlug(key) + ".html";
 }
 
 // Link from one generated page to another (both live in ideology/ or both in hi/ideology/).
 function siblingHref(key) {
-  return CONTENT[key].slug + ".html";
+  return getSlug(key) + ".html";
 }
 
 /* ---------- Page sections ---------- */
@@ -340,6 +353,116 @@ function page(ideo, lang) {
       <a href="${root}terms.html">${esc(ui.footer.terms)}</a>
       <a href="${root}contact.html">${esc(ui.footer.contact)}</a>
       <a href="${root}stats.html">${esc(ui.footer.stats)}</a>
+      <a href="index.html">${esc(ui.footer.ideologies)}</a>
+    </nav>
+    <p>© ideoMap</p>
+  </footer>
+
+  <script src="${root}assets/js/config.js"></script>
+  <script src="${root}assets/js/strings.js"></script>
+  <script src="${root}assets/js/questions.js"></script>
+  <script src="${root}assets/js/app.js"></script>
+</body>
+</html>
+`;
+}
+
+function hubPage(lang) {
+  const ui = UI[lang];
+  const other = lang === "en" ? "hi" : "en";
+  const root = lang === "hi" ? "../../" : "../";
+  const rel = (lang === "hi" ? "hi/" : "") + "ideology/index.html";
+  const self = SITE + rel;
+  const otherHref = (lang === "en" ? "../hi/ideology/" : "../../ideology/") + "index.html";
+  const quizHref = `${root}start.html?lang=${lang}`;
+
+  const cards = QUIZ.ideologies.map((ideo) => {
+    const c = CONTENT[ideo.key][lang];
+    const d = ideo[lang];
+    const guideHref = siblingHref(ideo.key);
+    return `<a class="card ideo-hub-card" href="${guideHref}">` +
+      `<div class="ideo-hub-card__top">` +
+      `<span class="ideo-hub-card__emoji" aria-hidden="true">${ideo.emoji}</span>` +
+      `<div class="ideo-hub-card__titles">` +
+      `<h2 class="ideo-hub-card__title">${esc(d.title)}</h2>` +
+      `<span class="badge badge--accent">${esc(d.simpleTitle)}</span>` +
+      `</div></div>` +
+      `<p class="ideo-hub-card__lead">${esc(c.lead)}</p>` +
+      `<span class="ideo-hub-card__link">${esc(ui.hubReadMore)}</span>` +
+      `</a>`;
+  });
+
+  const firstEight = cards.slice(0, 8).join("\n      ");
+  const lastEight = cards.slice(8, 16).join("\n      ");
+
+  return `<!doctype html>
+<html lang="${lang}" data-lang="${lang}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>${esc(ui.hubTitle)} | ideoMap</title>
+  <meta name="description" content="${esc(ui.hubDesc)}">
+  <link rel="canonical" href="${self}">
+  <link rel="alternate" hreflang="en" href="${SITE}ideology/index.html">
+  <link rel="alternate" hreflang="hi" href="${SITE}hi/ideology/index.html">
+  <link rel="alternate" hreflang="x-default" href="${SITE}ideology/index.html">
+  <meta name="theme-color" content="#fcfcfd">
+  <link rel="icon" href="${root}assets/img/icon.svg" type="image/svg+xml">
+  <link rel="manifest" href="${root}site.webmanifest">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="ideoMap">
+  <meta property="og:title" content="${esc(ui.hubTitle)}">
+  <meta property="og:description" content="${esc(ui.hubDesc)}">
+  <meta property="og:url" content="${self}">
+  <meta property="og:image" content="${SITE}assets/img/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preload" href="${root}assets/fonts/instrument-sans.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="${root}assets/fonts/instrument-serif.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="${root}assets/css/style.css">
+</head>
+<body data-page="ideology-hub">
+  <header class="site-header">
+    <a class="brand" href="${root}index.html"><img src="${root}assets/img/icon.svg" alt="" width="28" height="28"><span>ideoMap</span></a>
+    <a class="lang-switch" href="${otherHref}" lang="${other}" hreflang="${other}">${esc(STR[lang].langSwitch)}</a>
+  </header>
+
+  <main class="container ideo ideo-hub">
+    <section class="card ideo-hero">
+      <p class="ideo-hero__eyebrow">${esc(ui.eyebrow)}</p>
+      <h1 class="ideo-hero__title">${esc(ui.hubTitle)}</h1>
+      <p class="ideo-hero__lead">${esc(ui.hubIntro)}</p>
+      <a class="btn btn--primary" href="${quizHref}">${esc(ui.takeQuiz)}</a>
+    </section>
+
+    <div class="ideo-hub-grid">
+      ${firstEight}
+    </div>
+
+    <div class="ad" data-ad="middle"></div>
+
+    <div class="ideo-hub-grid">
+      ${lastEight}
+    </div>
+
+    <div class="ad" data-ad="bottom"></div>
+
+    <section class="card ideo-cta">
+      <h2>${esc(ui.ctaTitle)}</h2>
+      <p>${esc(ui.ctaText)}</p>
+      <a class="btn btn--primary" href="${quizHref}">${esc(ui.takeQuiz)}</a>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <nav>
+      <a href="${root}about.html">${esc(ui.footer.about)}</a>
+      <a href="${root}privacy.html">${esc(ui.footer.privacy)}</a>
+      <a href="${root}terms.html">${esc(ui.footer.terms)}</a>
+      <a href="${root}contact.html">${esc(ui.footer.contact)}</a>
+      <a href="${root}stats.html">${esc(ui.footer.stats)}</a>
+      <a href="index.html">${esc(ui.footer.ideologies)}</a>
     </nav>
     <p>© ideoMap</p>
   </footer>
@@ -368,6 +491,15 @@ Object.keys(CONTENT).forEach((key) => {
   });
 });
 
+// Write hub pages: ideology/index.html and hi/ideology/index.html
+LANGS.forEach((lang) => {
+  const rel = (lang === "hi" ? "hi/" : "") + "ideology/index.html";
+  const file = path.join(ROOT, rel);
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.writeFileSync(file, hubPage(lang));
+  written.push(rel);
+});
+
 // stats.html is left out on purpose: it is marked noindex.
 const STATIC_PAGES = ["", "about.html", "privacy.html", "terms.html", "contact.html"];
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
@@ -378,3 +510,4 @@ ${STATIC_PAGES.concat(written).map((p) => `  <url><loc>${SITE}${p}</loc></url>`)
 fs.writeFileSync(path.join(ROOT, "sitemap.xml"), sitemap);
 
 console.log(`Wrote ${written.length} pages:\n  ${written.join("\n  ")}\nUpdated sitemap.xml`);
+
