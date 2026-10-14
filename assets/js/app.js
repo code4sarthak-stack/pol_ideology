@@ -379,6 +379,15 @@
     if (ideoBtn && lang === "hi") {
       ideoBtn.setAttribute("href", "hi/ideology/index.html");
     }
+
+    var counterWrap = document.getElementById("live-counter-wrap");
+    if (counterWrap) {
+      counterWrap.addEventListener("click", function (e) {
+        if (!e.target.closest("a")) {
+          window.location.href = url("stats.html");
+        }
+      });
+    }
   }
 
   function startPage() {
