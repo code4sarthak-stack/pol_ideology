@@ -353,7 +353,7 @@ function page(ideo, lang) {
       <a href="${root}terms.html">${esc(ui.footer.terms)}</a>
       <a href="${root}contact.html">${esc(ui.footer.contact)}</a>
       <a href="${root}stats.html">${esc(ui.footer.stats)}</a>
-      <a href="index.html">${esc(ui.footer.ideologies)}</a>
+      <a href="index.html" class="footer-ideo-link">${esc(ui.footer.ideologies)}</a>
     </nav>
     <p>© ideoMap</p>
   </footer>
@@ -462,7 +462,7 @@ function hubPage(lang) {
       <a href="${root}terms.html">${esc(ui.footer.terms)}</a>
       <a href="${root}contact.html">${esc(ui.footer.contact)}</a>
       <a href="${root}stats.html">${esc(ui.footer.stats)}</a>
-      <a href="index.html">${esc(ui.footer.ideologies)}</a>
+      <a href="index.html" class="footer-ideo-link">${esc(ui.footer.ideologies)}</a>
     </nav>
     <p>© ideoMap</p>
   </footer>

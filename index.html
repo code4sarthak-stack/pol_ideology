@@ -28,6 +28,7 @@
 <body data-page="home">
   <header class="site-header">
     <a class="brand" href="index.html"><img src="assets/img/icon.svg" alt="" width="28" height="28"><span class="brand__text"><span class="brand__title">ideoMap</span><span class="brand__sub">Left or Right</span></span></a>
+    <a class="site-header__link" href="ideology/index.html" id="header-ideo-link">Ideologies · <span lang="hi">विचारधाराएँ</span></a>
   </header>
 
   <main class="container">
@@ -63,6 +64,21 @@
           <span class="meta-pill__sep">·</span>
           <span>✨ 100% Free</span>
         </div>
+      </div>
+
+      <!-- Explore Ideology Guides Button Banner -->
+      <div class="ideo-browse-card">
+        <div class="ideo-browse-card__body">
+          <div class="ideo-browse-card__title">
+            <span class="ideo-browse-card__icon" aria-hidden="true">🏛️</span>
+            <span>Explore Ideology Guides · <span lang="hi">विचारधारा गाइड</span></span>
+          </div>
+          <p class="ideo-browse-card__desc">Want to skip the quiz? Choose from all 16 political philosophies and read their full guides.<br><span lang="hi">सीधे 16 राजनीतिक विचारधाराओं के विस्तृत गाइड पढ़ें।</span></p>
+        </div>
+        <button type="button" class="btn btn--secondary ideo-trigger-btn" id="open-ideo-selector">
+          <span>Select an Ideology · विचारधारा चुनें</span>
+          <span aria-hidden="true">▾</span>
+        </button>
       </div>
 
       <!-- Modern Aesthetic Live Quiz Takers Counter -->
@@ -132,10 +148,81 @@
       <a href="terms.html">Terms of Service</a>
       <a href="contact.html">Contact</a>
       <a href="stats.html">Community Stats</a>
-      <a href="ideology/index.html">All ideologies</a>
+      <a href="ideology/index.html" class="footer-ideo-link">All ideologies <span lang="hi">· सभी विचारधाराएँ</span></a>
     </nav>
     <p>© ideoMap</p>
   </footer>
+
+  <!-- Ideology Selector Modal -->
+  <div class="ideo-modal" id="ideo-selector-modal" aria-hidden="true" role="dialog" aria-labelledby="ideo-modal-title">
+    <div class="ideo-modal__backdrop" id="ideo-modal-backdrop"></div>
+    <div class="ideo-modal__dialog">
+      <div class="ideo-modal__header">
+        <div>
+          <h2 class="ideo-modal__title" id="ideo-modal-title">Select an Ideology <span lang="hi">· विचारधारा चुनें</span></h2>
+          <p class="ideo-modal__sub">Choose any of the 16 political philosophies to read its complete guide.<br><span lang="hi">पूरा गाइड पढ़ने के लिए 16 में से कोई भी विचारधारा चुनें।</span></p>
+        </div>
+        <button type="button" class="ideo-modal__close" id="ideo-modal-close" aria-label="Close selector">✕</button>
+      </div>
+
+      <div class="ideo-modal__lang-row">
+        <span class="ideo-modal__lang-label">Guide Language · भाषा:</span>
+        <div class="ideo-modal__lang-toggles" role="group" aria-label="Guide language toggle">
+          <button type="button" class="ideo-modal__lang-btn is-active" data-lang="en">English</button>
+          <button type="button" class="ideo-modal__lang-btn" data-lang="hi">हिन्दी</button>
+        </div>
+      </div>
+
+      <div class="ideo-modal__select-box">
+        <label for="modal-ideology-select" class="sr-only">Choose ideology</label>
+        <select id="modal-ideology-select" class="ideo-modal__dropdown" aria-label="Choose an ideology">
+          <option value="" disabled selected>Select from list · सूची में से चुनें...</option>
+          <option value="centrism">⚖️ Centrism · मध्यमार्ग</option>
+          <option value="social-democracy">☀️ Social Democracy · सामाजिक लोकतंत्र</option>
+          <option value="democratic-socialism">🌹 Democratic Socialism · लोकतांत्रिक समाजवाद</option>
+          <option value="communism">🚩 Communism · साम्यवाद</option>
+          <option value="libertarian-socialism">🤝 Libertarian Socialism · स्वतंत्रतावादी समाजवाद</option>
+          <option value="progressive-liberalism">🌱 Progressive Liberalism · प्रगतिशील उदारवाद</option>
+          <option value="gandhian-sarvodaya">🕊️ Gandhian Sarvodaya · गांधीवादी सर्वोदय</option>
+          <option value="classical-liberalism">🗽 Classical Liberalism · शास्त्रीय उदारवाद</option>
+          <option value="libertarianism">🦅 Libertarianism · व्यक्तिवादी स्वतंत्रतावाद</option>
+          <option value="liberal-conservatism">🏛️ Liberal Conservatism · उदार रूढ़िवाद</option>
+          <option value="communitarianism">🏘️ Communitarianism · समुदायवाद</option>
+          <option value="traditional-conservatism">📜 Traditional Conservatism · पारंपरिक रूढ़िवाद</option>
+          <option value="left-wing-nationalism">🦁 Left-Wing Nationalism · वामपंथी राष्ट्रवाद</option>
+          <option value="national-conservatism">🛡️ National Conservatism · राष्ट्रीय रूढ़िवाद</option>
+          <option value="authoritarian-capitalism">💼 Authoritarian Capitalism · सत्तावादी पूँजीवाद</option>
+          <option value="authoritarian-nationalism">⚔️ Authoritarian Nationalism · सत्तावादी राष्ट्रवाद</option>
+        </select>
+      </div>
+
+      <div class="ideo-modal__grid" id="modal-chips-grid">
+        <a class="ideo-modal__chip" href="ideology/centrism.html" data-slug="centrism"><span class="ideo-modal__chip-emoji" aria-hidden="true">⚖️</span><span class="ideo-modal__chip-text">Centrism<span class="ideo-modal__chip-hi" lang="hi">मध्यमार्ग</span></span></a>
+        <a class="ideo-modal__chip" href="ideology/social-democracy.html" data-slug="social-democracy"><span class="ideo-modal__chip-emoji" aria-hidden="true">☀️</span><span class="ideo-modal__chip-text">Social Democracy<span class="ideo-modal__chip-hi" lang="hi">सामाजिक लोकतंत्र</span></span></a>
+        <a class="ideo-modal__chip" href="ideology/democratic-socialism.html" data-slug="democratic-socialism"><span class="ideo-modal__chip-emoji" aria-hidden="true">🌹</span><span class="ideo-modal__chip-text">Democratic Socialism<span class="ideo-modal__chip-hi" lang="hi">लोकतांत्रिक समाजवाद</span></span></a>
+        <a class="ideo-modal__chip" href="ideology/communism.html" data-slug="communism"><span class="ideo-modal__chip-emoji" aria-hidden="true">🚩</span><span class="ideo-modal__chip-text">Communism<span class="ideo-modal__chip-hi" lang="hi">साम्यवाद</span></span></a>
+        <a class="ideo-modal__chip" href="ideology/libertarian-socialism.html" data-slug="libertarian-socialism"><span class="ideo-modal__chip-emoji" aria-hidden="true">🤝</span><span class="ideo-modal__chip-text">Libertarian Socialism<span class="ideo-modal__chip-hi" lang="hi">स्वतंत्रतावादी समाजवाद</span></span></a>
+        <a class="ideo-modal__chip" href="ideology/progressive-liberalism.html" data-slug="progressive-liberalism"><span class="ideo-modal__chip-emoji" aria-hidden="true">🌱</span><span class="ideo-modal__chip-text">Progressive Liberalism<span class="ideo-modal__chip-hi" lang="hi">प्रगतिशील उदारवाद</span></span></a>
+        <a class="ideo-modal__chip" href="ideology/gandhian-sarvodaya.html" data-slug="gandhian-sarvodaya"><span class="ideo-modal__chip-emoji" aria-hidden="true">🕊️</span><span class="ideo-modal__chip-text">Gandhian Sarvodaya<span class="ideo-modal__chip-hi" lang="hi">गांधीवादी सर्वोदय</span></span></a>
+        <a class="ideo-modal__chip" href="ideology/classical-liberalism.html" data-slug="classical-liberalism"><span class="ideo-modal__chip-emoji" aria-hidden="true">🗽</span><span class="ideo-modal__chip-text">Classical Liberalism<span class="ideo-modal__chip-hi" lang="hi">शास्त्रीय उदारवाद</span></span></a>
+        <a class="ideo-modal__chip" href="ideology/libertarianism.html" data-slug="libertarianism"><span class="ideo-modal__chip-emoji" aria-hidden="true">🦅</span><span class="ideo-modal__chip-text">Libertarianism<span class="ideo-modal__chip-hi" lang="hi">व्यक्तिवादी स्वतंत्रतावाद</span></span></a>
+        <a class="ideo-modal__chip" href="ideology/liberal-conservatism.html" data-slug="liberal-conservatism"><span class="ideo-modal__chip-emoji" aria-hidden="true">🏛️</span><span class="ideo-modal__chip-text">Liberal Conservatism<span class="ideo-modal__chip-hi" lang="hi">उदार रूढ़िवाद</span></span></a>
+        <a class="ideo-modal__chip" href="ideology/communitarianism.html" data-slug="communitarianism"><span class="ideo-modal__chip-emoji" aria-hidden="true">🏘️</span><span class="ideo-modal__chip-text">Communitarianism<span class="ideo-modal__chip-hi" lang="hi">समुदायवाद</span></span></a>
+        <a class="ideo-modal__chip" href="ideology/traditional-conservatism.html" data-slug="traditional-conservatism"><span class="ideo-modal__chip-emoji" aria-hidden="true">📜</span><span class="ideo-modal__chip-text">Traditional Conservatism<span class="ideo-modal__chip-hi" lang="hi">पारंपरिक रूढ़िवाद</span></span></a>
+        <a class="ideo-modal__chip" href="ideology/left-wing-nationalism.html" data-slug="left-wing-nationalism"><span class="ideo-modal__chip-emoji" aria-hidden="true">🦁</span><span class="ideo-modal__chip-text">Left-Wing Nationalism<span class="ideo-modal__chip-hi" lang="hi">वामपंथी राष्ट्रवाद</span></span></a>
+        <a class="ideo-modal__chip" href="ideology/national-conservatism.html" data-slug="national-conservatism"><span class="ideo-modal__chip-emoji" aria-hidden="true">🛡️</span><span class="ideo-modal__chip-text">National Conservatism<span class="ideo-modal__chip-hi" lang="hi">राष्ट्रीय रूढ़िवाद</span></span></a>
+        <a class="ideo-modal__chip" href="ideology/authoritarian-capitalism.html" data-slug="authoritarian-capitalism"><span class="ideo-modal__chip-emoji" aria-hidden="true">💼</span><span class="ideo-modal__chip-text">Authoritarian Capitalism<span class="ideo-modal__chip-hi" lang="hi">सत्तावादी पूँजीवाद</span></span></a>
+        <a class="ideo-modal__chip" href="ideology/authoritarian-nationalism.html" data-slug="authoritarian-nationalism"><span class="ideo-modal__chip-emoji" aria-hidden="true">⚔️</span><span class="ideo-modal__chip-text">Authoritarian Nationalism<span class="ideo-modal__chip-hi" lang="hi">सत्तावादी राष्ट्रवाद</span></span></a>
+      </div>
+
+      <div class="ideo-modal__footer">
+        <a href="ideology/index.html" class="ideo-modal__hub-link" id="modal-hub-link">
+          <span>View all 16 on directory page (Hub) →</span>
+          <span lang="hi">सभी 16 विचारधाराओं की डायरेक्टरी देखें →</span>
+        </a>
+      </div>
+    </div>
+  </div>
 
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
