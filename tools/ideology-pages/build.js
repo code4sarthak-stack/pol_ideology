@@ -138,8 +138,7 @@ function siblingHref(key) {
 /* ---------- Page sections ---------- */
 
 function meter(value, leftName, rightName, label) {
-  const leftPct = Math.round((100 - value) / 2);
-  const rightPct = 100 - leftPct;
+  const { left: leftPct, right: rightPct } = QUIZ.leanSplit(value);
   const segs = ["l2", "l1", "mid", "r1", "r2"].map((seg, i) =>
     `<span class="meter__seg meter__seg--${seg}${i === bandIndex(value) ? " is-active" : ""}" style="flex-basis: 20%;"></span>`).join("");
   return `<div class="meter">` +

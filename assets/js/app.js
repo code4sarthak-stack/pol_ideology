@@ -347,7 +347,9 @@
     }
     var s = {};
     DOMAINS.forEach(function (d) { s[d] = Math.round((raw[d] / max[d]) * 100); });
-    s.overall = Math.round(0.5 * s.econ + 0.5 * ((s.social + s.civil + s.world) / 3));
+    // Halves round away from zero, so -10.5 and +10.5 end up equally far from the centre.
+    var overall = 0.5 * s.econ + 0.5 * ((s.social + s.civil + s.world) / 3);
+    s.overall = overall < 0 ? -Math.round(-overall) : Math.round(overall);
     return s;
   }
 
@@ -370,6 +372,7 @@
   var OVERALL_SEGS = [[20, "l2"], [13.75, "lm"], [11, "l1"], [10.5, "mid"], [11, "r1"], [13.75, "rm"], [20, "r2"]];
 
   // Ideologies sorted by distance between their typical position and the user's four scores.
+  // The sort is stable, so on an exact tie the ideology listed first in results.js wins.
   function rankIdeologies(s) {
     return QUIZ.ideologies.map(function (ideo) {
       var d = 0;
@@ -779,6 +782,7 @@
     if (overallBox) {
       overallBox.innerHTML = "";
       overallBox.appendChild(renderRadialGauge(s.overall, t("left"), t("right"), overall, overallBand));
+      overallBox.appendChild(el("p", "gauge-note", t("gaugeNote")));
     }
 
     // Template 3 Bento: Ideological neighbours chips
@@ -1312,8 +1316,9 @@
 
   // "55% Right" style summary of an overall score, as shown under the gauge.
   function leanText(value, leftName, rightName) {
-    var leftPct = Math.round((100 - value) / 2);
-    var rightPct = 100 - leftPct;
+    var split = QUIZ.leanSplit(value);
+    var leftPct = split.left;
+    var rightPct = split.right;
     return leftPct > rightPct
       ? leftPct + "% " + leftName
       : rightPct > leftPct
@@ -1449,8 +1454,9 @@
 
   // A diverging meter: band segments (strong left … strong right) and a marker at the score.
   function meter(value, leftName, rightName, label, segs, active) {
-    var leftPct = Math.round((100 - value) / 2);
-    var rightPct = 100 - leftPct;
+    var split = QUIZ.leanSplit(value);
+    var leftPct = split.left;
+    var rightPct = split.right;
     var wrap = el("div", "meter");
 
     var track = el("div", "meter__track");

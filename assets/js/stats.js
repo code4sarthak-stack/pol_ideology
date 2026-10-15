@@ -180,8 +180,9 @@
       var domHtml = domKeys.map(function (d) {
         var dom = QUIZ.domains[d];
         var avg = data.averages[d] || 0;
-        var leftPct = Math.round((100 - avg) / 2);
-        var rightPct = 100 - leftPct;
+        var split = QUIZ.leanSplit(avg);
+        var leftPct = split.left;
+        var rightPct = split.right;
         var markerPos = Math.min(96, Math.max(4, (avg + 100) / 2));
 
         return (
