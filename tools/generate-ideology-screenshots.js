@@ -47,7 +47,8 @@ function score(answers) {
   }
   var s = {};
   DOMAINS.forEach(function (d) { s[d] = Math.round((raw[d] / max[d]) * 100); });
-  s.overall = Math.round(0.5 * s.econ + 0.5 * ((s.social + s.civil + s.world) / 3));
+  var overall = 0.5 * s.econ + 0.5 * ((s.social + s.civil + s.world) / 3);
+  s.overall = overall < 0 ? -Math.round(-overall) : Math.round(overall);
   return s;
 }
 
@@ -68,8 +69,9 @@ function overallIndex(v) {
 }
 
 function leanText(value, leftName, rightName) {
-  var leftPct = Math.round((100 - value) / 2);
-  var rightPct = 100 - leftPct;
+  var split = QUIZ.leanSplit(value);
+  var leftPct = split.left;
+  var rightPct = split.right;
   return leftPct > rightPct
     ? leftPct + "% " + leftName
     : rightPct > leftPct
@@ -81,7 +83,7 @@ function leanText(value, leftName, rightName) {
 function findAnswersForIdeology(target) {
   // Special tailored match for social-democracy to give 66% Left
   if (target.slug === "social-democracy") {
-    return "122020114121";
+    return "131430333414";
   }
 
   let bestAns = null;
@@ -196,6 +198,11 @@ async function main() {
       mobile: true
     });
 
+const STORY_DIR = path.join(ROOT, "screenshots", "story-cards");
+if (!fs.existsSync(STORY_DIR)) {
+  fs.mkdirSync(STORY_DIR, { recursive: true });
+}
+
     for (let i = 0; i < ideos.length; i++) {
       const ideo = ideos[i];
       const ans = findAnswersForIdeology(ideo);
@@ -212,21 +219,11 @@ async function main() {
       await send("Page.navigate", { url: `http://127.0.0.1:${PORT}/result.html?a=${ans}` });
       await new Promise((r) => setTimeout(r, 600));
 
-      // Customize card to match reference screenshot (emoji circle, sarthak name, clean layout)
+      // Keep authentic brand header with app logo, ideoMap, and tagline intact!
       await send("Runtime.evaluate", {
         expression: `(() => {
-          // Remove ads and site header so the card is right at top
+          // Remove top ad banner and site header so the result card is nicely positioned at top
           document.querySelectorAll(".ad, .site-header").forEach(el => el.remove());
-
-          const brand = document.querySelector(".result-hero__brand");
-          if (brand) {
-            const emojiDiv = document.createElement("div");
-            emojiDiv.className = "result-hero__emoji";
-            emojiDiv.id = "result-emoji";
-            emojiDiv.setAttribute("aria-hidden", "true");
-            emojiDiv.textContent = ${JSON.stringify(ideo.emoji)};
-            brand.parentNode.replaceChild(emojiDiv, brand);
-          }
           const lead = document.getElementById("result-lead");
           if (lead) lead.textContent = "sarthak, your political ideology is";
           const guide = document.getElementById("result-guide-link");
@@ -236,7 +233,7 @@ async function main() {
 
       await new Promise((r) => setTimeout(r, 200));
 
-      // Measure bounding box of the hero card
+      // 1. Capture the on-page result hero card (with app logo, ideoMap, tagline)
       const evalRes = await send("Runtime.evaluate", {
         expression: `(() => {
           const el = document.querySelector(".result-hero");
@@ -262,21 +259,49 @@ async function main() {
       const outPath = path.join(OUT_DIR, `${ideo.slug}.png`);
       fs.writeFileSync(outPath, Buffer.from(shotRes.data, "base64"));
 
-      // Also copy to artifact directory if available
+      // Also copy to artifact directory
       const ARTIFACT_DIR = "/Users/sarthak/.gemini/antigravity/brain/52d5aae2-b61f-45a0-bf88-6b4ce3294531/ideology-screenshots";
       if (!fs.existsSync(ARTIFACT_DIR)) {
         fs.mkdirSync(ARTIFACT_DIR, { recursive: true });
       }
       fs.writeFileSync(path.join(ARTIFACT_DIR, `${ideo.slug}.png`), Buffer.from(shotRes.data, "base64"));
 
-      console.log(`[${i + 1}/${ideos.length}] ${ideo.emoji} ${ideo.en.title} -> ${band} (${lean}) -> saved: screenshots/ideologies/${ideo.slug}.png`);
+      // 2. Generate and capture full 1080x1920 Story Card (matching WhatsApp status card)
+      await send("Runtime.evaluate", {
+        expression: `(() => {
+          const btn = document.getElementById("hero-share-wa");
+          if (btn) btn.click();
+        })()`
+      });
+
+      await new Promise((r) => setTimeout(r, 600));
+
+      const canvasRes = await send("Runtime.evaluate", {
+        expression: `(() => {
+          const canvas = document.querySelector("#share-preview-img-wrap canvas");
+          return canvas ? canvas.toDataURL("image/png") : null;
+        })()`,
+        returnByValue: true
+      });
+
+      if (canvasRes.result.value) {
+        const storyBase64 = canvasRes.result.value.replace(/^data:image\/png;base64,/, "");
+        fs.writeFileSync(path.join(STORY_DIR, `${ideo.slug}.png`), Buffer.from(storyBase64, "base64"));
+        const ARTIFACT_STORY_DIR = "/Users/sarthak/.gemini/antigravity/brain/52d5aae2-b61f-45a0-bf88-6b4ce3294531/story-cards";
+        if (!fs.existsSync(ARTIFACT_STORY_DIR)) {
+          fs.mkdirSync(ARTIFACT_STORY_DIR, { recursive: true });
+        }
+        fs.writeFileSync(path.join(ARTIFACT_STORY_DIR, `${ideo.slug}.png`), Buffer.from(storyBase64, "base64"));
+      }
+
+      console.log(`[${i + 1}/${ideos.length}] ${ideo.emoji} ${ideo.en.title} -> ${band} (${lean}) -> saved: screenshots/ideologies/${ideo.slug}.png & story-cards/${ideo.slug}.png`);
     }
 
     // Generate extreme 100% Left and 100% Right cases
     console.log("\nGenerating extreme edge cases (100% Left & 100% Right)...");
     const extremeCases = [
-      { name: "100-percent-left", ans: "004040044404", emoji: "✊" },
-      { name: "100-percent-right", ans: "440404400040", emoji: "⚔️" }
+      { name: "100-percent-left", ans: "004040044404" },
+      { name: "100-percent-right", ans: "440404400040" }
     ];
 
     for (const c of extremeCases) {
@@ -286,15 +311,6 @@ async function main() {
       await send("Runtime.evaluate", {
         expression: `(() => {
           document.querySelectorAll(".ad, .site-header").forEach(el => el.remove());
-          const brand = document.querySelector(".result-hero__brand");
-          if (brand) {
-            const emojiDiv = document.createElement("div");
-            emojiDiv.className = "result-hero__emoji";
-            emojiDiv.id = "result-emoji";
-            emojiDiv.setAttribute("aria-hidden", "true");
-            emojiDiv.textContent = ${JSON.stringify(c.emoji)};
-            brand.parentNode.replaceChild(emojiDiv, brand);
-          }
           const lead = document.getElementById("result-lead");
           if (lead) lead.textContent = "sarthak, your political ideology is";
           const guide = document.getElementById("result-guide-link");
@@ -331,7 +347,35 @@ async function main() {
       if (fs.existsSync(ARTIFACT_DIR)) {
         fs.writeFileSync(path.join(ARTIFACT_DIR, `${c.name}.png`), Buffer.from(shotRes.data, "base64"));
       }
-      console.log(`Saved extreme case: screenshots/ideologies/${c.name}.png`);
+
+      // Story Card for extreme cases
+      await send("Runtime.evaluate", {
+        expression: `(() => {
+          const btn = document.getElementById("hero-share-wa");
+          if (btn) btn.click();
+        })()`
+      });
+
+      await new Promise((r) => setTimeout(r, 600));
+
+      const canvasRes = await send("Runtime.evaluate", {
+        expression: `(() => {
+          const canvas = document.querySelector("#share-preview-img-wrap canvas");
+          return canvas ? canvas.toDataURL("image/png") : null;
+        })()`,
+        returnByValue: true
+      });
+
+      if (canvasRes.result.value) {
+        const storyBase64 = canvasRes.result.value.replace(/^data:image\/png;base64,/, "");
+        fs.writeFileSync(path.join(STORY_DIR, `${c.name}.png`), Buffer.from(storyBase64, "base64"));
+        const ARTIFACT_STORY_DIR = "/Users/sarthak/.gemini/antigravity/brain/52d5aae2-b61f-45a0-bf88-6b4ce3294531/story-cards";
+        if (fs.existsSync(ARTIFACT_STORY_DIR)) {
+          fs.writeFileSync(path.join(ARTIFACT_STORY_DIR, `${c.name}.png`), Buffer.from(storyBase64, "base64"));
+        }
+      }
+
+      console.log(`Saved extreme case: screenshots/ideologies/${c.name}.png & story-cards/${c.name}.png`);
     }
 
     ws.close();

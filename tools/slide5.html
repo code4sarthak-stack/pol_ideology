@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    width: 896px;
+    height: 1200px;
+    background: #F7F5EE;
+    font-family: 'Inter', -apple-system, sans-serif;
+    color: #0F172A;
+    padding: 60px 52px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+  .header-row {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  .badge-brand {
+    font-size: 21px;
+    font-weight: 500;
+    color: #0F172A;
+    border: 1.5px solid #0F172A;
+    border-radius: 9999px;
+    padding: 7px 22px;
+    background: transparent;
+  }
+  .title-section {
+    margin-bottom: 30px;
+  }
+  h1 {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-size: 72px;
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.5px;
+    color: #0F172A;
+    margin-bottom: 12px;
+  }
+  .subtitle {
+    font-size: 25px;
+    color: #475569;
+    font-weight: 400;
+  }
+  .compass-card {
+    background: #FFFFFF;
+    border-radius: 28px;
+    padding: 36px 36px 32px 36px;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.06);
+    border: 1px solid rgba(0,0,0,0.04);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+  }
+  .compass-grid-wrapper {
+    width: 480px;
+    height: 480px;
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    border: 1.5px solid #CBD5E1;
+    margin: 20px 0 28px 0;
+  }
+  .quadrant {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+  }
+  .q-tl { top: 0; left: 0; background: #FFF1F2; } /* Auth Left */
+  .q-tr { top: 0; right: 0; background: #EEF2FF; } /* Auth Right */
+  .q-bl { bottom: 0; left: 0; background: #F0FDF4; } /* Lib Left */
+  .q-br { bottom: 0; right: 0; background: #FEF9C3; } /* Lib Right */
+  
+  .axis-v {
+    position: absolute;
+    top: 0; bottom: 0; left: 50%;
+    width: 2px;
+    background: #64748B;
+    transform: translateX(-50%);
+    z-index: 2;
+  }
+  .axis-h {
+    position: absolute;
+    left: 0; right: 0; top: 50%;
+    height: 2px;
+    background: #64748B;
+    transform: translateY(-50%);
+    z-index: 2;
+  }
+  .grid-lines {
+    position: absolute;
+    inset: 0;
+    background-image: 
+      linear-gradient(to right, rgba(148, 163, 184, 0.25) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(148, 163, 184, 0.25) 1px, transparent 1px);
+    background-size: 60px 60px;
+    z-index: 1;
+  }
+  .label-axis {
+    position: absolute;
+    font-size: 15px;
+    font-weight: 700;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    z-index: 3;
+  }
+  .label-auth { top: 10px; left: 50%; transform: translateX(-50%); }
+  .label-lib { bottom: 10px; left: 50%; transform: translateX(-50%); }
+  .label-left { left: 10px; top: 50%; transform: translateY(-50%); }
+  .label-right { right: 10px; top: 50%; transform: translateY(-50%); }
+
+  /* Pin marker at x: +55% (right), y: +75% (top) */
+  /* Compass coords: 0 is center (240px). x=+55 -> 240 + (240*0.55) = 372px. y=+75 (up) -> 240 - (240*0.75) = 60px. */
+  .pin-glow {
+    position: absolute;
+    left: 372px;
+    top: 60px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(79, 70, 229, 0.3);
+    transform: translate(-50%, -50%);
+    z-index: 4;
+    animation: pulse 2s infinite;
+  }
+  .pin-core {
+    position: absolute;
+    left: 372px;
+    top: 60px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #4F46E5;
+    border: 3px solid #FFFFFF;
+    box-shadow: 0 0 14px rgba(79, 70, 229, 0.9);
+    transform: translate(-50%, -50%);
+    z-index: 5;
+  }
+  .compass-summary {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 20px;
+    padding: 18px 24px;
+  }
+  .compass-badge {
+    background: #4F46E5;
+    color: #FFFFFF;
+    font-weight: 700;
+    font-size: 19px;
+    padding: 8px 18px;
+    border-radius: 9999px;
+    white-space: nowrap;
+  }
+  .compass-text {
+    font-size: 19px;
+    color: #1E293B;
+    font-weight: 500;
+    line-height: 1.3;
+  }
+</style>
+</head>
+<body>
+  <div>
+    <div class="header-row">
+      <div class="badge-brand">ideoMap.in</div>
+    </div>
+    <div class="title-section">
+      <h1>Where It Sits on the Compass</h1>
+      <div class="subtitle">Exact ideological coordinate mapping</div>
+    </div>
+    <div class="compass-card">
+      <div class="compass-grid-wrapper">
+        <div class="quadrant q-tl"></div>
+        <div class="quadrant q-tr"></div>
+        <div class="quadrant q-bl"></div>
+        <div class="quadrant q-br"></div>
+        <div class="grid-lines"></div>
+        <div class="axis-v"></div>
+        <div class="axis-h"></div>
+        <div class="label-axis label-auth">Authority</div>
+        <div class="label-axis label-lib">Liberty</div>
+        <div class="label-axis label-left">Equality</div>
+        <div class="label-axis label-right">Markets</div>
+        <div class="pin-glow"></div>
+        <div class="pin-core"></div>
+      </div>
+      <div class="compass-summary">
+        <div class="compass-badge">Authoritarian Right [+55, +75]</div>
+        <div class="compass-text">High state authority combined with aggressive, pro-market capitalism.</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

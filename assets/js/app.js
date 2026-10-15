@@ -2428,6 +2428,14 @@
 
   /* ---------- Boot ---------- */
 
+  // Track sponsor clicks on header-powered link
+  document.addEventListener("click", function (e) {
+    var pLink = e.target && e.target.closest ? e.target.closest(".header-powered") : null;
+    if (pLink) {
+      track("sponsor_click", { sponsor: "examlytix", slot: "header_powered", target_url: "https://examlytix.com" });
+    }
+  });
+
   applyI18n();
   initAnalytics();
   var pages = { home: homePage, start: startPage, quiz: quizPage, result: resultPage, stats: statsPage };

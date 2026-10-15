@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    width: 896px;
+    height: 1200px;
+    background: #F7F5EE;
+    font-family: 'Inter', -apple-system, sans-serif;
+    color: #0F172A;
+    padding: 60px 52px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+  .header-row {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  .badge-brand {
+    font-size: 21px;
+    font-weight: 500;
+    color: #0F172A;
+    border: 1.5px solid #0F172A;
+    border-radius: 9999px;
+    padding: 7px 22px;
+    background: transparent;
+  }
+  .title-section {
+    margin-bottom: 40px;
+  }
+  h1 {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-size: 76px;
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.5px;
+    color: #0F172A;
+    margin-bottom: 12px;
+  }
+  .subtitle {
+    font-size: 25px;
+    color: #475569;
+    font-weight: 400;
+  }
+  .cards-container {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    margin-bottom: 44px;
+  }
+  .bento-card {
+    background: #FFFFFF;
+    border-radius: 26px;
+    padding: 36px 40px;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.06);
+    border: 1px solid rgba(0,0,0,0.04);
+    position: relative;
+    border-left: 10px solid transparent;
+  }
+  .card-success {
+    border-left-color: #16A34A;
+  }
+  .card-caution {
+    border-left-color: #DC2626;
+  }
+  .card-header-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  .pill-status {
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 6px 16px;
+    border-radius: 9999px;
+  }
+  .pill-success {
+    background: #DCFCE7;
+    color: #15803D;
+  }
+  .pill-caution {
+    background: #FEE2E2;
+    color: #B91C1C;
+  }
+  .card-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #0F172A;
+  }
+  .card-text {
+    font-size: 20px;
+    line-height: 1.5;
+    color: #334155;
+    font-weight: 400;
+  }
+  .cta-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    margin-top: 10px;
+  }
+  .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: #4F46E5;
+    color: #FFFFFF;
+    font-size: 24px;
+    font-weight: 600;
+    padding: 20px 48px;
+    border-radius: 9999px;
+    box-shadow: 0 12px 28px rgba(79, 70, 229, 0.35);
+    text-decoration: none;
+    letter-spacing: -0.2px;
+  }
+  .cta-sub {
+    font-size: 17px;
+    color: #64748B;
+    font-weight: 500;
+  }
+</style>
+</head>
+<body>
+  <div>
+    <div class="header-row">
+      <div class="badge-brand">ideoMap.in</div>
+    </div>
+    <div class="title-section">
+      <h1>Real-World In Practice</h1>
+      <div class="subtitle">Historical Precedents & Cautionary Lessons</div>
+    </div>
+    <div class="cards-container">
+      <div class="bento-card card-success">
+        <div class="card-header-row">
+          <span class="pill-status pill-success">🟢 Success Case</span>
+          <span class="card-title">Singapore's Economic Miracle • 1965–1990</span>
+        </div>
+        <div class="card-text">
+          Transformed from a vulnerable third-world port into a global financial powerhouse through strict social order and state-backed capitalism under Lee Kuan Yew.
+        </div>
+      </div>
+      <div class="bento-card card-caution">
+        <div class="card-header-row">
+          <span class="pill-status pill-caution">🔴 Cautionary Case</span>
+          <span class="card-title">Pinochet's Violent Crackdowns • Chile, 1973–1990</span>
+        </div>
+        <div class="card-text">
+          Radical free-market deregulation and privatization enforced through military dictatorship, dissolution of congress, and widespread human rights abuses.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="cta-section">
+    <div class="cta-btn">Discover your score • ideoMap.in</div>
+    <div class="cta-sub">Take the free 12-question quiz to find your ideology</div>
+  </div>
+</body>
+</html>

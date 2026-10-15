@@ -253,11 +253,21 @@ function page(ideo, lang) {
   <meta name="twitter:image" content="${ogImg}">
   <link rel="preload" href="${root}assets/fonts/instrument-sans.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="${root}assets/fonts/instrument-serif.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="${root}assets/css/style.css">
 </head>
 <body data-page="ideology">
   <header class="site-header">
-    <a class="brand" href="${root}index.html"><img src="${root}assets/img/icon.svg" alt="" width="28" height="28"><span>ideoMap</span></a>
+    <div class="site-header__brand-wrap">
+      <a href="https://examlytix.com" target="_blank" rel="noopener" class="header-powered" aria-label="Powered by ExamLytix">
+        <span class="powered-label">powered by</span>
+        <img src="${root}assets/img/examlytix-logo.png" class="powered-logo" alt="" width="14" height="14">
+        <span class="powered-brand">Exam<span class="brand-highlight">Lytix</span></span>
+      </a>
+      <a class="brand" href="${root}index.html"><img src="${root}assets/img/icon.svg" alt="" width="28" height="28"><span>ideoMap</span></a>
+    </div>
     <a class="lang-switch" href="${otherHref}" lang="${other}" hreflang="${other}">${esc(STR[lang].langSwitch)}</a>
   </header>
 
@@ -423,11 +433,21 @@ function hubPage(lang) {
   <meta name="twitter:card" content="summary_large_image">
   <link rel="preload" href="${root}assets/fonts/instrument-sans.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="${root}assets/fonts/instrument-serif.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="${root}assets/css/style.css">
 </head>
 <body data-page="ideology-hub">
   <header class="site-header">
-    <a class="brand" href="${root}index.html"><img src="${root}assets/img/icon.svg" alt="" width="28" height="28"><span>ideoMap</span></a>
+    <div class="site-header__brand-wrap">
+      <a href="https://examlytix.com" target="_blank" rel="noopener" class="header-powered" aria-label="Powered by ExamLytix">
+        <span class="powered-label">powered by</span>
+        <img src="${root}assets/img/examlytix-logo.png" class="powered-logo" alt="" width="14" height="14">
+        <span class="powered-brand">Exam<span class="brand-highlight">Lytix</span></span>
+      </a>
+      <a class="brand" href="${root}index.html"><img src="${root}assets/img/icon.svg" alt="" width="28" height="28"><span>ideoMap</span></a>
+    </div>
     <a class="lang-switch" href="${otherHref}" lang="${other}" hreflang="${other}">${esc(STR[lang].langSwitch)}</a>
   </header>
 
