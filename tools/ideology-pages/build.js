@@ -260,15 +260,14 @@ function page(ideo, lang) {
 </head>
 <body data-page="ideology">
   <header class="site-header">
-    <div class="site-header__brand-wrap">
+    <a class="brand" href="${root}index.html"><img src="${root}assets/img/icon.svg" alt="" width="28" height="28"><span>ideoMap</span></a>
+    <div class="site-header__right">
+      <a class="lang-switch" href="${otherHref}" lang="${other}" hreflang="${other}">${esc(STR[lang].langSwitch)}</a>
       <a href="https://examlytix.com" target="_blank" rel="noopener" class="header-powered" aria-label="Powered by ExamLytix">
         <span class="powered-label">powered by</span>
-        <img src="${root}assets/img/examlytix-logo.png" class="powered-logo" alt="" width="14" height="14">
-        <span class="powered-brand">Exam<span class="brand-highlight">Lytix</span></span>
+        <span class="powered-brand"><img src="${root}assets/img/examlytix-logo.png" class="powered-logo" alt="" width="13" height="13">Exam<span class="brand-highlight">Lytix</span></span>
       </a>
-      <a class="brand" href="${root}index.html"><img src="${root}assets/img/icon.svg" alt="" width="28" height="28"><span>ideoMap</span></a>
     </div>
-    <a class="lang-switch" href="${otherHref}" lang="${other}" hreflang="${other}">${esc(STR[lang].langSwitch)}</a>
   </header>
 
   <main class="container ideo">
@@ -440,15 +439,14 @@ function hubPage(lang) {
 </head>
 <body data-page="ideology-hub">
   <header class="site-header">
-    <div class="site-header__brand-wrap">
+    <a class="brand" href="${root}index.html"><img src="${root}assets/img/icon.svg" alt="" width="28" height="28"><span>ideoMap</span></a>
+    <div class="site-header__right">
+      <a class="lang-switch" href="${otherHref}" lang="${other}" hreflang="${other}">${esc(STR[lang].langSwitch)}</a>
       <a href="https://examlytix.com" target="_blank" rel="noopener" class="header-powered" aria-label="Powered by ExamLytix">
         <span class="powered-label">powered by</span>
-        <img src="${root}assets/img/examlytix-logo.png" class="powered-logo" alt="" width="14" height="14">
-        <span class="powered-brand">Exam<span class="brand-highlight">Lytix</span></span>
+        <span class="powered-brand"><img src="${root}assets/img/examlytix-logo.png" class="powered-logo" alt="" width="13" height="13">Exam<span class="brand-highlight">Lytix</span></span>
       </a>
-      <a class="brand" href="${root}index.html"><img src="${root}assets/img/icon.svg" alt="" width="28" height="28"><span>ideoMap</span></a>
     </div>
-    <a class="lang-switch" href="${otherHref}" lang="${other}" hreflang="${other}">${esc(STR[lang].langSwitch)}</a>
   </header>
 
   <main class="container ideo ideo-hub">
