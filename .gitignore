@@ -1,0 +1,13 @@
+# Build & dependency directories
+node_modules/
+
+# Social media output & generation folders (never push to repo)
+insta_data/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
