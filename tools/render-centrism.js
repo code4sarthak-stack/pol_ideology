@@ -16,8 +16,8 @@ if (!fs.existsSync(OUT_DIR)) {
 const svgLogo = fs.readFileSync(path.join(ROOT, "assets/img/icon.svg"), "utf8");
 const logoBase64 = `data:image/svg+xml;base64,${Buffer.from(svgLogo).toString("base64")}`;
 
-// Allegorical classical centerpiece for Slide 1 (Raphael's Iustitia / Lady Justice)
-const justiceImagePath = path.join(ROOT, "tools/raphael_iustitia.jpg");
+// Custom centerpiece for Slide 1 (Walking the Middle Path between Left and Right)
+const coverImagePath = path.join(ROOT, "tools/centrism_custom_cover.jpg");
 
 // Mathematical Compass Engine & Algorithm
 const { getCompassModel, crossCheckPin } = require("./compass-algorithm.js");
@@ -147,9 +147,8 @@ const slide1Html = `<!DOCTYPE html>
       width: 100%;
       height: 100%;
       object-fit: cover;
-      object-position: center 38%;
+      object-position: center 36%;
       display: block;
-      filter: contrast(1.04) brightness(0.98);
     }
     .frame-badge {
       position: absolute;
@@ -220,8 +219,8 @@ const slide1Html = `<!DOCTYPE html>
 
   <div class="visual-wrapper">
     <div class="monument-frame">
-      <img src="/justice.jpg" alt="Lady Justice & The Balanced Scales">
-      <div class="frame-badge">⚖️ Classical Allegory · Lady Justice & The Balanced Scales</div>
+      <img src="/cover.jpg" alt="The Middle Path">
+      <div class="frame-badge">⚖️ The Middle Path · Walking Between Extremes</div>
     </div>
   </div>
 
@@ -1829,9 +1828,9 @@ const pages = {
 };
 
 const server = http.createServer((req, res) => {
-  if (req.url === "/justice.jpg") {
+  if (req.url === "/cover.jpg" || req.url === "/justice.jpg") {
     res.writeHead(200, { "Content-Type": "image/jpeg" });
-    res.end(fs.readFileSync(justiceImagePath));
+    res.end(fs.readFileSync(coverImagePath));
     return;
   }
   const content = pages[req.url] || pages["/slide1"];
@@ -1839,8 +1838,8 @@ const server = http.createServer((req, res) => {
   res.end(content);
 });
 
-const PORT = 9896;
-const DEBUG_PORT = 9563;
+const PORT = 9894;
+const DEBUG_PORT = 9562;
 
 server.listen(PORT, "127.0.0.1", async () => {
   console.log(`Rendering Centrism assets on port ${PORT}...`);
@@ -1913,6 +1912,7 @@ server.listen(PORT, "127.0.0.1", async () => {
 
     // Also copy to artifact directory for presentation
     fs.writeFileSync(path.join(ARTIFACT_DIR, job.out), Buffer.from(screenshot.data, "base64"));
+    fs.writeFileSync(path.join(ARTIFACT_DIR, "cnt_" + job.out), Buffer.from(screenshot.data, "base64"));
   }
 
   // Generate clean explanation.txt
