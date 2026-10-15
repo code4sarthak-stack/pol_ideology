@@ -1335,12 +1335,20 @@ strong { color: var(--ink); font-weight: 600; }
 .gauge-center { text-align: center; }
 .gauge-pct {
   display: block;
-  font-size: 1.55rem;
+  font-size: 1.15rem;
   font-weight: 700;
   color: var(--ink);
   line-height: 1.15;
   letter-spacing: -0.01em;
   font-variant-numeric: tabular-nums;
+}
+.gauge-note {
+  margin: 10px auto 0;
+  max-width: 300px;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--muted);
+  text-align: center;
 }
 
 .result-hero__desc {

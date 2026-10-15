@@ -9,7 +9,8 @@
  *   good: that view at its best    bad: a cautionary case of it going wrong
  *
  * ideologies: the overall result is the ideology whose position [econ, social, civil, world]
- * is closest to the user's four scores.
+ * is closest to the user's four scores. When two are exactly equally close, the one listed
+ * first here wins, so reordering this list changes some results, including shared links.
  */
 window.QUIZ.overallBands = [
   {
@@ -48,6 +49,15 @@ window.QUIZ.overallBands = [
     "hi": "धुर दक्षिणपंथी"
   }
 ];
+
+// Splits a -100 … +100 score into the "x% Left / y% Right" shown under meters and the gauge.
+// Both sides round down the same way, so -3 and +3 both show 51%, and only a score of
+// exactly ±100 (every answer at that pole) shows 100%.
+// Used by app.js, stats.js and tools/ideology-pages/build.js, which all load this file.
+window.QUIZ.leanSplit = function (value) {
+  var lean = 50 + Math.floor(Math.abs(value) / 2);
+  return value < 0 ? { left: lean, right: 100 - lean } : { left: 100 - lean, right: lean };
+};
 
 window.QUIZ.bands = {
   "econ": [
