@@ -10,10 +10,14 @@
   var DB = window.QUIZ_DB;
 
   var params = new URLSearchParams(location.search);
+  // Same order as resolveLang() in app.js (URL → saved choice → browser language), so the
+  // dashboard and the page text around it are always in the same language.
+  var LANGS = ["en", "hi"];
   var lang = params.get("lang");
-  if (lang !== "hi" && lang !== "en") {
-    try { lang = localStorage.getItem("pq_lang") || "en"; } catch (e) { lang = "en"; }
+  if (LANGS.indexOf(lang) === -1) {
+    try { lang = localStorage.getItem("pq_lang"); } catch (e) { lang = null; }
   }
+  if (LANGS.indexOf(lang) === -1) lang = /^hi\b/i.test(navigator.language || "") ? "hi" : "en";
 
   function t(key, vars) {
     var s = STR[lang][key];

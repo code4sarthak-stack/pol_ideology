@@ -121,7 +121,8 @@
 
   function renderAds() {
     var slots = document.querySelectorAll("[data-ad]");
-    if (adsEnabled) {
+    // index.html already has the tag in <head> (AdSense site verification), so add it only once.
+    if (adsEnabled && !document.querySelector("script[src*='pagead/js/adsbygoogle.js']")) {
       // One script tag also enables Auto ads (anchor + vignette), which you switch on in AdSense.
       var s = document.createElement("script");
       s.async = true;
@@ -1082,7 +1083,7 @@
               '</div>' +
             '</div>';
           kpiTop.style.cursor = "pointer";
-          kpiTop.title = t("laymanTapHint") || "Tap to learn more";
+          kpiTop.title = t("laymanTapHint");
           kpiTop.onclick = function () {
             openIdeologyModal(topIdeoObj, kpiTop);
           };
@@ -1249,16 +1250,21 @@
 
         updateListDisplay();
 
-        ideoBarsContainer.addEventListener("click", function (e) {
-          if (e.target.closest("#btn-toggle-ideo-bars")) return;
+        function openBar(e) {
+          if (e.target.closest("#btn-toggle-ideo-bars")) return false;
           var itemEl = e.target.closest(".stats-bar-item");
-          if (!itemEl) return;
-          var key = itemEl.getAttribute("data-key");
-          if (!key) return;
-          var ideoObj = findIdeology(key);
-          if (ideoObj && typeof openIdeologyModal === "function") {
-            openIdeologyModal(ideoObj, itemEl);
-          }
+          if (!itemEl) return false;
+          var ideoObj = findIdeology(itemEl.getAttribute("data-key"));
+          if (!ideoObj) return false;
+          openIdeologyModal(ideoObj, itemEl);
+          return true;
+        }
+
+        ideoBarsContainer.addEventListener("click", openBar);
+        // The bars are role="button", so Enter and Space must work like a click.
+        ideoBarsContainer.addEventListener("keydown", function (e) {
+          if (e.key !== "Enter" && e.key !== " ") return;
+          if (openBar(e)) e.preventDefault(); // stop Space from scrolling the page
         });
       }
     });
@@ -1515,10 +1521,26 @@
 
   function closeSharePreviewModal() {
     var modal = document.getElementById("share-preview-modal");
-    if (!modal) return;
+    // Already closed: leave the page alone (the ideology explainer may be open and own "modal-open").
+    if (!modal || !modal.classList.contains("is-active")) return;
     modal.classList.remove("is-active");
     modal.setAttribute("aria-hidden", "true");
     document.body.classList.remove("modal-open");
+  }
+
+  // The ways to close the preview are wired up once, not on every open, so they don't pile up.
+  var sharePreviewInitialized = false;
+  function initSharePreviewModal(modal) {
+    if (sharePreviewInitialized) return;
+    sharePreviewInitialized = true;
+    var closeBtn = document.getElementById("share-preview-close");
+    if (closeBtn) closeBtn.addEventListener("click", closeSharePreviewModal);
+    modal.addEventListener("click", function (e) {
+      if (e.target === modal) closeSharePreviewModal();
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") closeSharePreviewModal();
+    });
   }
 
   /**
@@ -1543,8 +1565,8 @@
     var waChatBtn   = document.getElementById("share-preview-wa-chat-btn");
     var instaBtn    = document.getElementById("share-preview-insta-btn");
     var dlBtn       = document.getElementById("share-preview-dl-btn");
-    var closeBtn    = document.getElementById("share-preview-close");
     if (!modal) return;
+    initSharePreviewModal(modal);
 
     var actionHandlers = (typeof actions === "object" && actions !== null) ? actions : {};
     if (typeof actions === "string") {
@@ -1581,19 +1603,6 @@
     modal.setAttribute("aria-hidden", "false");
     document.body.classList.add("modal-open");
     modal.focus();
-
-    // Close button
-    if (closeBtn) {
-      closeBtn.onclick = closeSharePreviewModal;
-    }
-    // Backdrop click closes
-    modal.addEventListener("click", function onBdClick(e) {
-      if (e.target === modal) { closeSharePreviewModal(); modal.removeEventListener("click", onBdClick); }
-    });
-    // Escape key closes
-    document.addEventListener("keydown", function onEsc(e) {
-      if (e.key === "Escape") { closeSharePreviewModal(); document.removeEventListener("keydown", onEsc); }
-    });
 
     // Build canvas asynchronously so the modal animation plays first
     setTimeout(function () { loadStoryLogo(renderPreview); }, 60);

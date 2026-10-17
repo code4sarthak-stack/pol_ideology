@@ -6,12 +6,12 @@ A mobile-first quiz website that earns money from ads. A visitor:
 2. **Enters their name** and picks a length: **Quick** (12 questions, about 2 minutes) or **In-depth** (24 questions, about 5 minutes).
 3. **Answers the questions**, one per page. Each question has its own five answer choices, plus a short note on the history and research behind it.
    - Quick-quiz takers reach a **checkpoint** after question 12: *See results now* or *Continue to 24 questions*. Their 12 answers are kept either way.
-   - A Quick result page also offers *Continue to 24 questions* (not shown in a friend's shared view).
+   - A Quick result page also offers *Continue to 24 questions*.
 4. **Gets a result page** with:
    - their closest ideology (out of 16) and an overall Left ↔ Right meter
    - a meter for each of 4 areas: Economy, Society, Civil liberties and World politics
    - one good and one cautionary real-world example for their ideology and for each area
-   - a political-compass chart and WhatsApp sharing
+   - a political-compass chart and sharing (WhatsApp, Instagram story image, copy link)
 
 Every page shows ads. **See [AD_STRATEGY.md](AD_STRATEGY.md) for the full monetisation plan.**
 
@@ -120,7 +120,7 @@ The project tracks overall ideological trends across all participants:
 
 1. **Anonymous Result Submission**:
    - When a user finishes the quiz, `assets/js/db.js` logs an anonymous record (ideology, overall band, Left-Right score, and 4 domain scores).
-   - Friend shared views (`?s=1`) and page reloads are automatically deduplicated.
+   - Page reloads and revisits are automatically deduplicated (old `?s=1` friend links never count).
    - **One entry per quiz.** A Quick (12-answer) result and the In-depth (24-answer) result that continues it share their first 12 answers, so they count as one quiz. When someone finishes all 24 after seeing their Quick result, the 24-answer result *replaces* the 12-answer one: the "quizzes taken" counter does not go up again, the summary swaps the old scores for the new ones, and the old entry is removed from the recent list. The browser remembers what it saved per quiz in `localStorage` (`pq_entry_…`, `pq_counted_…`: anonymous scores only, never the name). A different browser or cleared site data counts as a new quiz.
 2. **Community Statistics Dashboard (`stats.html`)**:
    - Total number of participants who took the quiz.
@@ -142,4 +142,5 @@ The project tracks overall ideological trends across all participants:
 - **Quiz length** is `total=12` or `total=24`. After question 12 of the Quick quiz the next page is `quiz.html?step=checkpoint&a=…&total=12`; its two buttons are real links to `result.html?a=…` and `quiz.html?q=13&a=…&total=24`. Old links without `total` are treated as Quick, and any URL with more than 12 answers as In-depth. A result is valid with exactly 12 or 24 answers.
 - **GA4 events**: `quiz_start` and `answer` carry `total`; `checkpoint_choice` (`results` / `continue`) is sent at the checkpoint; `quiz_complete` is sent on the last answer of the In-depth quiz or on *See results now*; `precision_continue` is sent from the result page.
 - **The name is stored only in `localStorage`.** It is never put in a URL, because URLs are sent to ad and analytics servers.
-- **Shared links** look like `result.html?a=…&s=1`. They open a "friend view" with a *Take the quiz* call to action.
+- **Sharing** never puts answers in the link. The share buttons (`setupShare` / `shareUrl` in `app.js`) link to the guide page of the user's ideology, e.g. `https://ideomap.in/ideology/social-democracy.html` (`/hi/ideology/…` in Hindi), or to `https://ideomap.in` for story images. The story image (1080×1920) is drawn on a canvas in the browser and shared with the Web Share API, or downloaded where that isn't available.
+- **Old friend links** (`result.html?a=…&s=1`, from earlier versions) still work: they open a "friend view" with a *Take the quiz* call to action, without the visitor's name, the *Continue to 24 questions* card or a community submission. New shares no longer create them.
