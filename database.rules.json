@@ -1,0 +1,63 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+
+    "quiz_count": {
+      ".read": true,
+      ".write": "newData.exists()",
+      ".validate": "newData.isNumber() && newData.val() == (data.exists() ? data.val() : 0) + 1"
+    },
+
+    "ideology_tracker": {
+      "summary": {
+        ".read": true,
+        ".write": "newData.exists()",
+        ".validate": "newData.hasChildren(['total', 'bands', 'ideologies', 'sums', 'langs'])",
+
+        "total": {
+          ".validate": "newData.isNumber() && newData.val() >= 0 && (data.exists() ? (newData.val() == data.val() || newData.val() == data.val() + 1) : newData.val() <= 1)"
+        },
+        "bands": {
+          "$band": {
+            ".validate": "$band.matches(/^[0-6]$/) && newData.isNumber() && newData.val() >= 0 && newData.val() <= newData.parent().parent().child('total').val()"
+          }
+        },
+        "ideologies": {
+          "$key": {
+            ".validate": "$key.matches(/^(socdem|demsoc|progressive|centrist|classical|libertarian|libcon|conservative|natcon|leftnat|gandhian|communitarian|libsoc|communism|authcap|authnat)$/) && newData.isNumber() && newData.val() >= 0 && newData.val() <= newData.parent().parent().child('total').val()"
+          }
+        },
+        "sums": {
+          "$domain": {
+            ".validate": "$domain.matches(/^(econ|social|civil|world|overall)$/) && newData.isNumber() && newData.val() >= -100 * newData.parent().parent().child('total').val() && newData.val() <= 100 * newData.parent().parent().child('total').val()"
+          }
+        },
+        "langs": {
+          "$lang": {
+            ".validate": "$lang.matches(/^(en|hi)$/) && newData.isNumber() && newData.val() >= 0 && newData.val() <= newData.parent().parent().child('total').val()"
+          }
+        },
+        "$other": { ".validate": false }
+      },
+
+      "recent": {
+        ".read": "query.orderByKey == true && query.limitToLast <= 15",
+
+        "$id": {
+          ".write": "!data.exists() || !newData.exists()",
+          ".validate": "newData.hasChildren(['ideology', 'overall_band', 'overall_score', 'lang', 'ts'])",
+
+          "ideology": {
+            ".validate": "newData.isString() && newData.val().matches(/^(socdem|demsoc|progressive|centrist|classical|libertarian|libcon|conservative|natcon|leftnat|gandhian|communitarian|libsoc|communism|authcap|authnat)$/)"
+          },
+          "overall_band": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 6" },
+          "overall_score": { ".validate": "newData.isNumber() && newData.val() >= -100 && newData.val() <= 100" },
+          "lang": { ".validate": "newData.val() == 'en' || newData.val() == 'hi'" },
+          "ts": { ".validate": "newData.val() == now" },
+          "$other": { ".validate": false }
+        }
+      }
+    }
+  }
+}

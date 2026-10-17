@@ -127,8 +127,8 @@
           exHtml +
           '    </div>' +
           '    <div class="stats-bar-metric">' +
-          '      <span class="stats-bar-pct">' + item.pct + '%</span>' +
-          '      <span class="stats-bar-count">(' + item.count + ')</span>' +
+          '      <span class="stats-bar-pct">' + Number(item.pct) + '%</span>' +
+          '      <span class="stats-bar-count">(' + Number(item.count) + ')</span>' +
           '    </div>' +
           '  </div>' +
           '  <div class="stats-bar-track">' +
@@ -161,10 +161,10 @@
           '  <div class="spectrum-band-head">' +
           '    <span class="spectrum-band-dot" style="background: ' + bandColors[i] + ';"></span>' +
           '    <span class="spectrum-band-name">' + esc(band[lang]) + '</span>' +
-          '    <span class="spectrum-band-pct">' + stat.pct + '% (' + stat.count + ')</span>' +
+          '    <span class="spectrum-band-pct">' + Number(stat.pct) + '% (' + Number(stat.count) + ')</span>' +
           '  </div>' +
           '  <div class="spectrum-band-track">' +
-          '    <div class="spectrum-band-fill" style="width: ' + stat.pct + '%; background: ' + bandColors[i] + ';"></div>' +
+          '    <div class="spectrum-band-fill" style="width: ' + Number(stat.pct) + '%; background: ' + bandColors[i] + ';"></div>' +
           '  </div>' +
           '</div>'
         );
@@ -220,8 +220,9 @@
           var ideoObj = findIdeology(r.ideology);
           var emoji = ideoObj ? ideoObj.emoji : "🧭";
           var title = ideoObj ? ideoObj[lang].title.split(" (")[0] : r.ideology;
-          var bandText = overallBandLabel(r.overall_score);
-          var scoreFmt = (r.overall_score > 0 ? "+" : "") + r.overall_score;
+          var score = Number(r.overall_score) || 0;
+          var bandText = overallBandLabel(score);
+          var scoreFmt = (score > 0 ? "+" : "") + score;
 
           return (
             '<div class="recent-feed-item">' +

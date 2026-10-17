@@ -391,6 +391,7 @@
     try {
       if (!window.firebase.apps || !window.firebase.apps.length) {
         window.firebase.initializeApp(CFG.FIREBASE);
+        if (window.activateFirebaseAppCheck) window.activateFirebaseAppCheck();
       }
       fbDbInstance = window.firebase.database();
       return fbDbInstance;
@@ -551,32 +552,11 @@
             save(countedKey, "1");
           }
         });
-        return;
       } catch (e) {
         console.warn("Quiz counter transaction error:", e);
       }
     }
-
-    // Direct REST fallback if SDK is unavailable or blocked
-    if (CFG.FIREBASE && CFG.FIREBASE.databaseURL) {
-      var url = CFG.FIREBASE.databaseURL.replace(/\/+$/, "") + "/quiz_count.json";
-      fetch(url)
-        .then(function (r) { return r.json(); })
-        .then(function (current) {
-          var nextVal = (typeof current === "number" && current >= 0) ? current + 1 : 1;
-          return fetch(url, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(nextVal)
-          });
-        })
-        .then(function () {
-          save(countedKey, "1");
-        })
-        .catch(function (err) {
-          console.warn("REST quiz counter increment warning:", err);
-        });
-    }
+    // No REST fallback: a read-then-write over REST is not atomic and loses counts.
   }
 
   /* ---------- Pages ---------- */
@@ -1098,7 +1078,7 @@
               '<span class="community-kpi-top-row__icon" aria-hidden="true">' + topIdeoObj.emoji + '</span>' +
               '<div class="community-kpi-top-row__body">' +
                 '<span class="community-kpi-top-row__title">' + esc(cleanTitle) + '</span>' +
-                '<span class="community-kpi-top-row__pct">' + topPct + '%</span>' +
+                '<span class="community-kpi-top-row__pct">' + Number(topPct) + '%</span>' +
               '</div>' +
             '</div>';
           kpiTop.style.cursor = "pointer";
@@ -1170,10 +1150,10 @@
             '  <div class="spectrum-band-head">' +
             '    <span class="spectrum-band-dot" style="background: ' + bandColors[i] + ';"></span>' +
             '    <span class="spectrum-band-name">' + esc(band[lang]) + (isUserBand ? ' <span class="badge stats-bar-user-badge">' + esc(t("youTag")) + '</span>' : '') + '</span>' +
-            '    <span class="spectrum-band-pct">' + bStat.pct + '% (' + bStat.count + ')</span>' +
+            '    <span class="spectrum-band-pct">' + Number(bStat.pct) + '% (' + Number(bStat.count) + ')</span>' +
             '  </div>' +
             '  <div class="spectrum-band-track">' +
-            '    <div class="spectrum-band-fill" style="width: ' + bStat.pct + '%; background: ' + bandColors[i] + ';"></div>' +
+            '    <div class="spectrum-band-fill" style="width: ' + Number(bStat.pct) + '%; background: ' + bandColors[i] + ';"></div>' +
             '  </div>' +
             '</div>'
           );
@@ -1219,8 +1199,8 @@
             exHtml +
             '    </div>' +
             '    <div class="stats-bar-metric">' +
-            '      <span class="stats-bar-pct">' + item.pct + '%</span>' +
-            '      <span class="stats-bar-count">(' + item.count + ')</span>' +
+            '      <span class="stats-bar-pct">' + Number(item.pct) + '%</span>' +
+            '      <span class="stats-bar-count">(' + Number(item.count) + ')</span>' +
             '    </div>' +
             '  </div>' +
             '  <div class="stats-bar-track">' +

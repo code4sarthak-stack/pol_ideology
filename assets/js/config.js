@@ -92,5 +92,11 @@ window.SITE_CONFIG = {
     messagingSenderId: "753749456601",
     appId: "1:753749456601:web:018594a3ce3485344df0c8",
     measurementId: "G-JN6Q0JYG29"
-  }
+  },
+
+  // Firebase App Check (reCAPTCHA v3 site key): only this website can then write to the database.
+  // Create the key in Firebase console → App Check → your web app → reCAPTCHA v3, paste it here,
+  // and turn on enforcement for Realtime Database once the console shows verified requests.
+  // Empty = App Check is off.
+  APP_CHECK_SITE_KEY: ""
 };

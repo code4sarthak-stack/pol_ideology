@@ -115,6 +115,25 @@
     { ideology: "natcon", overall_band: 5, overall_score: 44, econ: 24, social: 56, civil: 42, world: 68, lang: "hi", age_min: 3720 }
   ];
 
+  // App Check proves database requests come from this website, not from a script.
+  // Runs once, right after the Firebase app is created (here or in app.js).
+  function activateAppCheck() {
+    if (!CFG.APP_CHECK_SITE_KEY || !window.firebase.appCheck) return;
+    try {
+      window.firebase.appCheck().activate(CFG.APP_CHECK_SITE_KEY, true);
+    } catch (e) {
+      console.warn("App Check activation error:", e);
+    }
+  }
+  window.activateFirebaseAppCheck = activateAppCheck;
+
+  // Database values are public and could be anything, so every number shown on a page goes
+  // through this before it reaches the DOM.
+  function num(v) {
+    var n = Number(v);
+    return isFinite(n) ? n : 0;
+  }
+
   /* Helper: Check Firebase */
   var fbInstance = null;
   function getFirebaseDb() {
@@ -123,6 +142,7 @@
     try {
       if (!window.firebase.apps || !window.firebase.apps.length) {
         window.firebase.initializeApp(CFG.FIREBASE);
+        activateAppCheck();
       }
       fbInstance = window.firebase.database();
       return fbInstance;
@@ -174,6 +194,7 @@
       var d = new Date(dateStrOrMin);
       mins = Math.max(1, Math.round((Date.now() - d.getTime()) / 60000));
     }
+    if (!isFinite(mins)) return "";
     if (mins < 60) return mins + "m ago";
     var hours = Math.floor(mins / 60);
     if (hours < 24) return hours + "h ago";
@@ -343,72 +364,70 @@
       // 1. Try Firebase Realtime Database
       var fb = getFirebaseDb();
       if (fb) {
-        return new Promise(function (resolve) {
-          fb.ref("ideology_tracker").once("value", function (snapshot) {
-            var val = snapshot.val();
-            if (val && val.summary && val.summary.total && val.summary.total > 0) {
-              var sum = val.summary;
-              var total = sum.total;
-              var ideologyStats = {};
-              var topIdeology = null;
-              var maxCount = -1;
+        var root = fb.ref("ideology_tracker");
+        // Only the summary and the newest 15 recent entries are downloaded, never the whole
+        // (ever-growing) recent list. The database rules allow nothing larger.
+        return Promise.all([
+          root.child("summary").once("value"),
+          root.child("recent").orderByKey().limitToLast(15).once("value")
+        ]).then(function (snaps) {
+          var sum = snaps[0].val();
+          var total = sum ? num(sum.total) : 0;
+          if (total <= 0) return processRows(SAMPLE_SUBMISSIONS, false);
 
-              Object.keys(sum.ideologies || {}).forEach(function (k) {
-                var c = sum.ideologies[k];
-                var pct = Math.round((c / total) * 100);
-                ideologyStats[k] = { count: c, pct: pct };
-                if (c > maxCount) {
-                  maxCount = c;
-                  topIdeology = k;
-                }
-              });
+          var ideologyStats = {};
+          var topIdeology = null;
+          var maxCount = -1;
 
-              var bandStats = {};
-              for (var b = 0; b <= 6; b++) {
-                var c = (sum.bands && sum.bands[b]) || 0;
-                bandStats[b] = { count: c, pct: Math.round((c / total) * 100) };
-              }
-
-              var averages = {
-                econ: Math.round((sum.sums.econ || 0) / total),
-                social: Math.round((sum.sums.social || 0) / total),
-                civil: Math.round((sum.sums.civil || 0) / total),
-                world: Math.round((sum.sums.world || 0) / total),
-                overall: Math.round((sum.sums.overall || 0) / total)
-              };
-
-              var recentList = [];
-              if (val.recent) {
-                var keys = Object.keys(val.recent).reverse().slice(0, 15);
-                recentList = keys.map(function (k) {
-                  var r = val.recent[k];
-                  return {
-                    ideology: r.ideology,
-                    overall_band: r.overall_band,
-                    overall_score: r.overall_score,
-                    lang: r.lang,
-                    timeAgo: formatTimeAgo(r.ts)
-                  };
-                });
-              }
-
-              resolve({
-                isLive: true,
-                total: total,
-                ideologies: ideologyStats,
-                bands: bandStats,
-                averages: averages,
-                topIdeology: topIdeology,
-                langCounts: sum.langs || { en: total, hi: 0 },
-                recent: recentList
-              });
-              return;
+          Object.keys(sum.ideologies || {}).forEach(function (k) {
+            var c = num(sum.ideologies[k]);
+            ideologyStats[k] = { count: c, pct: Math.round((c / total) * 100) };
+            if (c > maxCount) {
+              maxCount = c;
+              topIdeology = k;
             }
-            // Firebase empty -> sample dataset
-            resolve(processRows(SAMPLE_SUBMISSIONS, false));
-          }, function () {
-            resolve(processRows(SAMPLE_SUBMISSIONS, false));
           });
+
+          var bandStats = {};
+          for (var b = 0; b <= 6; b++) {
+            var c = num(sum.bands && sum.bands[b]);
+            bandStats[b] = { count: c, pct: Math.round((c / total) * 100) };
+          }
+
+          var sums = sum.sums || {};
+          var averages = {
+            econ: Math.round(num(sums.econ) / total),
+            social: Math.round(num(sums.social) / total),
+            civil: Math.round(num(sums.civil) / total),
+            world: Math.round(num(sums.world) / total),
+            overall: Math.round(num(sums.overall) / total)
+          };
+
+          var recentList = [];
+          snaps[1].forEach(function (child) {
+            var r = child.val() || {};
+            recentList.unshift({
+              ideology: String(r.ideology || ""),
+              overall_band: num(r.overall_band),
+              overall_score: num(r.overall_score),
+              lang: r.lang === "hi" ? "hi" : "en",
+              timeAgo: formatTimeAgo(num(r.ts))
+            });
+          });
+
+          var langs = sum.langs || {};
+          return {
+            isLive: true,
+            total: total,
+            ideologies: ideologyStats,
+            bands: bandStats,
+            averages: averages,
+            topIdeology: topIdeology,
+            langCounts: sum.langs ? { en: num(langs.en), hi: num(langs.hi) } : { en: total, hi: 0 },
+            recent: recentList
+          };
+        }).catch(function () {
+          return processRows(SAMPLE_SUBMISSIONS, false);
         });
       }
 
